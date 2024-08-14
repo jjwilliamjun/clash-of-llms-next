@@ -8,6 +8,9 @@
 `source venv/bin/activate`
 https://docs.python.org/3/library/venv.html
 
+## API key
+
+
 ## APIs
 ChatGPT
 - Setting the key as an environmental variable
@@ -20,6 +23,14 @@ https://platform.openai.com/docs/quickstart
 Ilama - not tested
  `!pip install llamaapi -q`
 
+## GitHub Commands
+Get most recent changes (be on main): `git pull` 
+Branch out: `git checkout -b [branchName]`
+Adding files for commit: `git add [filename]`
+Committing with msg: `git commit -m "[message]"`
+Pushing changes: `git push`
+Check what files have been changed: `git status`
+Switch branches: `git checkout [branch]`
 
 # Timeline
 *Week2 - 
