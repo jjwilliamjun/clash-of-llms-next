@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clash of LLMs</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="Home">
+        <h1>{{ title }}</h1>
+        <p>{{ content }}</p>
+        <input v-model="something">
+
+    </div>
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                title: "Clash of LLMs",
+                content: "Red and Blue team simulation"
+                };
+            }
+        }).mount('#Home');
+
+            
+    </script>
+</body>
