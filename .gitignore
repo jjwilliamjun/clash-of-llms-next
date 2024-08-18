@@ -16,3 +16,5 @@ node_modules/
 *.pyc
 *.pyc
 clash-of-llms/excel_api/__pycache__/import_excel.cpython-311.pyc
+openaiVenv/
+.github/
