@@ -7,7 +7,7 @@
 - More help: https://docs.python.org/3/library/venv.html
 
 ### APIs
-ChatGPT **Use ChatGPT-3.5 or lower models**
+ChatGPT(**Use ChatGPT-3.5 or lower models**)
 - `export OPENAI_API_KEY="your_api_key_here"`: Set the key as an environmental variable
 - `pip install openai`: Install openai library
 - More help: https://platform.openai.com/docs/quickstartOPEN
@@ -15,7 +15,14 @@ ChatGPT **Use ChatGPT-3.5 or lower models**
 Ilama - not tested
 - `!pip install llamaapi -q`
 
-## GitHub Commands
+### CI/CD tool installations
+**Pylint**
+- `pip install pylint`: linter for Python
+- `apt install pylint`: terminal linter tool
+  - `pylint [file.py]`: manually checking python files
+- Also install the extension for Pylint in vscode
+
+## Git Commands
 - `git pull`: Get most recent changes (most likely on main) 
 - `git checkout -b [branchName]`: Branch out
 - `git checkout [branch]`: Switch branches
@@ -25,10 +32,4 @@ Ilama - not tested
 - `git status`: Check what files have been changed
 Other Option: use built in vscode git extensions
 
-## CI/CD installations
-Pylint
-- `pip install pylint`: linter for Python
-- `apt install pylint`: terminal linter tool
-  - `pylint [file.py]`: manually checking python files
-- Also install the extension for Pylint in vscode
 
