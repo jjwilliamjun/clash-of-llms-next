@@ -17,7 +17,7 @@
 
   </div>
   <div>
-      <button @click="downloadExcel" class="!py-20">Download Excel</button > #For testing
+      <button @click="downloadExcel" class="!py-20">Download Excel</button >
   </div>
 </template>
 

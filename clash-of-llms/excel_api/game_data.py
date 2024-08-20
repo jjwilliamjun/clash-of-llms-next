@@ -48,9 +48,9 @@ class GameTurnData:
             'Turn': self.turn, 
             'Team': self.team, 
             'Message chosen': self.message_chosen, 
-            'Potency': self.potency, 
+            'Potency of message': self.potency, 
             'Energy level': self.energy_level, 
-            '% of nodes with increased alignment': self.increased_alignment, 
+            '% of nodes with increased alignment towards team': self.increased_alignment, 
             '% of nodes with decreased alignment towards team': self.decreased_alignment
         }
 

@@ -35,5 +35,5 @@ def export_excel():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    game_data = generate_game_data()
+    game_data = generate_game_data() #Testing purposes
     app.run(debug=True)
