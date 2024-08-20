@@ -7,6 +7,9 @@
           <label :for="'param' + index">{{ param.label }}</label>
           <input type="text" :id="'param' + index" v-model="param.value" placeholder="Enter {{ param.label }}" />
         </div>
+        <div>
+          <button @click="downloadExcel">Download Excel</button>
+        </div>
       </div>
       <button type="submit" class="submit-button">Start Simulation</button>
     </form>
@@ -14,6 +17,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -32,8 +36,34 @@ export default {
   methods: {
     startSimulation() {
       console.log("Parameters:", this.parameters);
-    }
-  }
+    },
+    downloadExcel() {
+      axios({
+        url: 'http://localhost:5000/excel_api/export_excel', 
+        method: 'GET',
+        responseType: 'blob', 
+      })
+      .then((response) => {
+        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const link = document.createElement('a');
+
+        link.href = window.URL.createObjectURL(blob);
+        const now = new Date();
+        const timestamp = now.getHours() + "_" + now.getMinutes() + "_" + now.getSeconds();
+    
+
+       const excel_file_name = `clash_of_llms_${timestamp}.xlsx`;
+        link.download = excel_file_name; 
+        
+        link.click();
+        
+        window.URL.revokeObjectURL(link.href);
+      })
+      .catch((error) => {
+        console.error('Error downloading the Excel file:', error);
+      });
+    },
+  },
 };
 </script>
 
