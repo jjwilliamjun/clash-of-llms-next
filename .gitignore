@@ -1,0 +1,12 @@
+# Virtualenv
+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+bin/
+include/
+lib/
+lib64/
+local/
+scripts/
+pyvenv.cfg
+.venv/
+pip-selfcheck.json
+node_modules/
