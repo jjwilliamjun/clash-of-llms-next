@@ -1,5 +1,4 @@
 import pandas as pd
-import xlrd
 
 '''
     PACKAGE VERISIONS
@@ -8,11 +7,13 @@ import xlrd
     openpyxl 3.1.5
 '''
 
-
+# Returns settings for red and blue teams as dictionaries
 def import_settings(xls_path):
     settings = pd.read_excel(xls_path)
+
     red_team = settings.loc[0]
     blue_team = settings.loc[1]
+
     red_team.to_dict()
     blue_team.to_dict()
 
@@ -22,10 +23,34 @@ def import_settings(xls_path):
     return red_team, blue_team
 
 
-def main():
-    path = input()
-    red_team, blue_team = import_settings(path)
+# Returns node attribues in a dictionary of dictionaries
+def import_node_attributes(xls_path):
+    attributes = pd.read_excel(xls_path)
+    nodes = {}
+    
+    for index, row in attributes.iterrows():
+        nodes[row['Node_ID']] = {
+            "Alignment": row['Alignment'],
+            "Uncertainty": row['Uncertainty'],
+            "Influence_Potential": row['Influence_Potential']
+        }
+    
+    # TO DO --> modify to store nodes appropriately
+
+    return nodes
 
 
-if __name__ == '__main__':
-    main()
+# Returns node connections in a dictionary of dictionaries
+def import_node_connections(xls_path):
+    connections = pd.read_excel(xls_path)
+    conns = {}
+
+    for index, row in connections.iterrows():
+        conns[row['Node']] = {
+            "Connected_Nodes": row['Connected_Nodes'],
+            "Influence_Factor": row['Influence_Factor']
+        }
+
+    # TO DO --> modify to store connections appropriately
+
+    return conns
