@@ -14,7 +14,6 @@
         <div>
           <button @click="downloadExcel">Download Excel</button>
         </div>
-
     <ParameterInputForm v-if="inputOption === 'manual'" />
     <FileUploadForm v-else />
   </div>
