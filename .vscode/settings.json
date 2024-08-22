@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./clash-of-llms/excel_api"
+    ]
+}
