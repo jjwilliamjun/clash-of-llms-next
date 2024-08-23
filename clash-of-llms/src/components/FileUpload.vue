@@ -35,19 +35,17 @@ export default {
     };
   },
   methods: {
-    startSimulation() {
+    async startSimulation() {
       // TO DO --> condition check 3 files uploaded
 
-      const path = 'http://127.0.0.1:5000/excel_api/excel_import'
+      const path = 'http://127.0.0.1:5000/excel_api/excel_import';
 
-      const response = axios.post(path, this.file_data)
-        .then(() => {
-            console.log("worked!");
-            console.log(response);
-          })
-          .catch((error) => {
-            console.log("didn't work", error);
-          });
+      try {
+        const response = axios.post(path, this.file_data);
+        console.log((await response).data);
+      } catch (error) {
+        console.log("didn't work", error);
+      }
     },
     handleSettingsUpload() {
       const settings_file = document.getElementById("settingsUpload").files[0];

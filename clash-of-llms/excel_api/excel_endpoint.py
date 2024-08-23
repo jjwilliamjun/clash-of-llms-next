@@ -4,6 +4,7 @@ from turtle import pd
 from flask import Flask, send_file, jsonify, request
 from flask_cors import CORS, cross_origin
 from io import BytesIO
+import json
 from excel_export import *
 from import_excel import *
 
@@ -40,7 +41,7 @@ def export_excel():
 @app.route('/excel_api/excel_import', methods=['GET', 'POST'])
 @cross_origin()
 def import_excel():
-    print("success")
+    output = []
 
     if request.method == 'POST':
 
@@ -51,15 +52,21 @@ def import_excel():
             
             if key == 'settings_file':
                 settings = import_settings(file_path)
-                print(settings)
+                # print(settings)
+                # output["settings"] = settings
+                output.append(settings)
             elif key == 'attributes_file':
                 nodes = import_node_attributes(file_path)
-                print(nodes)
+                # print(nodes)
+                output.append(nodes)
             elif key == 'connections_file':
                 connections = import_node_connections(file_path)
-                print(connections)
+                # print(connections)
+                output.append(connections)
 
-    return 'yay'
+    print(output)
+
+    return "yay"
 
 if __name__ == '__main__':
     game_data = generate_game_data() #Testing purposes
