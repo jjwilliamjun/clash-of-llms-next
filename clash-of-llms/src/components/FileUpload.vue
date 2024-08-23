@@ -25,12 +25,15 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
       settingsFile: [],
       attributesFile: [],
-      connectionsFile: []
+      connectionsFile: [], 
+      fileData: []
     };
   },
   methods: {
@@ -43,19 +46,28 @@ export default {
     handleSettingsUpload(event) {
       this.settingsFiles = Array.from(event.target.files);
       console.log("Settings uploaded: ", this.settingsFiles);
-
-      // Create FormData object and append the settings file to ti
-      const formData = new FormData();
-      formData.append('settings', this.settingsFile[0]);
-
-      // TO DO ---> Send axios.post to backend/Flask
     },
 
     
-    handleAttributesUpload(event) {
-      this.attributesFile = Array.from(event.target.files);
-      console.log("Attributes uploaded: ", this.attributesFiles);
+    handleAttributesUpload() {
+      const attrFile = document.getElementById("attributesUpload").files[0];
+      console.log("Attributes uploaded: ", attrFile);
+
+      const path = 'http://127.0.0.1:5000/excel_api/excel_import'
+
+      const formData = new FormData();
+      formData.append('file', attrFile);
+
+      const response = axios.post(path, formData)
+        .then(() => {
+            console.log("worked!");
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log("didn't work", error);
+          });
     },
+
     handleConnectionsUpload(event) {
       this.connectionsFile = Array.from(event.target.files);
       console.log("Connections uploaded: ", this.connectionsFile);
