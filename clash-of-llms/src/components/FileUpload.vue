@@ -30,71 +30,59 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      fileData: []
+      Files: [],
+      settings_data: new FormData(),
+      attributes_data: new FormData(),
+      connections_data: new FormData(),
     };
   },
   methods: {
     startSimulation() {
-      console.log("Files:", this.files);
-      // handle excel files here
+      // TO DO --> condition check 3 files uploaded
+
+      const path = 'http://127.0.0.1:5000/excel_api/excel_import'
+
+      const response1 = axios.post(path, this.settings_data)
+        .then(() => {
+            console.log("worked!");
+            console.log(response1);
+          })
+          .catch((error) => {
+            console.log("didn't work", error);
+          });
+      
+      const response2 = axios.post(path, this.attributes_data)
+        .then(() => {
+            console.log("worked!");
+            console.log(response2);
+          })
+          .catch((error) => {
+            console.log("didn't work", error);
+          });
+      
+      const response3 = axios.post(path, this.connections_data)
+        .then(() => {
+            console.log("worked!");
+            console.log(response3);
+          })
+          .catch((error) => {
+            console.log("didn't work", error);
+          });
     },
-
-
     handleSettingsUpload() {
       const settingsFile = document.getElementById("settingsUpload").files[0];
       console.log("Settings uploaded: ", settingsFile);
-
-      const path = 'http://127.0.0.1:5000/excel_api/excel_import'
-
-      const formData = new FormData();
-      formData.append('file', settingsFile);
-
-      const response = axios.post(path, formData)
-        .then(() => {
-            console.log("worked!");
-            console.log(response);
-          })
-          .catch((error) => {
-            console.log("didn't work", error);
-          });
+      this.settings_data.append('file', settingsFile);
     },
-    
     handleAttributesUpload() {
-      const attrFile = document.getElementById("attributesUpload").files[0];
-      console.log("Attributes uploaded: ", attrFile);
-
-      const path = 'http://127.0.0.1:5000/excel_api/excel_import'
-
-      const formData = new FormData();
-      formData.append('file', attrFile);
-
-      const response = axios.post(path, formData)
-        .then(() => {
-            console.log("worked!");
-            console.log(response);
-          })
-          .catch((error) => {
-            console.log("didn't work", error);
-          });
+      const attributes_file = document.getElementById("attributesUpload").files[0];
+      console.log("Attributes uploaded: ", attributes_file);
+      this.attributes_data.append('file', attributes_file)
     },
-
     handleConnectionsUpload() {
-      const connectionsFile = document.getElementById("connectionsUpload").files[0];
-      console.log("Settings uploaded: ", connectionsFile);
-
-      const path = 'http://127.0.0.1:5000/excel_api/excel_import'
-
-      const formData = new FormData();
-      formData.append('file', connectionsFile);
-
-      const response = axios.post(path, formData)
-        .then(() => {
-            console.log("worked!");
-            console.log(response);
-          })
-          .catch((error) => {
-            console.log("didn't work", error);
-          });
+      const connections_file = document.getElementById("connectionsUpload").files[0];
+      console.log("Settings uploaded: ", connections_file);
+      this.connections_data.append('file', connections_file)
     }
   }
 };
