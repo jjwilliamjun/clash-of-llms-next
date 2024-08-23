@@ -30,9 +30,6 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      settingsFile: [],
-      attributesFile: [],
-      connectionsFile: [], 
       fileData: []
     };
   },
@@ -43,11 +40,24 @@ export default {
     },
 
 
-    handleSettingsUpload(event) {
-      this.settingsFiles = Array.from(event.target.files);
-      console.log("Settings uploaded: ", this.settingsFiles);
-    },
+    handleSettingsUpload() {
+      const settingsFile = document.getElementById("settingsUpload").files[0];
+      console.log("Settings uploaded: ", settingsFile);
 
+      const path = 'http://127.0.0.1:5000/excel_api/excel_import'
+
+      const formData = new FormData();
+      formData.append('file', settingsFile);
+
+      const response = axios.post(path, formData)
+        .then(() => {
+            console.log("worked!");
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log("didn't work", error);
+          });
+    },
     
     handleAttributesUpload() {
       const attrFile = document.getElementById("attributesUpload").files[0];
@@ -68,9 +78,23 @@ export default {
           });
     },
 
-    handleConnectionsUpload(event) {
-      this.connectionsFile = Array.from(event.target.files);
-      console.log("Connections uploaded: ", this.connectionsFile);
+    handleConnectionsUpload() {
+      const connectionsFile = document.getElementById("connectionsUpload").files[0];
+      console.log("Settings uploaded: ", connectionsFile);
+
+      const path = 'http://127.0.0.1:5000/excel_api/excel_import'
+
+      const formData = new FormData();
+      formData.append('file', connectionsFile);
+
+      const response = axios.post(path, formData)
+        .then(() => {
+            console.log("worked!");
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log("didn't work", error);
+          });
     }
   }
 };

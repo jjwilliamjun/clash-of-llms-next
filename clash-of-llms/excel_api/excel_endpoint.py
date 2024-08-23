@@ -45,12 +45,20 @@ def import_excel():
     if request.method == 'POST':
         file = request.files['file']
         print(file.filename)
-        
+
         if file:
             file_path = os.path.join('/tmp', file.filename)
             file.save(file_path)
+        
+        if file.filename == 'NodeAttributes.xlsx':
             nodes = import_node_attributes(file_path)
             print(nodes)
+        elif file.filename == 'NodeConnections.xlsx':
+            connections = import_node_connections(file_path)
+            print(connections)
+        elif file.filename == 'SimulationSettings.xlsx':
+            settings = import_settings(file_path)
+            print(settings)
 
     res = ["yay"]
     return res
