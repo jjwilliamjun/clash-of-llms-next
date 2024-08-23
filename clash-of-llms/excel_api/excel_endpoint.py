@@ -1,9 +1,11 @@
+import os
 import datetime
 from turtle import pd
 from flask import Flask, send_file, jsonify, request
 from flask_cors import CORS, cross_origin
 from io import BytesIO
 from excel_export import *
+from import_excel import *
 
 app = Flask(__name__)
 game_data = None #This needs to be a global variable 
@@ -43,7 +45,12 @@ def import_excel():
     if request.method == 'POST':
         file = request.files['file']
         print(file.filename)
-        # print(request.content_type)
+        
+        if file:
+            file_path = os.path.join('/tmp', file.filename)
+            file.save(file_path)
+            nodes = import_node_attributes(file_path)
+            print(nodes)
 
     res = ["yay"]
     return res
