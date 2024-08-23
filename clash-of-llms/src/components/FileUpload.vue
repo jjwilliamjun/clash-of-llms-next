@@ -31,9 +31,7 @@ export default {
   data() {
     return {
       Files: [],
-      settings_data: new FormData(),
-      attributes_data: new FormData(),
-      connections_data: new FormData(),
+      file_data: new FormData
     };
   },
   methods: {
@@ -42,47 +40,29 @@ export default {
 
       const path = 'http://127.0.0.1:5000/excel_api/excel_import'
 
-      const response1 = axios.post(path, this.settings_data)
+      const response = axios.post(path, this.file_data)
         .then(() => {
             console.log("worked!");
-            console.log(response1);
-          })
-          .catch((error) => {
-            console.log("didn't work", error);
-          });
-      
-      const response2 = axios.post(path, this.attributes_data)
-        .then(() => {
-            console.log("worked!");
-            console.log(response2);
-          })
-          .catch((error) => {
-            console.log("didn't work", error);
-          });
-      
-      const response3 = axios.post(path, this.connections_data)
-        .then(() => {
-            console.log("worked!");
-            console.log(response3);
+            console.log(response);
           })
           .catch((error) => {
             console.log("didn't work", error);
           });
     },
     handleSettingsUpload() {
-      const settingsFile = document.getElementById("settingsUpload").files[0];
-      console.log("Settings uploaded: ", settingsFile);
-      this.settings_data.append('file', settingsFile);
+      const settings_file = document.getElementById("settingsUpload").files[0];
+      console.log("Settings uploaded: ", settings_file);
+      this.file_data.append('settings_file', settings_file);
     },
     handleAttributesUpload() {
       const attributes_file = document.getElementById("attributesUpload").files[0];
       console.log("Attributes uploaded: ", attributes_file);
-      this.attributes_data.append('file', attributes_file)
+      this.file_data.append('attributes_file', attributes_file)
     },
     handleConnectionsUpload() {
       const connections_file = document.getElementById("connectionsUpload").files[0];
       console.log("Settings uploaded: ", connections_file);
-      this.connections_data.append('file', connections_file)
+      this.file_data.append('connections_file', connections_file)
     }
   }
 };

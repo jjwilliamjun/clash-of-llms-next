@@ -43,25 +43,23 @@ def import_excel():
     print("success")
 
     if request.method == 'POST':
-        file = request.files['file']
-        print(file.filename)
 
-        if file:
+        for key, file_storage in request.files.items(multi=True):
+            file = request.files[f"{key}"]
             file_path = os.path.join('/tmp', file.filename)
             file.save(file_path)
-        
-        if file.filename == 'NodeAttributes.xlsx':
-            nodes = import_node_attributes(file_path)
-            print(nodes)
-        elif file.filename == 'NodeConnections.xlsx':
-            connections = import_node_connections(file_path)
-            print(connections)
-        elif file.filename == 'SimulationSettings.xlsx':
-            settings = import_settings(file_path)
-            print(settings)
+            
+            if key == 'settings_file':
+                settings = import_settings(file_path)
+                print(settings)
+            elif key == 'attributes_file':
+                nodes = import_node_attributes(file_path)
+                print(nodes)
+            elif key == 'connections_file':
+                connections = import_node_connections(file_path)
+                print(connections)
 
-    res = ["yay"]
-    return res
+    return 'yay'
 
 if __name__ == '__main__':
     game_data = generate_game_data() #Testing purposes
