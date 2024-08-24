@@ -1,11 +1,9 @@
 import networkx as nx
-from import_settings import import_settings, import_node_attributes, import_node_connections
+import matplotlib.pyplot as plt
+from import_settings import import_node_attributes, import_node_connections
 
 def create_node_network(attributes_file_path, connections_file_path):
-    """
-    Creates a node network based on attributes and connections provided in the 
-    specified Excel files.
-    """
+    # Import node attributes and connections using the functions you defined
     node_attributes = import_node_attributes(attributes_file_path)
     node_connections = import_node_connections(connections_file_path)
 
@@ -26,12 +24,42 @@ def create_node_network(attributes_file_path, connections_file_path):
 
     return graph
 
+def visualize_graph(graph):
+    pos = nx.spring_layout(graph)
+
+    # Create node labels with alignment values, using a default if missing
+    node_labels = {}
+    for node, data in graph.nodes(data=True):
+        alignment = data.get('Alignment', 0.0)  # Use 0.0 if 'Alignment' is missing
+        node_labels[node] = f"{node}\nAlign: {alignment:.2f}"
+    
+    nx.draw(graph, pos, labels=node_labels, node_color="lightblue", node_size=500, font_size=10)
+    
+    edge_labels = nx.get_edge_attributes(graph, 'weight')
+    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels)
+
+    plt.show()
+
 # Example usage
 if __name__ == '__main__':
-    ATTRIBUTES_FILE_PATH = 'NodeAttributes.xlsx'
-    CONNECTIONS_FILE_PATH = 'NodeConnections.xlsx'
+    attributes_file_path = 'NodeAttributes.xlsx'  # Path to your node attributes file
+    connections_file_path = 'NodeConnections.xlsx'  # Path to your node connections file
 
-    network_graph = create_node_network(ATTRIBUTES_FILE_PATH, CONNECTIONS_FILE_PATH)
+    try:
+        graph = create_node_network(attributes_file_path, connections_file_path)
 
-    print("Nodes:", network_graph.nodes(data=True))
-    print("Edges:", network_graph.edges(data=True))
+        # Print nodes and their attributes
+        print("Nodes:")
+        for node, attr in graph.nodes(data=True):
+            print(f"{node}: {attr}")
+
+        # Print edges and their attributes
+        print("\nEdges:")
+        for edge in graph.edges(data=True):
+            print(edge)
+
+        # Visualize the graph
+        visualize_graph(graph)
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
