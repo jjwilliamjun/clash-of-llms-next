@@ -51,22 +51,17 @@ def import_excel():
             file.save(file_path)
             
             if key == 'settings_file':
-                settings = import_settings(file_path)
-                # print(settings)
-                # output["settings"] = settings
-                output.append(settings)
+                settings = import_settings(file_path) 
+                output.append(settings[0].to_dict())
+                output.append(settings[1].to_dict())
             elif key == 'attributes_file':
-                nodes = import_node_attributes(file_path)
-                # print(nodes)
+                nodes = import_node_attributes(file_path) 
                 output.append(nodes)
             elif key == 'connections_file':
-                connections = import_node_connections(file_path)
-                # print(connections)
+                connections = import_node_connections(file_path) 
                 output.append(connections)
 
-    print(output)
-
-    return "yay"
+    return jsonify(output)
 
 if __name__ == '__main__':
     game_data = generate_game_data() #Testing purposes

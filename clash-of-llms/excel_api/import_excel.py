@@ -8,7 +8,7 @@ import pandas as pd
 '''
 
 # Returns settings for red and blue teams as dictionaries
-def import_settings(xls_path):
+def import_settings(xls_path) -> tuple:
     settings = pd.read_excel(xls_path)
 
     red_team = settings.loc[0]
@@ -24,7 +24,7 @@ def import_settings(xls_path):
 
 
 # Returns node attribues in a dictionary of dictionaries
-def import_node_attributes(xls_path):
+def import_node_attributes(xls_path) -> dict:
     attributes = pd.read_excel(xls_path)
     nodes = {}
     
@@ -41,7 +41,7 @@ def import_node_attributes(xls_path):
 
 
 # Returns node connections in a dictionary of dictionaries
-def import_node_connections(xls_path):
+def import_node_connections(xls_path) -> dict:
     connections = pd.read_excel(xls_path)
     conns = {}
 
