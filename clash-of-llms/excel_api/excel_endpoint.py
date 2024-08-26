@@ -1,7 +1,9 @@
 import os
 import datetime
+from turtle import pd
 from flask import Flask, send_file, jsonify, request
 from flask_cors import CORS, cross_origin
+from io import BytesIO
 import json
 from excel_export import *
 from import_excel import *
@@ -48,7 +50,8 @@ def import_excel():
 
             if key == 'settings_file':
                 settings = import_settings(file_path)
-                output.append(settings)
+                output.append(settings[0].to_dict())
+                output.append(settings[1].to_dict())
             elif key == 'attributes_file':
                 nodes = import_node_attributes(file_path)
                 output.append(nodes)
@@ -56,8 +59,7 @@ def import_excel():
                 connections = import_node_connections(file_path)
                 output.append(connections)
 
-    print(output)
-    return "yay"
+    return jsonify(output)
 
 # Route to serve network_output.json
 @app.route('/network_output.json', methods=['GET'])
