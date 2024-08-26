@@ -59,4 +59,28 @@
   .submit-button:hover {
     background-color: #0056b3;
   }
-  
+
+  .flex-container {
+      display: flex;
+  }
+
+  .flex-child {
+      flex: 1;
+      border: 1px solid #949494;
+      border-radius: 10px;
+      box-shadow: 2px 2px 5px #cecece;
+  }  
+
+  .flex-child:first-child {
+      margin-right: 20px;
+  } 
+
+  #redTeam {
+    font-weight: bold;
+    color: #fc5649;
+  }
+
+  #blueTeam {
+    font-weight: bold;
+    color: #0b7ffc;
+  } 
