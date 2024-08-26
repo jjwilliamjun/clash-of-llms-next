@@ -15,7 +15,7 @@
 <script>
 import { Network } from 'vis-network/standalone/esm/vis-network';
 import { DataSet } from 'vis-data/standalone/esm/vis-data';
-import networkData from '../../excel_api/network_output.json'; // Adjust the path if necessary
+import networkData from '../../create_node_network/network_output.json'; // Adjust the path if necessary
 
 export default {
   data() {
