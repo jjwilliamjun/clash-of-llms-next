@@ -36,19 +36,29 @@ export default {
 
       const data = {
         nodes: new DataSet(
-          networkData.nodes.map(node => ({
-            id: node.id,
-            label: node.id,
-            title: `Alignment: ${node.Alignment}\nUncertainty: ${node.Uncertainty}\nInfluence Potential: ${node.Influence_Potential}`,
-            color: {
-              background: 'green',
-              border: 'darkgreen',
-            },
-            font: {
-              color: 'white',
-            },
-            shape: 'circle',
-          }))
+          networkData.nodes.map(node => {
+            let color;
+            if (node.Alignment > 0.5) {
+              color = 'red';
+            } else if (node.Alignment < -0.5) {
+              color = 'blue';
+            } else {
+              color = 'green';
+            }
+            return {
+              id: node.id,
+              label: node.id,
+              title: `Alignment: ${node.Alignment}\nUncertainty: ${node.Uncertainty}\nInfluence Potential: ${node.Influence_Potential}`,
+              color: {
+                background: color,
+                border: 'darkgreen',
+              },
+              font: {
+                color: 'white',
+              },
+              shape: 'circle',
+            };
+          })
         ),
         edges: new DataSet(
           networkData.links.map(link => ({
