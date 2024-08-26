@@ -22,6 +22,22 @@
     <button type="submit" class="submit-button">Start Simulation</button>
   </form>
 
+  <div v-if="blue_team">
+    <p>{{ blue_team }}</p>
+  </div>
+
+  <div v-if="red_team">
+    <p>{{ red_team }}</p>
+  </div>
+
+  <div v-if="node_attributes">
+    <p>{{ node_attributes }}</p>
+  </div>
+
+  <div v-if="node_connections">
+    <p>{{ node_connections }}</p>
+  </div>
+
 </template>
 
 <script>
@@ -31,7 +47,12 @@ export default {
   data() {
     return {
       Files: [],
-      file_data: new FormData
+      file_data: new FormData, 
+      params: null,
+      blue_team: null,
+      red_team: null, 
+      node_attributes: null,
+      node_connections: null
     };
   },
   methods: {
@@ -42,8 +63,16 @@ export default {
 
       try {
         const response = axios.post(path, this.file_data);
-        console.log((await response).data);
+        this.params = (await response).data;
+
+        // TO DO --> CHANGE TO USE DATA FROM CLASSES
+        this.blue_team = this.params[1];
+        this.red_team = this.params[0];
+        this.node_attributes = this.params[2];
+        this.node_connections = this.params[3];
+        
       } catch (error) {
+        // TO DO --> error handling
         console.log("didn't work", error);
       }
     },
