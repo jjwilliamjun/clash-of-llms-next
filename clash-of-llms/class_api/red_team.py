@@ -27,4 +27,4 @@ class red_team:
     def generate_message(self):
         """generate a message with the team's current parameters"""
         message = get_message(self._team, self._alignment, self._energy)
-        
+        return message
