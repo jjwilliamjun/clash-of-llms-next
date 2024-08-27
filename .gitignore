@@ -14,6 +14,12 @@ pip-selfcheck.json
 node_modules/
 <<<<<<< HEAD
 .myenv/
+*.pyc
+*.pyc
+clash-of-llms/excel_api/__pycache__/import_excel.cpython-311.pyc
+openaiVenv/
+.github/
+
 
 =======
 excel_api/__pycache__/
