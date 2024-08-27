@@ -1,12 +1,5 @@
 import pandas as pd
 
-'''
-    PACKAGE VERISIONS
-    pandas 2.2.2
-    xlrd 2.0.1
-    openpyxl 3.1.5
-'''
-
 # Returns settings for red and blue teams as dictionaries
 def import_settings(xls_path) -> tuple:
     settings = pd.read_excel(xls_path)
