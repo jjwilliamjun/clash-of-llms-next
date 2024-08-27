@@ -1,8 +1,8 @@
 """Definition of the simulation's red team"""
 from gpt_endpoint import get_message
 
-class red_team:
-    def __init__(self, model_ID, energy, potency, influence_factor, alignment=50):
+class team:
+    def __init__(self, model_ID, energy, potency, influence_factor, alignment=0):
         """Setting parameters for red team"""
         self._team = 'red'
         self._energy = energy
@@ -28,3 +28,13 @@ class red_team:
         """generate a message with the team's current parameters"""
         message = get_message(self._team, self._alignment, self._energy)
         return message
+    def update_energy_level(self, energy_cost):
+        """
+        Attempt to generate and send a message. Consumes energy equal to message_cost.
+        """
+        
+        if self._energy - energy_cost <= 0 :
+            print(f"{self._team} cannot send the message")
+        else:
+            print(f"{self._team} can send the message")
+            self._energy - energy_cost
