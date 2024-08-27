@@ -35,13 +35,15 @@ def get_message(team: str, alignment: str, energy: str) -> list[str]:
             "role": "user", 
             "content": f"Generate 10 messages of differing potencies. {optional_msg} "
             f"Your current support percentage is {alignment}. Choose the best message"
-            "in the current situation. Return the message and its potency."
+            "in the current situation. Only return the best message and its potency separated by"
+            " a newline character."
         },
     ]
     )
+    
+    msg_array = completion.choices[0].message.content.split('\n')
+    message = msg_array[0].split(':')[1]
+    potency = msg_array[1].split(':')[1].strip('%')
 
+    return message, potency
 
-    print(completion.choices[0].message.content)
-    return completion.choices[0].message.content
-
-get_message('red', '56', '2000')

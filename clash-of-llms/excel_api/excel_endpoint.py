@@ -15,6 +15,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/excel_api/export_excel', methods=['GET'])
 def export_excel():
+    """Exports to excel"""
     try:
         if game_data is None:
             return jsonify({"error": "No game data available"}), 400

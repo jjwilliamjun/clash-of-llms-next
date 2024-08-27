@@ -12,6 +12,8 @@ pyvenv.cfg
 .venv/
 pip-selfcheck.json
 node_modules/
+<<<<<<< HEAD
+.myenv/
 *.pyc
 *.pyc
 clash-of-llms/excel_api/__pycache__/import_excel.cpython-311.pyc
@@ -19,3 +21,6 @@ openaiVenv/
 .github/
 
 
+=======
+excel_api/__pycache__/
+>>>>>>> 65c84c3c467504b68e0d70bec6bf8813bfb7735d
