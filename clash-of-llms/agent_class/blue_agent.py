@@ -4,6 +4,7 @@ class Blue_agent:
         self.influence_factor = influence_factor
         self.energy_level = initial_energy
         self.num_msg_sent = 0
+        
 
     def update_energy_level(self, energy_cost):
         """
