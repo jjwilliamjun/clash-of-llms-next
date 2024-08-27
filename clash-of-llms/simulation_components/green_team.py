@@ -14,9 +14,9 @@ import copy
 
 class green_team:
     def __init__(self, network_graph, blue_alignment, red_alignment):
-        self._network_graph = network_graph
-        self._blue_alignment=blue_alignment
-        self._red_alignment=red_alignment
+        self._network_graph = network_graph 
+        self._blue_alignment=blue_alignment #Number of "blue-leaning" nodes in the graph
+        self._red_alignment=red_alignment #Number of "red-leaning" nodes in the graph 
         self._previous_network_graph
         self._size=network_graph.number_of_nodes()
 
@@ -42,7 +42,7 @@ class green_team:
                     else:
                         print("Neighbours alignment is ", neighbour_alignment, "and old node alignment is ", node_alignment, "and ", influence_factor, "is being subtracted")
                         current_node['Alignment'] -= influence_factor
-            #could update alignment with each node value here?             
+                      
         update_team_alignments(current_node['Alignment'])
 
     def update_message_influence(self, message,potency,node):
