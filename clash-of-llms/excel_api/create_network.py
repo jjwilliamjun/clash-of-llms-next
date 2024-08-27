@@ -1,0 +1,49 @@
+import networkx as nx
+import json
+import os
+
+def create_node_network(node_attributes, node_connections):
+
+    graph = nx.Graph()
+
+    # Add nodes with their attributes
+    for node_id, attributes in node_attributes.items():
+        graph.add_node(node_id, **attributes)
+
+    # Add edges (connections between nodes) with weights
+    for node_id, connection in node_connections.items():
+        connected_nodes = connection['Connected_Nodes'].split(',')
+        influence_factors = map(float, connection['Influence_Factor'].split(','))
+
+        for target_node, influence in zip(connected_nodes, influence_factors):
+            graph.add_edge(node_id, target_node.strip(), weight=influence)
+
+    # Convert the graph to node-link data format, which is suitable for saving as JSON
+    graph_data = nx.node_link_data(graph)
+
+    # Save the JSON file in the current directory
+    json_path = os.path.join(os.getcwd(), 'network_output.json')
+    
+    # Print the current working directory and the full path to the JSON file
+    print(f"Current working directory: {os.getcwd()}")
+    print(f"Saving network to: {json_path}")
+
+    # Save the graph data as a JSON file
+    try:
+        with open(json_path, 'w') as f:
+            json.dump(graph_data, f, indent=4)
+        print(f"Network JSON file successfully created: {json_path}")
+    except Exception as e:
+        print(f"Failed to save network JSON file: {str(e)}")
+
+# Example usage
+if __name__ == '__main__':
+    # Assuming that the import_excel.py script provides the following functions
+    from import_excel import import_node_attributes, import_node_connections
+
+    # Load node attributes and connections from Excel files
+    node_attributes = import_node_attributes('NodeAttributes.xlsx')
+    node_connections = import_node_connections('NodeConnections.xlsx')
+
+    # Create the network and save it as network_output.json
+    create_node_network(node_attributes, node_connections)

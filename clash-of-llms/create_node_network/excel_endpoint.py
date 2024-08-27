@@ -1,16 +1,13 @@
 import os
 import datetime
-from turtle import pd
 from flask import Flask, send_file, jsonify, request
 from flask_cors import CORS, cross_origin
-from io import BytesIO
 import json
 from excel_export import *
 from import_excel import *
 
 app = Flask(__name__)
-game_data = None #This needs to be a global variable 
-# CORS(app)
+game_data = None  # This needs to be a global variable
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/excel_api/export_excel', methods=['GET'])
@@ -48,16 +45,16 @@ def import_excel():
             file = request.files[f"{key}"]
             file_path = os.path.join('/tmp', file.filename)
             file.save(file_path)
-            
+
             if key == 'settings_file':
-                settings = import_settings(file_path) 
+                settings = import_settings(file_path)
                 output.append(settings[0].to_dict())
                 output.append(settings[1].to_dict())
             elif key == 'attributes_file':
-                nodes = import_node_attributes(file_path) 
+                nodes = import_node_attributes(file_path)
                 output.append(nodes)
             elif key == 'connections_file':
-                connections = import_node_connections(file_path) 
+                connections = import_node_connections(file_path)
                 output.append(connections)
 
     return jsonify(output)
