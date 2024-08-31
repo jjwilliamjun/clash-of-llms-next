@@ -35,15 +35,35 @@ def get_message(team: str, alignment: str, energy: str) -> list[str]:
             "role": "user", 
             "content": f"Generate 10 messages of differing potencies. {optional_msg} "
             f"Your current support percentage is {alignment}. Choose the best message"
-            "in the current situation. Only return the best message and its potency separated by"
-            " a newline character."
+            "in the current situation. Always return the best message and its potency(int between 0 to 100) in the format"
+            " message: potency"
         },
     ]
     )
     
-    msg_array = completion.choices[0].message.content.split('\n')
-    message = msg_array[0].split(':')[1]
-    potency = msg_array[1].split(':')[1].strip('%')
+    # Initialize variables with default values
+    message = None
+    potency = None
+    try:
+        # Extract the message content
+        content = completion.choices[0].message.content
+
+        # Split content by newlines
+        msg_array = content.split('\n')
+
+        # Extract message and potency from the first two lines
+        message = msg_array[0].split(':')[1].strip()  # Strip any extra spaces
+        potency = msg_array[1].split(':')[1].strip('%').strip()  # Remove '%' and extra spaces
+        
+        # Convert potency to float if needed
+        potency = float(potency)
+        
+        # Print results for debugging
+        print(f"Message: {message}")
+        print(f"Potency: {potency}")
+    
+    except (IndexError, ValueError) as e:
+        print(f"Error processing response: {e}")
 
     return message, potency
 

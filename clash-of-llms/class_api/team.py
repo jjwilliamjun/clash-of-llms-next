@@ -1,8 +1,8 @@
 """Definition of the simulation's red team"""
 from gpt_endpoint import get_message
 
-class team:
-    def __init__(self, team, model_ID, energy=0, potency, influence_factor, max_cost, alignment=0):
+class Team:
+    def __init__(self, team, model_ID, energy, influence_factor, max_cost, alignment):
         """Setting parameters for team"""
         self._team = team
         self._model_ID = model_ID
