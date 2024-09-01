@@ -1,57 +1,59 @@
-
+"""Simulation class"""
 from team import Team
 
-
-class simulation:
+class Simulation:
     """The main simulation loop"""
     def __init__(self, red_team_param, blue_team_param):
-        """Initialize the simulation with one Red team and one Blue team."""
-        self.red_team= Team(**red_team_param)
-        self.blue_team = Team(**blue_team_param)
-        pass
-    def running(self):
-        """
-        Run the simulation, which could involve multiple rounds.
-        """
-        round_number = 1
-        while self.blue_team._energy > 0:
-            print(f"--- Round {round_number} ---")
+        """Initialization"""
+        self._red_team= Team(**red_team_param)
+        self._blue_team = Team(**blue_team_param)
+        self._round_num = 1
+        self._victor = None
+
+    def start(self):
+        """Run Simulation"""
+        while True:
+            # TODO Receive and examine data from front end
+            
+            # Energy depletion
+            if self._blue_team._energy == 0:
+                self._victor = 'red'
+                print("Blue Team has run out of energy")
+                break
+            
+            # Population majority
+            # TODO Potentially returned from the frontend
+            if self._red_team._alignment >= 80:
+                self._victor = 'red'
+                print("Red Team has gained majority support")
+                break
+            elif self._blue_team._alignment >= 80:
+                self._victor = "blue"
+                print("Blue Team has gained majority support")
+                break
+            
+            print(f"--- Round {self._round_num} ---")
 
             # Red team generates a message and updates energy
-            self.red_team.generate_message()
+            self._red_team.generate_message()
 
 
             # Blue team generates a message and updates energy
-            self.blue_team.generate_message()
-            blue_energy_cost = self.blue_team.energy_cost()
-            self.blue_team.update_energy_level(blue_energy_cost)
+            self._blue_team.generate_message()
+            blue_energy_cost = self._blue_team.energy_cost()
+            self._blue_team.update_energy_level(blue_energy_cost)
 
             # Move to the next round
-            self.red_team.next_round()
-            self.blue_team.next_round()
+            self._red_team.next_round()
+            self._blue_team.next_round()
 
-            round_number += 1
+            self._round_num += 1
 
+        if self._victor == 'red':
+            print("🔴 Red Team Wins")
+        else:
+            print("🔵 Blue Team Wins")
+        
+        # End Simulation
         print("Simulation finished.")
-
-# Example usage:
-red_team_params = {
-    'team': 'Red',
-    'model_ID': 'model_red',
-    'energy': 0,
-    'influence_factor': 10,
-    'max_cost': 20,
-    'alignment': 0
-}
-
-blue_team_params = {
-    'team': 'Blue',
-    'model_ID': 'model_blue',
-    'energy': 50,
-    'influence_factor': 12,
-    'max_cost': 20,
-    'alignment': 1
-}
-
-simulation = simulation(red_team_params, blue_team_params)
-simulation.running()
+        return self._victor

@@ -23,7 +23,7 @@ class Team:
         self._message, self._potency = get_message(self._team, self._alignment, self._energy)
         
     def update_energy_level(self, energy_cost):
-        """Consumes energy equal to message_cost. """
+        """Consumes energy equal to message_cost"""
         if self._energy - energy_cost <= 0 :
             self._energy = 0
         else:
@@ -31,16 +31,7 @@ class Team:
 
     #TODO potentially bring out to game parameters
     def energy_cost(self):
-        """
-        Calculate the energy cost required to send a message based on its potency.
-
-        Parameters:
-        - potency (int): The strength of the message (0 to 100).
-        - max_cost (int): The max energy cost for the hightest potency (100 potency). 
-
-        Returns:
-        - float: The calculated energy cost.
-        """
+        """Calculate the energy cost required to send a message based on its potency"""
 
         if not (0 <= self._potency <= 100):
             raise ValueError("Potency must be between 0 and 100.")
