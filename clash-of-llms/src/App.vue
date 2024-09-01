@@ -3,7 +3,8 @@
     <nav>
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link> |
-      <router-link to="/network">Network Graph</router-link>  <!-- Link to Network Graph -->
+      <router-link to="/network">Network Graph</router-link> | <!-- Link to Network Graph -->
+      <router-link to="/parameters">View Parameters</router-link>
     </nav>
     <router-view/>
   </div>

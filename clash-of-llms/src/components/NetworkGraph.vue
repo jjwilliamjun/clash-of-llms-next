@@ -15,21 +15,33 @@
 <script>
 import { Network } from 'vis-network/standalone/esm/vis-network';
 import { DataSet } from 'vis-data/standalone/esm/vis-data';
-import networkData from '../../create_node_network/network_output.json'; // Adjust the path if necessary
 
 export default {
   data() {
     return {
       selectedNode: null, // To store the currently selected node's details
+      networkData: null, // To store the network data
     };
   },
   mounted() {
-    this.loadNetworkData();
+    this.checkForNetworkData();
   },
   methods: {
-    loadNetworkData() {
-      console.log('Loading static network data...');
-      this.drawNetwork(networkData);
+    async checkForNetworkData() {
+      const pollInterval = 2000; // Check every 2 seconds
+      const poll = setInterval(async () => {
+        try {
+          const response = await fetch('http://127.0.0.1:5000/network_output.json');
+          if (response.ok) {
+            const networkData = await response.json();
+            this.networkData = networkData;
+            this.drawNetwork(networkData);
+            clearInterval(poll); // Stop polling once the data is loaded
+          }
+        } catch (error) {
+          console.error('Error loading network data:', error);
+        }
+      }, pollInterval);
     },
     drawNetwork(networkData) {
       const container = this.$refs.networkGraph;
@@ -65,29 +77,26 @@ export default {
             from: link.source,
             to: link.target,
             color: {
-              color: 'green', // Customize the color to match the nodes
+              color: 'green',
             },
-            width: 2, // Customize the width of the edges
+            width: 2,
           }))
         ),
       };
 
-      console.log('Rendering network with data:', data);  // Log the data used for rendering
-
       const options = {
         layout: {
-          randomSeed: 42, // Use a fixed random seed for reproducibility
-          improvedLayout: true, // Use improved layout for better visualization
-          hierarchical: false, // Disable hierarchical layout for more balanced layout
+          randomSeed: 42,
+          improvedLayout: true,
+          hierarchical: false,
         },
         interaction: {
-          dragNodes: true, // Enable dragging of nodes
-          zoomView: true,  // Enable zooming
-          dragView: true,  // Enable dragging of the entire view
-          navigationButtons: false, // Remove navigation buttons
+          dragNodes: true,
+          zoomView: true,
+          dragView: true,
         },
         physics: {
-          enabled: true, // Enable physics for more natural layout
+          enabled: true,
           forceAtlas2Based: {
             gravitationalConstant: -50,
             centralGravity: 0.005,
@@ -110,7 +119,6 @@ export default {
 
       const network = new Network(container, data, options);
 
-      // Listen for double-click events on the nodes
       network.on('doubleClick', (params) => {
         if (params.nodes.length > 0) {
           const nodeId = params.nodes[0];

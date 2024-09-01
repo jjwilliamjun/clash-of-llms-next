@@ -1,18 +1,19 @@
 """Definition of the simulation's red team"""
-from gpt_endpoint import get_message
+from class_api.gpt_endpoint import get_message
 
 class team:
-    def __init__(self, team, model_ID, energy=0, potency, influence_factor, max_cost, alignment=0):
+    def __init__(self, team, model_ID, energy, potency, msg_count, influence_factor, max_cost, temperature, alignment=0):
         """Setting parameters for team"""
         self._team = team
         self._model_ID = model_ID
         self._energy = energy
         self._potency = None
         self._message = None
-        self._message_count = 0
+        self._message_count = msg_count
         self._influence_factor = influence_factor
         self._alignment = alignment
         self._max_cost = max_cost
+        self._temperature = temperature
     
     def next_round(self):
         """Increment number of messages sent"""

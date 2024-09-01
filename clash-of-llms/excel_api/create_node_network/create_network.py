@@ -3,7 +3,6 @@ import json
 import os
 
 def create_node_network(node_attributes, node_connections):
-
     graph = nx.Graph()
 
     # Add nodes with their attributes
@@ -21,18 +20,17 @@ def create_node_network(node_attributes, node_connections):
     # Convert the graph to node-link data format, which is suitable for saving as JSON
     graph_data = nx.node_link_data(graph)
 
-    # Save the JSON file in the current directory
-    json_path = os.path.join(os.getcwd(), 'network_output.json')
+    # Define the correct path for saving the JSON file
+    json_path = os.path.join(os.getcwd(), 'excel_api', 'create_node_network', 'network_output.json')
     
     # Print the current working directory and the full path to the JSON file
-    print(f"Current working directory: {os.getcwd()}")
     print(f"Saving network to: {json_path}")
 
     # Save the graph data as a JSON file
     try:
         with open(json_path, 'w') as f:
             json.dump(graph_data, f, indent=4)
-        print(f"Network JSON file successfully created: {json_path}")
+        print(f"Network JSON file successfully created at: {json_path}")
     except Exception as e:
         print(f"Failed to save network JSON file: {str(e)}")
 

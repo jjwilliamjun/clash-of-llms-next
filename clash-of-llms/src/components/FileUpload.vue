@@ -19,31 +19,19 @@
       <br>
     </div>
     
-    <button type="submit" class="submit-button">Start Simulation</button>
+    <button type="submit" class="submit-button">Upload Files</button>
     <br>
   </form>
 
   <div v-if="display_params">
-    <div class="flex-container" v-if="display_params">
-      <div class="flex-child">
-        <div v-if="blue_team" color="blue">
-          <p id="blueTeam">Team: {{ blue_team.Team }}</p>
-          <p>Model: {{ blue_team.Model_ID }}</p>
-          <p>Initial Energy Level: {{ blue_team.Initial_Energy_Level }}</p>
-          <p>Number of Messages Generated Per Turn: {{ blue_team.Msgs_Generated }}</p>
-          <p>Temperature: {{ blue_team.Temperature }}</p>
-        </div>
+    <router-link to="/parameters">View Parameters</router-link>
+  </div>
+  
+  <div v-if="errors">
+    <strong>error in excel input: </strong>
+    <div v-for="(value, key) in errors" :key="key" class="error-message">
+        {{ value }}
       </div>
-
-      <div class="flex-child">
-        <div v-if="red_team">
-          <p id="redTeam">Team: {{ red_team.Team }}</p>
-          <p>Model: {{ red_team.Model_ID }}</p>
-          <p>Number of Messages Generated Per Turn: {{ red_team.Msgs_Generated }}</p>
-          <p>Temperature: {{ red_team.Temperature }}</p>
-        </div>
-      </div>
-    </div>
   </div>
 
 
@@ -59,40 +47,26 @@ export default {
       file_data: new FormData,
       display_params: false, 
       params: null,
-      blue_team: null,
-      red_team: null, 
-      node_attributes: null,
-      node_connections: null
+      errors: null
     };
   },
   methods: {
     async startSimulation() {
 
       const path = 'http://127.0.0.1:5000/excel_api/excel_import';
-
-      // Send files to backend flask app
       try {
         const response = axios.post(path, this.file_data);
         this.params = (await response).data;
-
-        if (this.params.length != 4) {
-          alert("Requires exactly 3 files.");
-          return;
-        }
-
-        // TO DO --> CHANGE TO USE DATA FROM CLASSES
         this.display_params = true;
-        this.blue_team = this.params[1];
-        this.red_team = this.params[0];
-        this.node_attributes = this.params[2];
-        this.node_connections = this.params[3];
-
-        // TO DO --> Display node parameters
         
       } catch (error) {
-        // TO DO --> error handling
-        console.log("Unable to upload/read files. Error: ", error);
-        alert("Unable to upload/read files.");
+        if (error.response) {
+          this.errors = error.response.data.error;
+          console.log("Unable to upload/read files. Error: ", error);
+        } else {
+          console.log("Unable to upload/read files. Error: ", error);
+          alert("Unable to upload/read files.");
+        }
       }
     },
     handleSettingsUpload() {
