@@ -23,7 +23,6 @@ class team:
         """generate a message with the team's current parameters"""
         self._message, self._potency = get_message(self._team, self._alignment, self._energy)
 
-        
     def update_energy_level(self, energy_cost):
         """
         Attempt to generate and send a message. Consumes energy equal to message_cost.
