@@ -1,6 +1,7 @@
 "Tests for simulation"
 import unittest
 from simulation import Simulation
+from excel_api.import_excel import import_node_attributes, import_node_connections
 
 red_team_params = {
     'team': 'Red',
@@ -23,7 +24,9 @@ blue_team_params = {
 class TestSimulation(unittest.TestCase):
     def test_initialization(self):
         """Simulate running test"""
-        sim = Simulation(red_team_params, blue_team_params)
+        node_attributes = import_node_attributes('NodeAttributes.xlsx')
+        node_connections = import_node_connections('NodeConnections.xlsx')
+        sim = Simulation(red_team_params, blue_team_params, node_attributes, node_connections)
         victor = sim.start()
         self.assertEqual(victor, 'red')
             

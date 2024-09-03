@@ -1,14 +1,20 @@
 """Simulation class"""
+
+# Attempt the import
+from excel_api import *
+
 from team import Team
+
 
 class Simulation:
     """The main simulation loop"""
-    def __init__(self, red_team_param, blue_team_param):
+    def __init__(self, red_team_param, blue_team_param, node_attributes, node_connec):
         """Initialization"""
         self._red_team= Team(**red_team_param)
         self._blue_team = Team(**blue_team_param)
         self._round_num = 1
         self._victor = None
+        self._green_network = create_node_network(node_attributes, node_connec)
 
     def start(self):
         """Run Simulation"""
