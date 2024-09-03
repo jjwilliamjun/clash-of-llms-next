@@ -1,7 +1,12 @@
 import networkx as nx
 import json
 import os
-from green_team import GreenTeam
+import sys
+from .green_team import GreenTeam
+
+# Add the parent directory of excel_api to sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from import_excel import import_node_attributes, import_node_connections
 
 def create_node_network(node_attributes, node_connections):
@@ -24,9 +29,14 @@ def create_node_network(node_attributes, node_connections):
     GreenTeam(graph, 30, 20) 
     # Convert the graph to node-link data format, which is suitable for saving as JSON
     graph_data = nx.node_link_data(graph)
+    print("Graph Data:", graph_data)
 
     # Define the correct path for saving the JSON file
-    json_path = os.path.join(os.getcwd(), 'excel_api', 'create_node_network', 'network_output.json')
+    # Set the path relative to the project's root directory
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    json_dir = os.path.join(script_dir, '../../excel_api/create_node_network')
+    json_path = os.path.join(json_dir, 'network_output.json')
+
     
     # Print the current working directory and the full path to the JSON file
     print(f"Saving network to: {json_path}")

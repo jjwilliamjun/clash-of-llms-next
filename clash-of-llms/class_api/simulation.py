@@ -1,8 +1,9 @@
 """Simulation class"""
-
+import os
+import sys
 # Attempt the import
-from excel_api import *
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from excel_api.create_node_network.create_network import create_node_network
 from team import Team
 
 
@@ -14,7 +15,7 @@ class Simulation:
         self._blue_team = Team(**blue_team_param)
         self._round_num = 1
         self._victor = None
-        self._green_network = create_node_network(node_attributes, node_connec)
+        create_node_network(node_attributes, node_connec)
 
     def start(self):
         """Run Simulation"""

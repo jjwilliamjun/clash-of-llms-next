@@ -1,6 +1,11 @@
 "Tests for simulation"
 import unittest
+import os
+import sys
 from simulation import Simulation
+# Add the parent directory of class_api to sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from excel_api.import_excel import import_node_attributes, import_node_connections
 
 red_team_params = {
@@ -9,6 +14,7 @@ red_team_params = {
     'energy': 0,
     'influence_factor': 10,
     'max_cost': 20,
+    'temperature': 0.5,
     'alignment': 40
 }
 
@@ -18,15 +24,21 @@ blue_team_params = {
     'energy': 100,
     'influence_factor': 12,
     'max_cost': 20,
+    'temperature': 0.5,
     'alignment': 60
 }
 
 class TestSimulation(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        """Setup any state before running the tests"""
+        # Load node attributes and connections
+        cls.node_attributes = import_node_attributes('NodeAttributes.xlsx')
+        cls.node_connections = import_node_connections('NodeConnections.xlsx')
+
     def test_initialization(self):
         """Simulate running test"""
-        node_attributes = import_node_attributes('NodeAttributes.xlsx')
-        node_connections = import_node_connections('NodeConnections.xlsx')
-        sim = Simulation(red_team_params, blue_team_params, node_attributes, node_connections)
+        sim = Simulation(red_team_params, blue_team_params, self.node_attributes, self.node_connections)
         victor = sim.start()
         self.assertEqual(victor, 'red')
             
