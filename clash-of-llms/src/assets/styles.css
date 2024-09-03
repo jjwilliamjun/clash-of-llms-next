@@ -60,27 +60,74 @@
     background-color: #0056b3;
   }
 
-  .flex-container {
-      display: flex;
-  }
-
-  .flex-child {
-      flex: 1;
-      border: 1px solid #949494;
-      border-radius: 10px;
-      box-shadow: 2px 2px 5px #cecece;
-  }  
-
-  .flex-child:first-child {
-      margin-right: 20px;
-  } 
-
   #redTeam {
     font-weight: bold;
     color: #fc5649;
+    text-align: left;
   }
 
   #blueTeam {
     font-weight: bold;
     color: #0b7ffc;
+    text-align: left;
+  }
+
+  #agents {
+    padding: 10px 25px 15px 25px;
+    margin: 40px;
+    border: 1px solid #949494;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px #cecece;
+  }
+
+  #agents p {
+    text-align: left;
+  }
+
+  .parameters {
+    text-align: left;
+  }
+
+  .select-parameter {
+    font-weight: bold;
+    margin: 1em;
+    text-align: left;
+  }
+
+  #blueParameters {
+    border-left: 2px solid #0b7ffc;
+  }
+
+  #redParameters {
+    border-left: 2px solid #fc5649;
+  }
+
+  .flex-container {
+    display: flex;
+  }
+
+  .flex-child {
+    flex: 1;
+  }  
+
+  .flex-child:first-child {
+    margin-right: 20px;
   } 
+
+  input[type="range"] {
+    width: 100%;
+  }
+
+  .accent {
+    accent-color: red;
+  }
+
+  #game-view {
+    max-width: 25%;
+  }
+
+  #graph-view {
+    max-width: 50%;
+  }
+
+  

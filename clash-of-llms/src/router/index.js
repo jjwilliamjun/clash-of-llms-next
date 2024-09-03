@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import NetworkGraph from '../components/NetworkGraph.vue';  // Import the NetworkGraph component
+import ParameterView from '@/components/ParameterView.vue';
 
 const routes = [
   {
@@ -17,6 +18,11 @@ const routes = [
     path: '/network',
     name: 'network',
     component: NetworkGraph,
+  },
+  {
+    path: '/parameters',
+    name: 'parameters',
+    component: ParameterView,
   },
 ];
 
