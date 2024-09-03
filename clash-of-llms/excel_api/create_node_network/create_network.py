@@ -1,7 +1,7 @@
 import networkx as nx
 import json
 import os
-from green_team import GreenTeam
+from create_node_network.green_team import GreenTeam
 from import_excel import import_node_attributes, import_node_connections
 
 def create_node_network(node_attributes, node_connections):

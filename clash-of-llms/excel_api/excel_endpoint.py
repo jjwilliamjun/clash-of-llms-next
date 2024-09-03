@@ -108,7 +108,7 @@ def get_parameters():
     output.append(red_team.__dict__)
     output.append(blue_team.__dict__)
     
-    return jsonify(output)
+    return jsonify(output), 200
 
 # Route to serve manually inputting parameters through UI
 @app.route('/excel_api/ui_parameters', methods=['GET', 'POST'])
@@ -124,6 +124,30 @@ def ui_parameters():
         blue_team = set_team(parameters[1])
     
     return '', 200
+
+# Route to serve next round request from the frontend
+@app.route('/excel_api/next_round', methods=['GET'])
+@cross_origin()
+def start_next_round():
+    msg_content = []
+    
+    team_colour = request.args.get('team')
+
+    if blue_team is None or red_team is None: 
+        return jsonify({"error": "Team not found"}), 404
+    
+    if team_colour == 'red':
+        current_team = red_team
+    elif team_colour == 'blue':
+        current_team = blue_team
+    else:
+        return jsonify({"error": "Incorrect team colour"}), 404
+    
+    current_team.generate_message()
+    msg_content.append(current_team._message)
+    msg_content.append(current_team._potency)
+        
+    return jsonify(msg_content), 200
 
 if __name__ == '__main__':
     game_data = generate_game_data()  # Testing purposes
