@@ -27,4 +27,6 @@ class TestSimulation(unittest.TestCase):
         victor = sim.start()
         self.assertEqual(victor, 'red')
             
-            
+
+if __name__ == "__main__":
+    unittest.main()
