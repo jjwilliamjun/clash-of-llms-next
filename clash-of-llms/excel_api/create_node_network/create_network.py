@@ -3,10 +3,86 @@ import json
 import os
 from create_node_network.green_team import GreenTeam
 from import_excel import import_node_attributes, import_node_connections
+import random
+
+def generate_random_network(node_count):
+    node_attributes = {}
+    node_connections = {}
+
+    for i in range(1, node_count + 1):
+        node_id = f'Node_{i}'
+        alignment = round(random.uniform(-1, 1), 2)
+        
+        node_attributes[node_id] = {
+            "Alignment": alignment,
+            "id": node_id
+        }
+        
+        # Generate random directed connections for each node
+        connected_nodes = random.sample(range(1, node_count + 1), random.randint(1, 5))
+        connected_nodes = [f'Node_{n}' for n in connected_nodes if n != i]  # Exclude self-loops
+        influence_factors = [round(random.uniform(0, 1), 2) for _ in connected_nodes]
+        
+        node_connections[node_id] = {
+            "Connected_Nodes": ",".join(connected_nodes),
+            "Influence_Factor": ",".join(map(str, influence_factors))
+        }
+        
+        # Optionally, add reciprocal connections
+        for target_node in connected_nodes:
+            if target_node not in node_connections:
+                reverse_influence = round(random.uniform(0, 1), 2)
+                node_connections[target_node] = {
+                    "Connected_Nodes": node_id,
+                    "Influence_Factor": str(reverse_influence)
+                }
+            else:
+                node_connections[target_node]["Connected_Nodes"] += f",{node_id}"
+                reverse_influence = round(random.uniform(0, 1), 2)
+                node_connections[target_node]["Influence_Factor"] += f",{reverse_influence}"
+
+    return node_attributes, node_connections
+
+def generate_user_input_network(node_count, connections_per_node):
+    node_attributes = {}
+    node_connections = {}
+
+    for i in range(1, node_count + 1):
+        node_id = f'Node_{i}'
+        alignment = round(random.uniform(-1, 1), 2)
+        
+        node_attributes[node_id] = {
+            "Alignment": alignment,
+            "id": node_id
+        }
+        
+        # Use user-defined connections for each node
+        connected_nodes = random.sample(range(1, node_count + 1), connections_per_node)
+        connected_nodes = [f'Node_{n}' for n in connected_nodes if n != i]  # Exclude self-loops
+        influence_factors = [round(random.uniform(0, 1), 2) for _ in connected_nodes]
+        
+        node_connections[node_id] = {
+            "Connected_Nodes": ",".join(connected_nodes),
+            "Influence_Factor": ",".join(map(str, influence_factors))
+        }
+        
+        # Optionally, add reciprocal connections
+        for target_node in connected_nodes:
+            if target_node not in node_connections:
+                reverse_influence = round(random.uniform(0, 1), 2)
+                node_connections[target_node] = {
+                    "Connected_Nodes": node_id,
+                    "Influence_Factor": str(reverse_influence)
+                }
+            else:
+                node_connections[target_node]["Connected_Nodes"] += f",{node_id}"
+                reverse_influence = round(random.uniform(0, 1), 2)
+                node_connections[target_node]["Influence_Factor"] += f",{reverse_influence}"
+
+    return node_attributes, node_connections
 
 def create_node_network(node_attributes, node_connections):
-
-    graph = nx.DiGraph()
+    graph = nx.DiGraph()  # Create a directed graph
 
     # Add nodes with their attributes
     for node_id, attributes in node_attributes.items():
@@ -18,7 +94,7 @@ def create_node_network(node_attributes, node_connections):
         influence_factors = map(float, connection['Influence_Factor'].split(','))
 
         for target_node, influence in zip(connected_nodes, influence_factors):
-            graph.add_edge(node_id, target_node.strip(), weight=influence)
+            graph.add_edge(node_id, target_node.strip(), weight=round(influence, 2))
 #Initialises green team. TODO: pass in num. of nodes aligned towards red, and towards blue 
 #Currently hard codes them to 30 and 20
     GreenTeam(graph, 30, 20) 
@@ -27,8 +103,6 @@ def create_node_network(node_attributes, node_connections):
 
     # Define the correct path for saving the JSON file
     json_path = os.path.join(os.getcwd(), 'excel_api', 'create_node_network', 'network_output.json')
-    
-    # Print the current working directory and the full path to the JSON file
     print(f"Saving network to: {json_path}")
 
     # Save the graph data as a JSON file
@@ -38,7 +112,6 @@ def create_node_network(node_attributes, node_connections):
         print(f"Network JSON file successfully created at: {json_path}")
     except Exception as e:
         print(f"Failed to save network JSON file: {str(e)}")
-
 # Example usage
 if __name__ == '__main__':
     # Assuming that the import_excel.py script provides the following functions
@@ -50,3 +123,4 @@ if __name__ == '__main__':
 
     # Create the network and save it as network_output.json
     create_node_network(node_attributes, node_connections)
+

@@ -48,7 +48,7 @@ def import_settings(xls_path) -> tuple:
     return red_team, blue_team
 
 
-# Returns node attribues in a dictionary of dictionaries
+# Returns node attributes in a dictionary of dictionaries
 def import_node_attributes(xls_path) -> dict:
     attributes = pd.read_excel(xls_path)
     nodes = {}
@@ -56,8 +56,6 @@ def import_node_attributes(xls_path) -> dict:
     for index, row in attributes.iterrows():
         nodes[row['Node_ID']] = {
             "Alignment": row['Alignment'],
-            "Uncertainty": row['Uncertainty'],
-            "Influence_Potential": row['Influence_Potential']
         }
 
     return nodes
