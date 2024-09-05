@@ -1,189 +1,101 @@
 <template>
-  <div class="about">
-    <!-- Introduction Section -->
-    <section v-if="introduction">
-      <h2>{{ introduction.title }}</h2>
-      <p>{{ introduction.content }}</p>
-    </section>
-
-    <!-- Node Connections Section -->
-    <section v-if="nodeConnections">
-      <h2>{{ nodeConnections.title }}</h2>
-      <h3>{{ nodeConnections.overview.title }}</h3>
-      <p>{{ nodeConnections.overview.content }}</p>
-
-      <!-- Node Connections Structure Table -->
-      <h3>{{ nodeConnections.structure.title }}</h3>
-      <table>
-        <thead>
-          <tr>
-            <th v-for="header in nodeConnections.structure.tableHeaders" :key="header">{{ header }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in nodeConnections.structure.tableContent" :key="row[0]">
-            <td v-for="cell in row" :key="cell">{{ cell }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Node Connections Example Table -->
-      <h3>{{ nodeConnections.example.title }}</h3>
-      <table>
-        <thead>
-          <tr>
-            <th v-for="header in nodeConnections.example.tableHeaders" :key="header">{{ header }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in nodeConnections.example.tableContent" :key="row[0]">
-            <td v-for="cell in row" :key="cell">{{ cell }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Instructions -->
-      <h3>{{ nodeConnections.instructions.title }}</h3>
-      <ol>
-        <li v-for="instruction in nodeConnections.instructions.content" :key="instruction">{{ instruction }}</li>
-      </ol>
-
-      <!-- Tips -->
-      <h3>{{ nodeConnections.tips.title }}</h3>
+  <div class="container">
+    <!-- Sticky Sidebar Navigation -->
+    <nav class="sticky-sidebar">
       <ul>
-        <li v-for="tip in nodeConnections.tips.content" :key="tip">{{ tip }}</li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('project-description')">Project Description</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('importing-files')">Importing Files</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('export-simulation-data')">Export Simulation Data</a></li>
       </ul>
+    </nav>
 
-      <!-- Download link for NodeConnections.xlsx -->
-      <p>
-        <strong>Download Example File: </strong>
-        <a href="/documents/NodeConnections.xlsx" download>NodeConnections.xlsx</a>
-      </p>
-    </section>
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- Loading State -->
+      <div v-if="loading" class="loading">Loading...</div>
 
-    <!-- Node Attributes Section -->
-    <section v-if="nodeAttributes">
-      <h2>{{ nodeAttributes.title }}</h2>
-      <h3>{{ nodeAttributes.overview.title }}</h3>
-      <p>{{ nodeAttributes.overview.content }}</p>
+      <!-- Project Description Section -->
+      <section id="project-description" v-if="!loading && projectDescription">
+        <h2>{{ projectDescription.title }}</h2>
+        <p>{{ projectDescription.content }}</p>
+      </section>
 
-      <!-- Node Attributes Structure Table -->
-      <h3>{{ nodeAttributes.structure.title }}</h3>
-      <table>
-        <thead>
-          <tr>
-            <th v-for="header in nodeAttributes.structure.tableHeaders" :key="header">{{ header }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in nodeAttributes.structure.tableContent" :key="row[0]">
-            <td v-for="cell in row" :key="cell">{{ cell }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- Importing Files Section -->
+      <section id="importing-files" v-if="!loading && guideData.importingFiles">
+        <h2>{{ guideData.importingFiles.title }}</h2>
+        <ol>
+          <li v-for="step in guideData.importingFiles.steps" :key="step">{{ step }}</li>
+        </ol>
+      </section>
 
-      <!-- Alignment Explanation Section (2.3) -->
-      <h3>{{ nodeAttributes.alignmentExplanation.title }}</h3>
-      <p>
-        The <strong>Alignment</strong> value indicates the initial stance of the node:
-      </p>
-      <ul>
-        <li v-for="(item, index) in nodeAttributes.alignmentExplanation.content" :key="index">
-          <strong>{{ item.range }}</strong>: {{ item.description }}
-        </li>
-      </ul>
+      <!-- Excel Guide Section -->
+      <section v-if="!loading && guideData.introduction">
+        <h2>{{ guideData.introduction.title }}</h2>
+        <p>{{ guideData.introduction.content }}</p>
+      </section>
 
+      <!-- Node Connections Section -->
+      <section v-if="!loading && guideData.nodeConnections">
+        <h2>{{ guideData.nodeConnections.title }}</h2>
+        <h3>{{ guideData.nodeConnections.overview.title }}</h3>
+        <p>{{ guideData.nodeConnections.overview.content }}</p>
 
-      <!-- Node Attributes Example Table -->
-      <h3>{{ nodeAttributes.example.title }}</h3>
-      <table>
-        <thead>
-          <tr>
-            <th v-for="header in nodeAttributes.example.tableHeaders" :key="header">{{ header }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in nodeAttributes.example.tableContent" :key="row[0]">
-            <td v-for="cell in row" :key="cell">{{ cell }}</td>
-          </tr>
-        </tbody>
-      </table>
+        <!-- Node Connections Structure Table -->
+        <h3>{{ guideData.nodeConnections.structure.title }}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th v-for="header in guideData.nodeConnections.structure.tableHeaders" :key="header">{{ header }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in guideData.nodeConnections.structure.tableContent" :key="row[0]">
+              <td v-for="cell in row" :key="cell">{{ cell }}</td>
+            </tr>
+          </tbody>
+        </table>
 
-      <!-- Instructions -->
-      <h3>{{ nodeAttributes.instructions.title }}</h3>
-      <ol>
-        <li v-for="instruction in nodeAttributes.instructions.content" :key="instruction">{{ instruction }}</li>
-      </ol>
+        <!-- Download link for NodeConnections.xlsx -->
+        <p>
+          <strong>Download Example File: </strong>
+          <a href="/documents/NodeConnections.xlsx" download>NodeConnections.xlsx</a>
+        </p>
+      </section>
 
-      <!-- Tips -->
-      <h3>{{ nodeAttributes.tips.title }}</h3>
-      <ul>
-        <li v-for="tip in nodeAttributes.tips.content" :key="tip">{{ tip }}</li>
-      </ul>
+      <!-- Node Attributes Section -->
+      <section v-if="!loading && guideData.nodeAttributes">
+        <h2>{{ guideData.nodeAttributes.title }}</h2>
+        <h3>{{ guideData.nodeAttributes.overview.title }}</h3>
+        <p>{{ guideData.nodeAttributes.overview.content }}</p>
 
-      <!-- Download link for NodeAttributes.xlsx -->
-      <p>
-        <strong>Download Example File: </strong>
-        <a href="/documents/NodeAttributes.xlsx" download>NodeAttributes.xlsx</a>
-      </p>
-    </section>
+        <!-- Node Attributes Example Table -->
+        <h3>{{ guideData.nodeAttributes.example.title }}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th v-for="header in guideData.nodeAttributes.example.tableHeaders" :key="header">{{ header }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in guideData.nodeAttributes.example.tableContent" :key="row[0]">
+              <td v-for="cell in row" :key="cell">{{ cell }}</td>
+            </tr>
+          </tbody>
+        </table>
 
-    <!-- Simulation Settings Section -->
-    <section v-if="simulationSettings">
-      <h2>{{ simulationSettings.title }}</h2>
-      <h3>{{ simulationSettings.overview.title }}</h3>
-      <p>{{ simulationSettings.overview.content }}</p>
+        <!-- Download link for NodeAttributes.xlsx -->
+        <p>
+          <strong>Download Example File: </strong>
+          <a href="/documents/NodeAttributes.xlsx" download>NodeAttributes.xlsx</a>
+        </p>
+      </section>
 
-      <!-- Simulation Settings Structure Table -->
-      <h3>{{ simulationSettings.structure.title }}</h3>
-      <table>
-        <thead>
-          <tr>
-            <th v-for="header in simulationSettings.structure.tableHeaders" :key="header">{{ header }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in simulationSettings.structure.tableContent" :key="row[0]">
-            <td v-for="cell in row" :key="cell">{{ cell }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Simulation Settings Example Table -->
-      <h3>{{ simulationSettings.example.title }}</h3>
-      <table>
-        <thead>
-          <tr>
-            <th v-for="header in simulationSettings.example.tableHeaders" :key="header">{{ header }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in simulationSettings.example.tableContent" :key="row[0]">
-            <td v-for="cell in row" :key="cell">{{ cell }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Instructions -->
-      <h3>{{ simulationSettings.instructions.title }}</h3>
-      <ol>
-        <li v-for="instruction in simulationSettings.instructions.content" :key="instruction">{{ instruction }}</li>
-      </ol>
-
-      <!-- Download link for SimulationSetting.xlsx -->
-      <p>
-        <strong>Download Example File: </strong>
-        <a href="/documents/SimulationSetting.xlsx" download>SimulationSetting.xlsx</a>
-      </p>
-    </section>
-
-    <!-- Importing Files Section -->
-    <section v-if="importingFiles">
-      <h2>{{ importingFiles.title }}</h2>
-      <ol>
-        <li v-for="step in importingFiles.steps" :key="step">{{ step }}</li>
-      </ol>
-    </section>
+      <!-- Export Simulation Data Section -->
+      <section id="export-simulation-data" v-if="!loading && exportSimulationData">
+        <h2>{{ exportSimulationData.title }}</h2>
+        <p>{{ exportSimulationData.content }}</p>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -193,91 +105,158 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      introduction: null,
-      nodeConnections: null,
-      nodeAttributes: null,
-      simulationSettings: null,
-      importingFiles: null
+      guideData: {},              // For storing data from guide.json (Excel Guide)
+      projectDescription: null,   // For storing data from project_description.json
+      exportSimulationData: null, // For storing data from export_simulation.json
+      loading: true               // Loading state
     };
   },
   mounted() {
-    this.fetchGuideData();
+    this.fetchAllData();
   },
   methods: {
+    // Fetch all necessary data
+    async fetchAllData() {
+      this.loading = true;
+      try {
+        await Promise.all([
+          this.fetchProjectDescription(),
+          this.fetchGuideData(),
+          this.fetchExportSimulationData()
+        ]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchProjectDescription() {
+      try {
+        const response = await axios.get('/documents/project_description.json');
+        this.projectDescription = response.data;
+      } catch (error) {
+        console.error('Error fetching project description:', error);
+      }
+    },
+
     async fetchGuideData() {
       try {
-        const response = await axios.get('/documents/guide.json'); // Fetch the JSON file
-        const data = response.data;
-        this.introduction = data.introduction;
-        this.nodeConnections = data.nodeConnections;
-        this.nodeAttributes = data.nodeAttributes;
-        this.simulationSettings = data.simulationSettings;
-        this.importingFiles = data.importingFiles;
+        const response = await axios.get('/documents/guide.json');
+        this.guideData = response.data;
       } catch (error) {
         console.error('Error fetching guide data:', error);
+      }
+    },
+
+    async fetchExportSimulationData() {
+      try {
+        const response = await axios.get('/documents/export_simulation.json');
+        this.exportSimulationData = response.data;
+      } catch (error) {
+        console.error('Error fetching export simulation data:', error);
+      }
+    },
+
+    // Method to scroll to the section smoothly
+    scrollToSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
       }
     }
   }
 };
 </script>
 
+
 <style scoped>
-.about {
-  padding: 20px;
-  max-width: 900px;
+.container {
+  display: flex;
+  max-width: 1200px;
   margin: 0 auto;
-  line-height: 1.6;
-  font-family: Arial, sans-serif;
 }
 
-section {
-  margin-bottom: 40px;
+.sticky-sidebar {
+  position: -webkit-sticky; /* For Safari */
+  position: sticky;
+  top: 20px;
+  width: 200px;
+  height: 100%; /* Ensure full height for long scrolling */
+  padding: 20px;
+  background: #f9f9f9;
 }
 
-/* Left-align all headers and content */
-h2, h3, p, ol, ul, table {
+nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+nav ul li {
+  margin-bottom: 15px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #007BFF;
+  font-weight: bold;
+}
+
+nav ul li a:hover,
+nav ul li a:focus {
+  text-decoration: underline;
+}
+
+/* Content area for sections */
+.content-area {
+  margin-left: 220px;
+  padding: 20px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+h2, h3, p, table, ol, ul {
   text-align: left;
 }
 
-/* Style for the headers */
 h2 {
   font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-h3 {
-  font-size: 20px;
-  color: #444;
-  margin-bottom: 15px;
-  text-align: left;
+  margin-bottom: 10px;
 }
 
 p {
   font-size: 16px;
   margin-bottom: 20px;
-  text-align: left;
+  max-width: 800px;
+  line-height: 1.6;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-/* Table Styling */
 table {
   width: 100%;
+  max-width: 1000px;
   border-collapse: collapse;
   margin-bottom: 20px;
-  border: 2px solid black;
-  text-align: left;
+  border: 1px solid #ddd;
+  table-layout: auto;
+  word-wrap: break-word;
 }
 
 th, td {
-  border: 2px solid black;
-  padding: 10px;
+  border: 1px solid #ddd;
+  padding: 12px 8px;
   text-align: left;
-  vertical-align: middle;
+  max-width: 300px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 th {
-  background-color: #f7f7f7;
+  background-color: #f2f2f2;
   font-weight: bold;
 }
 
@@ -285,10 +264,13 @@ tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 
-/* List Styling */
 ol, ul {
-  padding-left: 20px;
+  margin-left: 20px;
   margin-bottom: 20px;
+  text-align: left;
+  max-width: 800px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 </style>
