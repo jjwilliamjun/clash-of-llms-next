@@ -12,7 +12,7 @@ pyvenv.cfg
 .venv/
 pip-selfcheck.json
 node_modules/
-<<<<<<< HEAD
+
 .myenv/
 *.pyc
 *.pyc
@@ -21,6 +21,29 @@ openaiVenv/
 .github/
 
 
-=======
 excel_api/__pycache__/
->>>>>>> 65c84c3c467504b68e0d70bec6bf8813bfb7735d
+
+.DS_Store
+node_modules
+/dist
+
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
