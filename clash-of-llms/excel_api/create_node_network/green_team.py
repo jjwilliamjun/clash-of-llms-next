@@ -43,10 +43,19 @@ class GreenTeam:
         for node in self._network_graph.nodes():
             print(node, alignment[node])
 
-    def update_message_influence(self, message,potency,node):
-        #TODO
+    def broadcast_message(self, potency, team, influence_factor):
         "Updates the green nodes when a message is broadcasted from red or blue teams"
-        pass
+        current_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
+        alignment_influence=(potency/100)*influence_factor
+        for node in self._network_graph.nodes():
+            #Assumes blue alignment is negative, and red alignment is positive
+            if team.lower() == 'blue': 
+                new_alignment=current_alignment[node] - alignment_influence
+                self.update_node_alignment(node, new_alignment)
+            else:
+                new_alignment=current_alignment[node] + alignment_influence
+                self.update_node_alignment(node, new_alignment)
+        self.new_alignments()
 
 
     def update_node_alignment(self, current_node, new_alignment):
@@ -56,6 +65,7 @@ class GreenTeam:
 
     def influence_neighbours(self, neighbour_influence, node_alignment):
         """Returns the change in nodes alignment after influence from a single neighbour"""
+        
         update_factor=node_alignment*neighbour_influence
         return update_factor
 
