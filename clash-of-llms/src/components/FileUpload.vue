@@ -1,30 +1,78 @@
 <template>
-    <form @submit.prevent="startSimulation">
-      <div class="file-upload">
-        <label for="fileUpload">Upload Excel Files:</label>
-        <input type="file" id="fileUpload" @change="handleFileUpload" multiple accept=".xlsx, .xls" />
-      </div>
-      <button type="submit" class="submit-button">Start Simulation</button>
-    </form>
-  </template>
+  <h2>Upload User File</h2>
+  <form @submit.prevent="startSimulation" class="file-upload-form">
+    <div class="file-upload-row">
+      <label for="settingsUpload">Simulation Settings:</label>
+      <input type="file" id="settingsUpload" @change="handleSettingsUpload" accept=".xlsx, .xls" />
+    </div>
+
+    <div class="file-upload-row">
+      <label for="attributesUpload">Node Attributes:</label>
+      <input type="file" id="attributesUpload" @change="handleAttributesUpload" accept=".xlsx, .xls" />
+    </div>
+
+    <div class="file-upload-row">
+      <label for="connectionsUpload">Node Connections:</label>
+      <input type="file" id="connectionsUpload" @change="handleConnectionsUpload" accept=".xlsx, .xls" />
+    </div>
+    
+    <button type="submit" class="submit-button">Upload Files</button>
+  </form>
+
+  <div v-if="display_params">
+    <router-link to="/parameters">View Parameters</router-link>
+  </div>
   
-  <script>
-  export default {
-    data() {
-      return {
-        files: []
-      };
-    },
-    methods: {
-      handleFileUpload(event) {
-        this.files = Array.from(event.target.files);
-        console.log("Files uploaded:", this.files);
-      },
-      startSimulation() {
-        console.log("Files:", this.files);
-        // handle excel files here
+  <div v-if="errors" class="error-container">
+    <strong>Error in Excel input:</strong>
+    <div v-for="(value, key) in errors" :key="key" class="error-message">
+      {{ value }}
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      Files: [],
+      file_data: new FormData(),
+      display_params: false, 
+      params: null,
+      errors: null
+    };
+  },
+  methods: {
+    async startSimulation() {
+      const path = 'http://127.0.0.1:5000/excel_api/excel_import';
+      try {
+        const response = await axios.post(path, this.file_data);
+        this.params = response.data;
+        this.display_params = true;
+      } catch (error) {
+        if (error.response) {
+          this.errors = error.response.data.error;
+          console.log("Unable to upload/read files. Error: ", error);
+        } else {
+          console.log("Unable to upload/read files. Error: ", error);
+          alert("Unable to upload/read files.");
+        }
       }
+    },
+    handleSettingsUpload() {
+      const settings_file = document.getElementById("settingsUpload").files[0];
+      this.file_data.append('settings_file', settings_file);
+    },
+    handleAttributesUpload() {
+      const attributes_file = document.getElementById("attributesUpload").files[0];
+      this.file_data.append('attributes_file', attributes_file);
+    },
+    handleConnectionsUpload() {
+      const connections_file = document.getElementById("connectionsUpload").files[0];
+      this.file_data.append('connections_file', connections_file);
     }
-  };
-  </script>
-  
+  }
+};
+</script>

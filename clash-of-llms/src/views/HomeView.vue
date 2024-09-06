@@ -1,6 +1,9 @@
 <template>
   <div id="app" class="home">
+    <!-- Always visible title -->
     <h1>Red vs Blue Team Simulation</h1>
+    
+    <!-- Option toggle for selecting input method -->
     <div class="option-toggle">
       <label>
         <input type="radio" v-model="inputOption" value="manual" />
@@ -12,12 +15,12 @@
       </label>
     </div>
 
+    <!-- Conditionally render the forms based on the selected option -->
     <ParameterInputForm v-if="inputOption === 'manual'" />
     <FileUploadForm v-else />
-
   </div>
   <div>
-      <button @click="downloadExcel" class="!py-20">Download Excel</button >
+    <button @click="downloadExcel" class="!py-20">Download Excel</button>
   </div>
 </template>
 
@@ -29,7 +32,7 @@ import FileUploadForm from '@/components/FileUpload.vue';
 export default {
   data() {
     return {
-      inputOption: 'manual'
+      inputOption: 'manual' // Default option
     };
   },
   components: {
@@ -37,9 +40,6 @@ export default {
     FileUploadForm
   },
   methods: {
-    startSimulation() {
-      console.log("Parameters:", this.parameters);
-    },
     downloadExcel() {
       axios({
         url: 'http://localhost:5000/excel_api/export_excel', 
@@ -54,8 +54,7 @@ export default {
         const now = new Date();
         const timestamp = now.getHours() + "_" + now.getMinutes() + "_" + now.getSeconds();
     
-
-       const excel_file_name = `clash_of_llms_${timestamp}.xlsx`;
+        const excel_file_name = `clash_of_llms_${timestamp}.xlsx`;
         link.download = excel_file_name; 
         
         link.click();
@@ -69,3 +68,7 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+/* Add your styling here */
+</style>

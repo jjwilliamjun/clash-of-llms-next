@@ -1,0 +1,174 @@
+{
+    "directed": true,
+    "multigraph": false,
+    "graph": {},
+    "nodes": [
+        {
+            "Alignment": 0.75,
+            "id": "Node_1"
+        },
+        {
+            "Alignment": 0.6,
+            "id": "Node_2"
+        },
+        {
+            "Alignment": 0.4,
+            "id": "Node_3"
+        },
+        {
+            "Alignment": 0.85,
+            "id": "Node_4"
+        },
+        {
+            "Alignment": 0.3,
+            "id": "Node_5"
+        },
+        {
+            "Alignment": 0.5,
+            "id": "Node_6"
+        },
+        {
+            "Alignment": 0.2,
+            "id": "Node_7"
+        },
+        {
+            "Alignment": 0.9,
+            "id": "Node_8"
+        },
+        {
+            "Alignment": 0.35,
+            "id": "Node_9"
+        },
+        {
+            "Alignment": 0.65,
+            "id": "Node_10"
+        }
+    ],
+    "links": [
+        {
+            "weight": 0.45,
+            "source": "Node_1",
+            "target": "Node_5"
+        },
+        {
+            "weight": 0.78,
+            "source": "Node_1",
+            "target": "Node_8"
+        },
+        {
+            "weight": 0.67,
+            "source": "Node_2",
+            "target": "Node_3"
+        },
+        {
+            "weight": 0.52,
+            "source": "Node_2",
+            "target": "Node_7"
+        },
+        {
+            "weight": 0.88,
+            "source": "Node_2",
+            "target": "Node_1"
+        },
+        {
+            "weight": 0.67,
+            "source": "Node_3",
+            "target": "Node_2"
+        },
+        {
+            "weight": 0.71,
+            "source": "Node_3",
+            "target": "Node_9"
+        },
+        {
+            "weight": 0.59,
+            "source": "Node_3",
+            "target": "Node_6"
+        },
+        {
+            "weight": 0.64,
+            "source": "Node_4",
+            "target": "Node_10"
+        },
+        {
+            "weight": 0.83,
+            "source": "Node_4",
+            "target": "Node_6"
+        },
+        {
+            "weight": 0.45,
+            "source": "Node_5",
+            "target": "Node_1"
+        },
+        {
+            "weight": 0.92,
+            "source": "Node_5",
+            "target": "Node_8"
+        },
+        {
+            "weight": 0.59,
+            "source": "Node_6",
+            "target": "Node_3"
+        },
+        {
+            "weight": 0.83,
+            "source": "Node_6",
+            "target": "Node_4"
+        },
+        {
+            "weight": 0.75,
+            "source": "Node_6",
+            "target": "Node_9"
+        },
+        {
+            "weight": 0.52,
+            "source": "Node_7",
+            "target": "Node_2"
+        },
+        {
+            "weight": 0.68,
+            "source": "Node_7",
+            "target": "Node_10"
+        },
+        {
+            "weight": 0.78,
+            "source": "Node_8",
+            "target": "Node_1"
+        },
+        {
+            "weight": 0.92,
+            "source": "Node_8",
+            "target": "Node_5"
+        },
+        {
+            "weight": 0.71,
+            "source": "Node_9",
+            "target": "Node_3"
+        },
+        {
+            "weight": 0.75,
+            "source": "Node_9",
+            "target": "Node_6"
+        },
+        {
+            "weight": 0.89,
+            "source": "Node_9",
+            "target": "Node_10"
+        },
+        {
+            "weight": 0.64,
+            "source": "Node_10",
+            "target": "Node_4"
+        },
+        {
+            "weight": 0.68,
+            "source": "Node_10",
+            "target": "Node_7"
+        },
+        {
+            "weight": 0.89,
+            "source": "Node_10",
+            "target": "Node_9"
+        }
+    ]
+}

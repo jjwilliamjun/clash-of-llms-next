@@ -1,62 +1,167 @@
 .home {
-    padding: 20px;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .option-toggle {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  
-  .option-toggle label {
-    margin: 0 10px;
-  }
-  
-  .input-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 15px;
-    margin-bottom: 20px;
-  }
-  
-  .input-group {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  label {
-    margin-bottom: 5px;
-  }
-  
-  input[type="text"] {
-    width: 100%;
-    padding: 6px;
-    box-sizing: border-box;
-  }
-  
-  .file-upload {
-    margin-bottom: 20px;
-  }
-  
-  .submit-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .submit-button:hover {
-    background-color: #0056b3;
-  }
-  
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.option-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.option-toggle label {
+  margin: 0 10px;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.flex-child {
+  flex: 1;
+  max-width: 32%;
+  margin: 0 10px;
+}
+
+#blueTeam, #redTeam, #greenTeam {
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+#blueTeam {
+  color: #0b7ffc;
+}
+
+#redTeam {
+  color: #fc5649;
+}
+
+#greenTeam {
+  color: #7ed321;
+}
+
+/* not used */
+.team-settings {
+  padding: 20px;
+  border: 2px solid #949494; /* Increased border thickness */
+  border-radius: 10px;
+  box-shadow: 2px 2px 5px #cecece;
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
+}
+
+/* input page */
+#blueParameters, #redParameters, #greenParameters {
+  padding: 20px;
+  border: 1px solid #949494;
+  border-radius: 10px;
+  box-shadow: 2px 2px 5px #cecece;
+  margin-bottom: 20px;
+}
+
+#blueParameters {
+  border-left: 4px solid #0b7ffc;
+}
+
+#redParameters {
+  border-left: 4px solid #fc5649;
+}
+
+#greenParameters {
+  border-left: 4px solid #7ed321;
+}
+
+.select-parameter {
+  font-weight: bold;
+  margin-bottom: 1em;
+  text-align: left;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.submit-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.accent {
+  accent-color: red;
+}
+
+#game-view {
+  max-width: 32%;
+}
+
+#graph-view {
+  max-width: 64%;
+  margin-left: 10px;
+}
+
+.file-upload-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.file-upload-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.file-upload-row label {
+  min-width: 200px;
+  text-align: right;
+  margin-right: 20px;
+}
+
+.file-upload-row input[type="file"] {
+  flex-grow: 1;
+}
+
+.error-container {
+  margin-top: 20px;
+  color: red;
+}
+
+.error-message {
+  margin-bottom: 5px;
+}
+
+#agents {
+  padding: 10px 25px 15px 25px;
+  margin: 40px;
+  border: 1px solid #949494;
+  border-radius: 10px;
+  box-shadow: 2px 2px 5px #cecece;
+}
+
+#agents p {
+  text-align: left;
+}
