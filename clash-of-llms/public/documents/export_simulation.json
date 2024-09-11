@@ -1,5 +1,4 @@
 {
-    "title": "Export Simulation Data",
-    "content": "WIP"
-  }
-  
+  "title": "Export Simulation Data",
+  "content": "The simulation data records every decision made by the LLM for both the Blue and Red teams. Additionally, the Green nodes' alignment updates for each round are documented. The exported files are in Excel format, allowing researchers to review the simulation data in detail."
+}
