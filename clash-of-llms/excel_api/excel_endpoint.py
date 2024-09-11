@@ -13,6 +13,10 @@ from create_node_network.create_network import create_node_network, generate_ran
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+# Directory to store uploaded LLM files
+LLM_DIRECTORY = os.path.join(os.path.dirname(__file__), 'llm_files')
+os.makedirs(LLM_DIRECTORY, exist_ok=True)
+
 # Global variables to store game data and team settings
 game_data = None  
 red_team = None
@@ -80,6 +84,16 @@ def import_excel():
                     connections = import_node_connections(file_path)
                     node_connections = connections  # Save for network creation
 
+                elif key == 'red_team_llm':
+                    # Save the uploaded LLM file for the red team
+                    file_path = os.path.join(LLM_DIRECTORY, 'red_team_llm_' + file.filename)
+                    file.save(file_path)
+                    
+                elif key == 'blue_team_llm':
+                    # Save the uploaded LLM file for the blue team
+                    file_path = os.path.join(LLM_DIRECTORY, 'blue_team_llm_' + file.filename)
+                    file.save(file_path)
+
             # Ensure both node_attributes and node_connections are available
             if node_attributes and node_connections:
                 # Create the network and save it as a JSON file
@@ -114,8 +128,6 @@ def import_excel():
         print(f"Error during file upload: {e}")
         return jsonify({"error": str(e)}), 500
 
-
-
 # Route to serve network_output.json
 @app.route('/network_output.json', methods=['GET'])
 def serve_network_output():
@@ -125,6 +137,21 @@ def serve_network_output():
         return send_file(json_path, as_attachment=False, mimetype='application/json')
     else:
         return jsonify({"error": "JSON file not found"}), 404
+
+# Route to serve LLM file for a specific team
+@app.route('/llm_file/<team_colour>', methods=['GET'])
+def serve_llm_file(team_colour):
+    """Serves the uploaded LLM file for the specified team"""
+    if team_colour not in ['red', 'blue']:
+        return jsonify({"error": "Invalid team colour"}), 400
+    
+    file_name = f"{team_colour}_team_llm"
+    file_path = os.path.join(LLM_DIRECTORY, file_name)
+
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=False, mimetype='application/octet-stream')
+    else:
+        return jsonify({"error": "LLM file not found"}), 404
 
 # Route to fetch team parameters
 @app.route('/excel_api/get_parameters', methods=['GET'])
