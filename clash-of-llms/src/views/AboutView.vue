@@ -157,12 +157,46 @@
         <a href="/documents/NodeAttributes.xlsx" download="NodeAttributes.xlsx">NodeAttributes.xlsx</a>        
       </section>
 
-
       <!-- Export Simulation Data Section -->
       <section id="export-simulation-data" v-if="!loading && exportSimulationData">
         <h1>{{ exportSimulationData.title }}</h1>
-        <p>{{ exportSimulationData.content }}</p>
+      
+        <!-- Introduction -->
+        <div v-if="exportSimulationData.introduction">
+          <h2>{{ exportSimulationData.introduction.title }}</h2>
+          <p>{{ exportSimulationData.introduction.content }}</p>
+        </div>
+      
+        <!-- Columns Description -->
+        <div v-if="exportSimulationData.columnsDescription">
+          <h2>{{ exportSimulationData.columnsDescription.title }}</h2>
+          <ul>
+            <li v-for="column in exportSimulationData.columnsDescription.content" :key="column.columnName">
+              <strong>{{ column.columnName }}:</strong> {{ column.description }}
+            </li>
+          </ul>
+        </div>
+      
+        <!-- Example Table -->
+        <div v-if="exportSimulationData.exampleTable">
+          <h2>{{ exportSimulationData.exampleTable.title }}</h2>
+          <p>{{ exportSimulationData.exampleTable.description }}</p>
+          <table class="export-simulation-table">
+            <thead>
+              <tr>
+                <th v-for="header in exportSimulationData.exampleTable.headers" :key="header">{{ header }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in exportSimulationData.exampleTable.exampleData" :key="row[0]">
+                <td v-for="cell in row" :key="cell">{{ cell }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
+
+
     </div>
   </div>
 </template>
@@ -380,6 +414,56 @@ th:nth-child(3), td:nth-child(3) {
 tr:nth-child(even) {
   background-color: #f9f9f9;
 }
+
+/* Export Simulation Table Styles */
+.export-simulation-table {
+  width: 100%;
+  max-width: 1000px;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+}
+
+.export-simulation-table th, .export-simulation-table td {
+  border: 1px solid #ddd;
+  padding: 12px 8px;
+  text-align: left;
+}
+
+/* Adjust column widths for Export Simulation Table */
+.export-simulation-table th:first-child, .export-simulation-table td:first-child {
+  width: 10%; /* Adjust this value to balance the first column */
+}
+
+.export-simulation-table th:nth-child(2), .export-simulation-table td:nth-child(2) {
+  width: 10%; /* Adjust width for the 'Team' column */
+}
+
+.export-simulation-table th:nth-child(3), .export-simulation-table td:nth-child(3) {
+  width: 20%; /* Adjust width for the 'Message Chosen' column */
+}
+
+.export-simulation-table th:nth-child(4), .export-simulation-table td:nth-child(4) {
+  width: 10%; /* Adjust width for 'Potency' column */
+}
+
+.export-simulation-table th:nth-child(5), .export-simulation-table td:nth-child(5) {
+  width: 10%; /* Adjust width for 'Energy Level' column */
+}
+
+.export-simulation-table th:nth-child(6), .export-simulation-table td:nth-child(6) {
+  width: 20%; /* Adjust width for 'Increased Alignment' column */
+}
+
+.export-simulation-table th:nth-child(7), .export-simulation-table td:nth-child(7) {
+  width: 20%; /* Adjust width for 'Decreased Alignment' column */
+}
+
+/* Add a background color for even rows in the Export Simulation Table */
+.export-simulation-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
 
 ol, ul {
   margin-left: 20px;

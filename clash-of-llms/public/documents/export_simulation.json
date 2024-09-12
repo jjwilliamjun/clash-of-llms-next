@@ -1,4 +1,57 @@
 {
   "title": "Export Simulation Data",
-  "content": "The simulation data records every decision made by the LLM for both the Blue and Red teams. Additionally, the Green nodes' alignment updates for each round are documented. The exported files are in Excel format, allowing researchers to review the simulation data in detail."
+  "introduction": {
+    "title": "Introduction",
+    "content": "The simulation data records every decision made by the LLM for both the Blue and Red teams, as well as the Green nodes' alignment updates for each round. The data is exported in Excel format using a pandas DataFrame. Each row of the Excel file represents one turn in the simulation, including details such as the team, the message chosen, the potency of the message, the energy level after the turn, and the changes in alignment for each node. The exported files are structured and formatted for clarity, allowing researchers to review and analyze the data efficiently."
+  },
+  "columnsDescription": {
+    "title": "Columns in the Excel File",
+    "content": [
+      {
+        "columnName": "Turn",
+        "description": "The round number of the simulation."
+      },
+      {
+        "columnName": "Team",
+        "description": "The team (Blue or Red) that made the decision."
+      },
+      {
+        "columnName": "Message Chosen",
+        "description": "The message selected by the team during their turn."
+      },
+      {
+        "columnName": "Potency",
+        "description": "The effectiveness or strength of the message, represented as a value between 0 and 1."
+      },
+      {
+        "columnName": "Energy Level",
+        "description": "The remaining energy level of the Blue team after sending a message (Note: the Red team has infinite energy)."
+      },
+      {
+        "columnName": "Increased Alignment",
+        "description": "The percentage of nodes that shifted towards a team's alignment."
+      },
+      {
+        "columnName": "Decreased Alignment",
+        "description": "The percentage of nodes that shifted away from a team's alignment (only applicable for Red team)."
+      }
+    ]
+  },
+  "exampleTable": {
+    "title": "Table Structure Example",
+    "description": "The following table outlines how the exported Excel file will be structured:",
+    "headers": ["Turn", "Team", "Message Chosen", "Potency", "Energy Level", "Increased Alignment", "Decreased Alignment"],
+    "exampleData": [
+      ["1", "Blue", "Message is true", "0.8", "80", "60", ""],
+      ["2", "Red", "Message is false", "0.6", "", "40", "10"]
+    ]
+  },
+  "exampleText": {
+    "title": "Example of Exported Data in Text",
+    "content": "Below is an example of how the data might look in the exported Excel file in text format:\n```text\nTurn | Team | Message Chosen     | Potency | Energy Level | Increased Alignment | Decreased Alignment\n1    | Blue | Message is true     | 0.8     | 80           | 60                   | \n2    | Red  | Message is false    | 0.6     |              | 40                   | 10\n```"
+  },
+  "formatting": {
+    "title": "Formatting and Readability",
+    "content": "The Excel export process automatically adjusts the column widths for better readability. This ensures that no data is truncated and that all entries are easily viewable without manual adjustments."
+  }
 }
