@@ -6,9 +6,9 @@
         <li><a href="javascript:void(0)" @click="scrollToSection('project-description')">Project Description</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('importing-files')">Importing Files</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('simulation-settings')">Simulation Settings</a></li>
-        <li><a href="javascript:void(0)" @click="scrollToSection('export-simulation-data')">Export Simulation Data</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('node-connections')">Node Connections</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('node-attributes')">Node Attributes</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('export-simulation-data')">Export Simulation Data</a></li>
       </ul>
     </nav>
 
@@ -19,7 +19,7 @@
 
       <!-- Project Description Section -->
       <section id="project-description" v-if="!loading && projectDescription">
-        <h2>{{ projectDescription.title }}</h2>
+        <h1>{{ projectDescription.title }}</h1>
         <div v-for="section in projectDescription.sections" :key="section.subtitle">
           <h3>{{ section.subtitle }}</h3>
           <p v-html="section.content"></p>
@@ -36,7 +36,7 @@
 
       <!-- Simulation Settings Section -->
       <section id="simulation-settings" v-if="!loading && guideData.simulationSettings">
-        <h2>{{ guideData.simulationSettings.title }}</h2>
+        <h1>{{ guideData.simulationSettings.title }}</h1>
         <h3>{{ guideData.simulationSettings.overview.title }}</h3>
         <p>{{ guideData.simulationSettings.overview.content }}</p>
 
@@ -54,7 +54,6 @@
             </tr>
           </tbody>
         </table>
-
         <!-- Energy Explanation -->
         <h3>{{ guideData.simulationSettings.energyExplanation.title }}</h3>
         <p>{{ guideData.simulationSettings.energyExplanation.content }}</p>
@@ -81,11 +80,14 @@
             </tr>
           </tbody>
         </table>
+        <!-- Download Simulation Settings Example -->
+        <h3>Download Example File</h3>
+        <a href="/documents/SimulationSettings.xlsx" download="SimulationSettings.xlsx">SimulationSettings.xlsx</a>
       </section>
 
       <!-- Node Connections Section -->
       <section id="node-connections" v-if="!loading && guideData.nodeConnections">
-        <h2>{{ guideData.nodeConnections.title }}</h2>
+        <h1>{{ guideData.nodeConnections.title }}</h1>
         <h3>{{ guideData.nodeConnections.overview.title }}</h3>
         <p>{{ guideData.nodeConnections.overview.content }}</p>
 
@@ -103,7 +105,6 @@
             </tr>
           </tbody>
         </table>
-
         <!-- Example for Node Connections -->
         <h3>{{ guideData.nodeConnections.example.title }}</h3>
         <table>
@@ -118,18 +119,22 @@
             </tr>
           </tbody>
         </table>
+        <!-- Download Node Connections Example -->
+        <h3>Download Example File</h3>
+        <a href="/documents/NodeConnections.xlsx" download="NodeConnections.xlsx">NodeConnections.xlsx</a>
       </section>
 
       <!-- Node Attributes Section -->
       <section id="node-attributes" v-if="!loading && guideData.nodeAttributes">
-        <h2>{{ guideData.nodeAttributes.title }}</h2>
+        <h1>{{ guideData.nodeAttributes.title }}</h1>
         <h3>{{ guideData.nodeAttributes.overview.title }}</h3>
         <p>{{ guideData.nodeAttributes.overview.content }}</p>
 
         <!-- Alignment Explanation -->
         <h3>{{ guideData.nodeAttributes.alignmentExplanation.title }}</h3>
         <div v-for="alignment in guideData.nodeAttributes.alignmentExplanation.content" :key="alignment.range">
-          <strong>{{ alignment.range }}:</strong> {{ alignment.description }}
+          <p><strong>{{ alignment.range }}:</strong></p>
+          <p>{{ alignment.description }}</p>
         </div>
 
         <!-- Node Attributes Example Table -->
@@ -146,11 +151,16 @@
             </tr>
           </tbody>
         </table>
+
+        <!-- Download Node Attributes Example -->
+        <h3>Download Example File</h3>
+        <a href="/documents/NodeAttributes.xlsx" download="NodeAttributes.xlsx">NodeAttributes.xlsx</a>        
       </section>
+
 
       <!-- Export Simulation Data Section -->
       <section id="export-simulation-data" v-if="!loading && exportSimulationData">
-        <h2>{{ exportSimulationData.title }}</h2>
+        <h1>{{ exportSimulationData.title }}</h1>
         <p>{{ exportSimulationData.content }}</p>
       </section>
     </div>
@@ -249,6 +259,7 @@ nav ul {
   list-style-type: none;
   padding: 0;
   margin-bottom: 20px;
+  text-align: left; /* Ensure alignment for the sidebar */
 }
 
 nav ul li {
@@ -259,6 +270,7 @@ nav ul li a {
   text-decoration: none;
   color: #007BFF;
   font-weight: bold;
+  text-align: left; /* Sidebar links aligned to the left */
 }
 
 nav ul li a:hover,
@@ -271,10 +283,16 @@ nav ul li a:focus {
   margin-left: 220px;
   padding: 20px;
   flex: 1;
+  text-align: left; /* Ensure the content is aligned left */
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Add space between sections */
+section {
+  margin-bottom: 40px; /* Increase space between each section */
 }
 
 h2, h3, p, table, ol, ul {
@@ -283,19 +301,28 @@ h2, h3, p, table, ol, ul {
   margin: 0 auto;
 }
 
+h1 {
+  font-size: 30px;
+  margin-bottom: 15px;
+  text-align: center; /* Align headings left */
+}
+
 h2 {
   font-size: 24px;
   margin-bottom: 15px;
+  text-align: left; /* Align headings left */
 }
 
 h3 {
   font-size: 20px; /* Adjusted size for better hierarchy */
   margin-bottom: 12px;
+  text-align: left; /* Align sub-headings left */
 }
 
 h4 {
   font-size: 18px;
   margin-bottom: 10px;
+  text-align: left; /* Align h4 left */
 }
 
 p {
@@ -305,6 +332,7 @@ p {
   line-height: 1.6;
   word-break: break-word;
   overflow-wrap: break-word;
+  text-align: left; /* Ensure paragraphs are aligned left */
 }
 
 /* Updated table styling for better readability */
@@ -321,7 +349,7 @@ table {
 th, td {
   border: 1px solid #ddd;
   padding: 12px 8px;
-  text-align: left;
+  text-align: left; /* Ensure table cells and headers are aligned left */
   word-break: break-word;
   overflow-wrap: break-word;
 }
@@ -330,31 +358,27 @@ th {
   background-color: #f2f2f2;
   font-weight: bold;
   font-size: 14px; /* Make the text a bit smaller for better readability */
+  text-align: left; /* Ensure table headers are aligned left */
 }
 
 td {
   font-size: 14px;
+  text-align: left; /* Ensure table cells are aligned left */
 }
+
+/* Widen the first column */
+th:first-child, td:first-child {
+  width: 25%; /* Adjust this value to make the first column wider */
+}
+
+/* Widen the third column */
+th:nth-child(3), td:nth-child(3) {
+  width: 18%; /* Adjust this value to make the third column wider */
+}
+
 
 tr:nth-child(even) {
   background-color: #f9f9f9;
-}
-
-/* Adjustments for small screens */
-@media screen and (max-width: 768px) {
-  .content-area {
-    margin-left: 0;
-    padding: 10px;
-  }
-
-  table {
-    font-size: 12px;
-    table-layout: auto; /* Allow the table to adapt more dynamically to smaller screens */
-  }
-
-  th, td {
-    padding: 8px;
-  }
 }
 
 ol, ul {
@@ -363,6 +387,7 @@ ol, ul {
   max-width: 800px;
   word-break: break-word;
   overflow-wrap: break-word;
+  text-align: left; /* Ensure lists are aligned left */
 }
 
 .loading {
@@ -372,44 +397,9 @@ ol, ul {
   margin-top: 50px;
 }
 
-/* Add subtle animations for smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-@media screen and (max-width: 480px) {
-  h2 {
-    font-size: 22px;
-  }
-
-  h3 {
-    font-size: 18px;
-  }
-
-  p {
-    font-size: 14px;
-  }
-
-  table {
-    font-size: 10px;
-  }
-
-  th, td {
-    padding: 6px;
-  }
-
-  .sticky-sidebar {
-    display: none; /* Hide sidebar on small screens */
-  }
-
-  .content-area {
-    margin-left: 0;
-  }
-}
-
-@media (min-width: 1201px) {
-  .container {
-    max-width: 1400px;
-  }
-}
 </style>
+
