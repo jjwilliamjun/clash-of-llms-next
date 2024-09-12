@@ -1,9 +1,11 @@
 import networkx as nx
 import json
 import os
-from create_node_network.green_team import GreenTeam
-from import_excel import import_node_attributes, import_node_connections
 import random
+from excel_api.create_node_network.green_team import GreenTeam
+from excel_api.import_excel import import_node_attributes, import_node_connections
+
+green_team=None
 
 def generate_random_network(node_count):
     node_attributes = {}
@@ -83,7 +85,8 @@ def generate_user_input_network(node_count, connections_per_node):
 
 def create_node_network(node_attributes, node_connections):
     graph = nx.DiGraph()  # Create a directed graph
-
+    global green_team
+    
     # Add nodes with their attributes
     for node_id, attributes in node_attributes.items():
         graph.add_node(node_id, **attributes)
@@ -97,7 +100,7 @@ def create_node_network(node_attributes, node_connections):
             graph.add_edge(node_id, target_node.strip(), weight=round(influence, 2))
 #Initialises green team. TODO: pass in num. of nodes aligned towards red, and towards blue 
 #Currently hard codes them to 30 and 20
-    GreenTeam(graph, 30, 20) 
+    green_team=GreenTeam(graph, 30, 20) 
     # Convert the graph to node-link data format, which is suitable for saving as JSON
     graph_data = nx.node_link_data(graph)
 
