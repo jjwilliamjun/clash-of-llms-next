@@ -278,8 +278,6 @@ def start_next_round():
     
     current_team.generate_message()
     green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
-    #green_team.broadcast_message(current_team._potency, current_team, current_team._influence_factor)
-    green_team.print_all_node_alignments()
     if current_team._team.lower() == 'blue':
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)
