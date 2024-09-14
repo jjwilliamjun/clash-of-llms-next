@@ -14,12 +14,6 @@
               </select>
             </div>
 
-            <!-- Custom Model Input Field -->
-            <div v-if="blue_team.Model_ID === 'custom'" class="select-parameter">
-              <label for="custom_model_blue">Custom Model: </label>
-              <input type="text" id="custom_model_blue" v-model="customModel">
-            </div>
-
             <!-- File Upload for Custom Model -->
             <div v-if="blue_team.Model_ID === 'custom'" class="select-parameter">
               <label for="file_upload_blue">Upload Custom File: </label>
@@ -69,12 +63,6 @@
               <select name="red_model" id="model" v-model="red_team.Model_ID">
                 <option v-for="(item, index) in models" :key="index" :value="item">{{ item }}</option>
               </select>
-            </div>
-
-            <!-- Custom Model Input Field -->
-            <div v-if="red_team.Model_ID === 'custom'" class="select-parameter">
-              <label for="custom_model_red">Custom Model: </label>
-              <input type="text" id="custom_model_red" v-model="customModel">
             </div>
 
             <!-- File Upload for Custom Model -->
@@ -173,7 +161,8 @@ export default {
         Temperature: 0.5,
         Influence_Factor: 0.5,
         Alignment: 5,
-        Max_Cost: 1
+        Max_Cost: 1,
+        Custom_File: null, // New property to store the uploaded file for the blue team
       },
       red_team: {
         Team: 'Red',
@@ -184,7 +173,8 @@ export default {
         Temperature: 0.5,
         Influence_Factor: 0.5,
         Alignment: 5,
-        Max_Cost: 1
+        Max_Cost: 1,
+        Custom_File: null, // New property to store the uploaded file for the red team
       },
       green_node_count_option: 'userData',  // Default to user data
       green_nodes_count: 30, // Default to 30 green nodes
@@ -204,16 +194,62 @@ export default {
     updateAlignments() {
       this.green_alignments = Math.max(0, 100 - this.red_alignments - this.blue_alignments);
     },
+    handleFileUploadBlue(event) {
+      const file = event.target.files[0];
+      this.blue_team.Custom_File = file; // Store the file for later use
+    },
+    handleFileUploadRed(event) {
+      const file = event.target.files[0];
+      this.red_team.Custom_File = file; // Store the file for later use
+    },
+    async uploadLLMFiles() {
+      // Uploads the LLM files for both teams if they exist
+      const uploadPromises = [];
+
+      if (this.blue_team.Model_ID === 'custom' && this.blue_team.Custom_File) {
+        const formData = new FormData();
+        formData.append('llm_file', this.blue_team.Custom_File);
+
+        uploadPromises.push(
+          axios.post('http://127.0.0.1:5000/excel_api/upload_llm', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          })
+        );
+      }
+
+      if (this.red_team.Model_ID === 'custom' && this.red_team.Custom_File) {
+        const formData = new FormData();
+        formData.append('llm_file', this.red_team.Custom_File);
+
+        uploadPromises.push(
+          axios.post('http://127.0.0.1:5000/excel_api/upload_llm', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          })
+        );
+      }
+
+      // Wait for all upload requests to complete
+      try {
+        await Promise.all(uploadPromises);
+        console.log("All custom LLM files uploaded successfully.");
+      } catch (error) {
+        console.error("Error uploading LLM files:", error.response ? error.response.data : error.message);
+        throw error; // Re-throw the error to handle it in handleFormSubmit
+      }
+    },
     async handleFormSubmit() {
-      if (this.green_node_count_option === 'userData') {
-        // Navigate to the FileUpload.vue page if custom model is selected
-        if (this.showFileUpload) {
+      try {
+        // Redirect to FileUpload.vue if 'userData' is selected
+        if (this.green_node_count_option === 'userData') {
           this.$router.push('/upload');
-        } else {
-          // Handle error if file upload is required but not shown
-          console.error("File upload is required but not available.");
+          return; // Stop further execution
         }
-      } else {
+
+        if (this.showFileUpload) {
+          // Upload LLM files before proceeding
+          await this.uploadLLMFiles();
+        }
+
         // Prepare the data for submission
         const data = {
           red_team: {
@@ -232,16 +268,15 @@ export default {
 
         const path = 'http://127.0.0.1:5000/excel_api/ui_parameters';
 
-        try {
-          const response = await axios.post(path, data);
-          this.params = response.data;
-          this.display_params = true;
+        const response = await axios.post(path, data);
+        this.params = response.data;
+        this.display_params = true;
 
-          // Optional: Redirect after successful submission
-          // this.$router.push('/parameters'); // Uncomment if you want to redirect to parameters view
-        } catch (error) {
-          console.error("Error submitting form:", error.response ? error.response.data : error.message);
-        }
+        // Optional: Redirect after successful submission
+        // this.$router.push('/parameters'); // Uncomment if you want to redirect to parameters view
+
+      } catch (error) {
+        console.error("Error submitting form:", error.response ? error.response.data : error.message);
       }
     },
   },
@@ -251,5 +286,7 @@ export default {
   }
 };
 </script>
+
+
 
 

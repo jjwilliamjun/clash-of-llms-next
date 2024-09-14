@@ -48,137 +48,134 @@ export default {
         }
       }, pollInterval);
     },
-
     drawNetwork(networkData) {
-  const container = this.$refs.networkGraph;
+      const container = this.$refs.networkGraph;
 
-  // Helper function to interpolate between two colors
-  function interpolateColor(color1, color2, factor) {
-    const result = color1.slice(1).match(/.{1,2}/g)
-      .map((hex, i) => {
-        return Math.round(
-          parseInt(hex, 16) * (1 - factor) + parseInt(color2.slice(1).match(/.{1,2}/g)[i], 16) * factor
-        );
-      });
-    return `rgb(${result.join(',')})`;
-  }
+      // Helper function to interpolate between two colors
+      function interpolateColor(color1, color2, factor) {
+        const result = color1.slice(1).match(/.{1,2}/g)
+          .map((hex, i) => {
+            return Math.round(
+              parseInt(hex, 16) * (1 - factor) + parseInt(color2.slice(1).match(/.{1,2}/g)[i], 16) * factor
+            );
+          });
+        return `rgb(${result.join(',')})`;
+      }
 
-  // Function to determine color based on alignment using predefined color levels
-  function getColor(value) {
-    // Convert value from [-1, 1] to [0, 1] for interpolation
-    const normalizedValue = (value + 1) / 2;
+      // Function to determine color based on alignment using predefined color levels
+      function getColor(value) {
+        // Convert value from [-1, 1] to [0, 1] for interpolation
+        const normalizedValue = (value + 1) / 2;
 
-    // Define color stops
-    if (normalizedValue <= 0.25) {
-      // Interpolate between Red (#d7191c) and Light Red (#fe8181)
-      return interpolateColor('#c80000', '#fe8181', normalizedValue / 0.25);
-    } else if (normalizedValue > 0.5 && normalizedValue <= 0.75) {
-      // Interpolate between Green (#31a354) and Greenish Blue (#0e86d4)
-      return interpolateColor('#31a354', '#0e86d4', (normalizedValue - 0.5) / 0.25);
-    } else if (normalizedValue > 0.75 && normalizedValue <= 1) {
-      // Interpolate between Greenish Blue (#0e86d4) and Deep Blue (#0006b1)
-      return interpolateColor('#0e86d4', '#0006b1', (normalizedValue - 0.75) / 0.25);
-    } else {
-      return '#0006b1'; // Fallback to Deep Blue
-    }
-  }
+        // Define color stops
+        if (normalizedValue <= 0.25) {
+          // Interpolate between Red and Light Red
+          return interpolateColor('#FF0000', '#FF7F7F', normalizedValue / 0.25);
+        } else if (normalizedValue > 0.5 && normalizedValue <= 0.75) {
+          // Interpolate between Green and Greenish Blue
+          return interpolateColor('#31a354', '#0e86d4', (normalizedValue - 0.5) / 0.25);
+        } else if (normalizedValue > 0.75 && normalizedValue <= 1) {
+          // Interpolate between Greenish Blue and Deep Blue
+          return interpolateColor('#0e86d4', '#0006b1', (normalizedValue - 0.75) / 0.25);
+        } else {
+          return '#0006b1'; // Fallback to Deep Blue
+        }
+      }
 
-  const data = {
-    nodes: new DataSet(
-      networkData.nodes.map(node => {
-        const color = getColor(node.Alignment); // Use the color interpolation function
-        return {
-          id: node.id,
-          label: node.id,
-          title: `${node.id}: Alignment: ${node.Alignment}`,
-          color: {
-            background: color,
-            border: 'darkgreen',
-          },
-          font: {
-            color: 'white',
-          },
-          shape: 'circle',
-        };
-      })
-    ),
-    edges: new DataSet(
-      networkData.links.map(link => ({
-        from: link.source,
-        to: link.target,
-        title: `Influence Factor: ${link.weight}`,  // Display influence factor when hovering over the edge
-        color: {
-          color: 'green',
-        },
-        width: 2,
-        influence: link.weight,  // Store the influence factor for later use
-      }))
-    ),
-  };
-
-  const options = {
-    layout: {
-      randomSeed: 42,
-      improvedLayout: true,
-      hierarchical: false,
-    },
-    interaction: {
-      dragNodes: true,
-      zoomView: true,
-      dragView: true,
-    },
-    physics: {
-      enabled: true,
-      forceAtlas2Based: {
-        gravitationalConstant: -50,
-        centralGravity: 0.005,
-        springLength: 100,
-        springConstant: 0.08,
-        damping: 0.4,
-        avoidOverlap: 0.5,
-      },
-      solver: 'forceAtlas2Based',
-      stabilization: {
-        enabled: true,
-        iterations: 2000,
-        updateInterval: 25,
-      },
-    },
-    autoResize: true,
-    height: '100%',
-    width: '100%',
-  };
-
-  const network = new Network(container, data, options);
-
-  // Disable physics after stabilization
-  network.once('stabilizationIterationsDone', () => {
-    network.setOptions({ physics: false });
-  });
-
-  network.on('doubleClick', (params) => {
-    if (params.nodes.length > 0) {
-      const nodeId = params.nodes[0];
-      this.selectedNode = networkData.nodes.find(node => node.id === nodeId);
-      this.selectedEdge = null; // Clear edge selection when a node is selected
-    }
-  });
-
-  network.on('selectEdge', (params) => {
-    if (params.edges.length > 0) {
-      const edgeId = params.edges[0];
-      const edge = data.edges.get(edgeId);
-      this.selectedEdge = {
-        from: edge.from,
-        to: edge.to,
-        influence: edge.influence
+      const data = {
+        nodes: new DataSet(
+          networkData.nodes.map(node => {
+            const color = getColor(node.Alignment); // Use the color interpolation function
+            return {
+              id: node.id,
+              label: node.id,
+              title: `${node.id}: Alignment: ${node.Alignment}`,
+              color: {
+                background: color,
+                border: 'darkgreen',
+              },
+              font: {
+                color: 'white',
+              },
+              shape: 'circle',
+            };
+          })
+        ),
+        edges: new DataSet(
+          networkData.links.map(link => ({
+            from: link.source,
+            to: link.target,
+            title: `Influence Factor: ${link.weight}`,  // Display influence factor when hovering over the edge
+            color: {
+              color: 'green',
+            },
+            width: 2,
+            influence: link.weight,  // Store the influence factor for later use
+          }))
+        ),
       };
-      this.selectedNode = null; // Clear node selection when an edge is selected
-    }
-  });
-},
 
+      const options = {
+        layout: {
+          randomSeed: 42,
+          improvedLayout: true,
+          hierarchical: false,
+        },
+        interaction: {
+          dragNodes: true,
+          zoomView: true,
+          dragView: true,
+        },
+        physics: {
+          enabled: true,
+          forceAtlas2Based: {
+            gravitationalConstant: -50,
+            centralGravity: 0.005,
+            springLength: 100,
+            springConstant: 0.08,
+            damping: 0.4,
+            avoidOverlap: 0.5,
+          },
+          solver: 'forceAtlas2Based',
+          stabilization: {
+            enabled: true,
+            iterations: 2000,
+            updateInterval: 25,
+          },
+        },
+        autoResize: true,
+        height: '100%',
+        width: '100%',
+      };
 
+      const network = new Network(container, data, options);
+
+      // Disable physics after stabilization
+      network.once('stabilizationIterationsDone', () => {
+        network.setOptions({ physics: false });
+      });
+
+      network.on('doubleClick', (params) => {
+        if (params.nodes.length > 0) {
+          const nodeId = params.nodes[0];
+          this.selectedNode = networkData.nodes.find(node => node.id === nodeId);
+          this.selectedEdge = null; // Clear edge selection when a node is selected
+        }
+      });
+
+      network.on('selectEdge', (params) => {
+        if (params.edges.length > 0) {
+          const edgeId = params.edges[0];
+          const edge = data.edges.get(edgeId);
+          this.selectedEdge = {
+            from: edge.from,
+            to: edge.to,
+            influence: edge.influence
+          };
+          this.selectedNode = null; // Clear node selection when an edge is selected
+        }
+      });
+    },
   },
 };
 </script>
