@@ -1,5 +1,10 @@
 """Definition of the simulation's red team"""
-from gpt_endpoint import get_message
+
+from class_api.gpt_endpoint import get_message
+from excel_api.import_excel import *
+from excel_api.create_node_network.create_network import *
+import excel_api.create_node_network.create_network as GreenNetwork
+
 
 class Team:
     def __init__(self, team, model_ID, energy, influence_factor, max_cost, temperature, alignment=0):
@@ -22,6 +27,7 @@ class Team:
     def generate_message(self):
         """generate a message with the team's current parameters"""
         self._message, self._potency = get_message(self._team, self._alignment, self._energy)
+        #GreenNetwork.green_team.broadcast_message(self._potency, self._team, self._influence_factor)
 
     def update_energy_level(self, energy_cost):
         """Consumes energy equal to message_cost"""
@@ -30,7 +36,7 @@ class Team:
         else:
             self._energy -= energy_cost
 
-    #TODO potentially bring out to game parameters
+    #TODO potentially bring out to game  parameters
     def energy_cost(self):
         """Calculate the energy cost required to send a message based on its potency"""
 

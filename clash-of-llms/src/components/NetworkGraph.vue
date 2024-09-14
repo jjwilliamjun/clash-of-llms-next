@@ -6,8 +6,12 @@
       <h3>Node Details</h3>
       <p><strong>ID:</strong> {{ selectedNode.id }}</p>
       <p><strong>Alignment:</strong> {{ selectedNode.Alignment }}</p>
-      <p><strong>Uncertainty:</strong> {{ selectedNode.Uncertainty }}</p>
-      <p><strong>Influence Potential:</strong> {{ selectedNode.Influence_Potential }}</p>
+    </div>
+    <div v-if="selectedEdge" class="edge-details">
+      <h3>Edge Details</h3>
+      <p><strong>From:</strong> {{ selectedEdge.from }}</p>
+      <p><strong>To:</strong> {{ selectedEdge.to }}</p>
+      <p><strong>Influence Factor:</strong> {{ selectedEdge.influence }}</p>
     </div>
   </div>
 </template>
@@ -20,7 +24,8 @@ export default {
   data() {
     return {
       selectedNode: null, // To store the currently selected node's details
-      networkData: null, // To store the network data
+      selectedEdge: null, // To store the currently selected edge's details
+      networkData: null,  // To store the network data
     };
   },
   mounted() {
@@ -60,7 +65,7 @@ export default {
             return {
               id: node.id,
               label: node.id,
-              title: `Alignment: ${node.Alignment}\nUncertainty: ${node.Uncertainty}\nInfluence Potential: ${node.Influence_Potential}`,
+              title: `${node.id}: Alignment: ${node.Alignment}`,
               color: {
                 background: color,
                 border: 'darkgreen',
@@ -76,10 +81,12 @@ export default {
           networkData.links.map(link => ({
             from: link.source,
             to: link.target,
+            title: `Influence Factor: ${link.weight}`,  // Display influence factor when hovering over the edge
             color: {
               color: 'green',
             },
             width: 2,
+            influence: link.weight,  // Store the influence factor for later use
           }))
         ),
       };
@@ -119,10 +126,29 @@ export default {
 
       const network = new Network(container, data, options);
 
+      // Disable physics after stabilization
+      network.once('stabilizationIterationsDone', () => {
+        network.setOptions({ physics: false });
+      });
+
       network.on('doubleClick', (params) => {
         if (params.nodes.length > 0) {
           const nodeId = params.nodes[0];
           this.selectedNode = networkData.nodes.find(node => node.id === nodeId);
+          this.selectedEdge = null; // Clear edge selection when a node is selected
+        }
+      });
+
+      network.on('selectEdge', (params) => {
+        if (params.edges.length > 0) {
+          const edgeId = params.edges[0];
+          const edge = data.edges.get(edgeId);
+          this.selectedEdge = {
+            from: edge.from,
+            to: edge.to,
+            influence: edge.influence
+          };
+          this.selectedNode = null; // Clear node selection when an edge is selected
         }
       });
     },
@@ -131,7 +157,7 @@ export default {
 </script>
 
 <style scoped>
-.node-details {
+.node-details, .edge-details {
   margin-top: 20px;
   padding: 10px;
   border: 1px solid #ccc;

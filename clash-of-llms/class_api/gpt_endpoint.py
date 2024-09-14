@@ -68,4 +68,3 @@ def get_message(team: str, alignment: str, energy: str):
             #print(f"Error processing response: {e}")
 
     return message, potency
-
