@@ -9,6 +9,7 @@ from import_excel import *
 from class_api import team
 from set_parameters import *
 from create_node_network.create_network import create_node_network, generate_random_network, generate_user_input_network
+from create_node_network.green_team import *
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -17,6 +18,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 game_data = None  
 red_team = None
 blue_team = None
+green_team = None
 
 @app.route('/excel_api/export_excel', methods=['GET'])
 def export_excel():
@@ -50,7 +52,7 @@ def import_excel():
     """Handles the import of Excel files or random generation of network data"""
     node_attributes = None
     node_connections = None
-
+    global green_team
     try:
         if request.files:
             for key, file_storage in request.files.items():
@@ -83,7 +85,9 @@ def import_excel():
             # Ensure both node_attributes and node_connections are available
             if node_attributes and node_connections:
                 # Create the network and save it as a JSON file
-                create_node_network(node_attributes, node_connections)
+                network_graph=create_node_network(node_attributes, node_connections)
+                green_team=GreenTeam(network_graph, 30, 20)
+                print("Green team initialised")
                 return jsonify({"message": "Network created successfully from Excel files!"}), 200
             else:
                 return jsonify({"error": "Missing node attributes or connections"}), 400
@@ -104,7 +108,8 @@ def import_excel():
                 return jsonify({"error": "Invalid option provided"}), 400
 
             # Create the network and save it as a JSON file
-            create_node_network(node_attributes, node_connections)
+            network_graph=create_node_network(node_attributes, node_connections)
+            green_team=GreenTeam(network_graph, 30, 20)
             return jsonify({"message": "Network generated successfully!"}), 200
         
         else:
@@ -146,6 +151,7 @@ def get_parameters():
 @cross_origin()
 def ui_parameters():
     """Handles the UI parameters input, including random network generation"""
+    global green_team
     try:
         parameters = request.get_json()
 
@@ -167,7 +173,9 @@ def ui_parameters():
         else:
             return jsonify({"error": "Invalid green_node_count_option"}), 400
 
-        create_node_network(node_attributes, node_connections)
+        network_graph=create_node_network(node_attributes, node_connections)
+        green_team=GreenTeam(network_graph, 30,20)
+
         return jsonify({"message": "Network generated successfully!"}), 200
 
     except Exception as e:
@@ -194,6 +202,9 @@ def start_next_round():
         return jsonify({"error": "Incorrect team colour"}), 404
     
     current_team.generate_message()
+    green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
+    #green_team.broadcast_message(current_team._potency, current_team, current_team._influence_factor)
+    green_team.print_all_node_alignments()
     msg_content.append(current_team._message)
     msg_content.append(current_team._potency)
         

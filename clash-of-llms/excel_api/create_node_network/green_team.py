@@ -46,7 +46,7 @@ class GreenTeam:
     def broadcast_message(self, potency, team, influence_factor):
         "Updates the green nodes when a message is broadcasted from red or blue teams"
         current_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
-        alignment_influence=(potency/100)*influence_factor
+        alignment_influence=(float(potency)/100)*influence_factor
         for node in self._network_graph.nodes():
             #Assumes blue alignment is negative, and red alignment is positive
             if team.lower() == 'blue': 
@@ -78,7 +78,13 @@ class GreenTeam:
         elif node_alignment < self.alignment_min/2:
             self._blue_alignment+=1
 
-
+    def print_all_node_alignments(self):
+        """Prints the alignment of all nodes in the network graph"""
+        alignment = nx.get_node_attributes(self._network_graph, "Alignment")
+        for node_id in self._network_graph.nodes():
+            node_alignment=alignment[node_id]
+            print(f"Node {node_id}: Alignment = {node_alignment}")
+    
     def blue_alignment(self):
         """Returns the % of the population that aligns with the blue team"""
         return (self._blue_alignment/self._size)*100
