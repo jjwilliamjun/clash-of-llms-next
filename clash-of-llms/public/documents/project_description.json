@@ -3,7 +3,7 @@
   "sections": [
     {
       "subtitle": "Introduction",
-      "content": "This project simulates interactions between different entities within a network based on a 'Red vs Blue' scenario, with an additional entity called the Green Node. The objective of the simulation is to model influence dynamics and communication patterns, where the primary goal is for the Red and Blue teams to influence the Green Node. Both the Red and Blue teams utilize <strong>Large Language Models (LLMs)</strong> to devise efficient strategies and win influence over the Green Node. These teams operate under distinct attributes and rules, representing unique alignment tendencies and objectives."
+      "content": "This project simulates interactions between different entities within a network based on a 'Red vs Blue' scenario, with an additional entity called the Green Node. The objective of the simulation is to model influence dynamics and communication patterns, where the primary goal is for the Red and Blue teams to influence the Green Node Network. Both the Red and Blue teams utilize <strong>Large Language Models (LLMs)</strong> to devise efficient strategies and win influence over the Green Node Network. These teams operate under distinct attributes and rules, representing unique alignment tendencies and objectives."
     },
     {
       "subtitle": "Key Objectives",
@@ -15,7 +15,7 @@
     },
     {
       "subtitle": "Simulation Goals",
-      "content": "The primary goals of the simulation are:<br><br>1. <strong>Influence the Green Node</strong>: The Red and Blue teams compete using their respective <strong>LLM models</strong> to influence the Green Node's alignment in their favor.<br><br>2. <strong>Evaluate Communication Efficiency</strong>: Measure how effectively each team’s LLM-based message generation and energy usage contribute to their success.<br><br>3. <strong>Observe Green Node’s Shifts</strong>: Monitor how the Green Node shifts between alignments and analyze how this impacts the overall balance of power in the network."
+      "content": "The primary goals of the simulation are:<br><br>1. <strong>Influence the Green Node Network</strong>: The Red and Blue teams compete using their respective LLMs to influence the Green Node's alignment in their favor.<br><br>2. <strong>Evaluate Communication Efficiency</strong>: Measure how effectively each team’s LLM-based message generation and energy usage contribute to their success.<br><br>3. <strong>Observe Green Node’s Shifts</strong>: Monitor how the Green Node shifts between alignments and analyze how this impacts the overall balance of power in the network."
     },
     {
       "subtitle": "Technical Setup",

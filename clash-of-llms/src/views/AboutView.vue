@@ -54,6 +54,7 @@
             </tr>
           </tbody>
         </table>
+
         <!-- Energy Explanation -->
         <h3>{{ guideData.simulationSettings.energyExplanation.title }}</h3>
         <p>{{ guideData.simulationSettings.energyExplanation.content }}</p>
@@ -80,10 +81,17 @@
             </tr>
           </tbody>
         </table>
+
+        <!-- Instructions -->
+        <h3>{{ guideData.simulationSettings.instructions.title }}</h3>
+        <ul>
+          <li v-for="instruction in guideData.simulationSettings.instructions.content" :key="instruction">{{ instruction }}</li>
+        </ul>
         <!-- Download Simulation Settings Example -->
         <h3>Download Example File</h3>
         <a href="/documents/SimulationSettings.xlsx" download="SimulationSettings.xlsx">SimulationSettings.xlsx</a>
       </section>
+      
 
       <!-- Node Connections Section -->
       <section id="node-connections" v-if="!loading && guideData.nodeConnections">
@@ -105,6 +113,7 @@
             </tr>
           </tbody>
         </table>
+
         <!-- Example for Node Connections -->
         <h3>{{ guideData.nodeConnections.example.title }}</h3>
         <table>
@@ -119,9 +128,21 @@
             </tr>
           </tbody>
         </table>
+
+        <!-- Instructions -->
+        <h3>{{ guideData.nodeConnections.instructions.title }}</h3>
+        <ul>
+          <li v-for="instruction in guideData.nodeConnections.instructions.content" :key="instruction">{{ instruction }}</li>
+        </ul>
+
+        <!-- Tips -->
+        <h3>{{ guideData.nodeConnections.tips.title }}</h3>
+        <ul>
+          <li v-for="tip in guideData.nodeConnections.tips.content" :key="tip">{{ tip }}</li>
+        </ul>
         <!-- Download Node Connections Example -->
         <h3>Download Example File</h3>
-        <a href="/documents/NodeConnections.xlsx" download="NodeConnections.xlsx">NodeConnections.xlsx</a>
+        <a href="/documents/NodeConnections.xlsx" download="NodeConnections.xlsx">NodeConnections.xlsx</a>        
       </section>
 
       <!-- Node Attributes Section -->
@@ -133,8 +154,7 @@
         <!-- Alignment Explanation -->
         <h3>{{ guideData.nodeAttributes.alignmentExplanation.title }}</h3>
         <div v-for="alignment in guideData.nodeAttributes.alignmentExplanation.content" :key="alignment.range">
-          <p><strong>{{ alignment.range }}:</strong></p>
-          <p>{{ alignment.description }}</p>
+          <p><strong>{{ alignment.range }}:</strong> {{ alignment.description }}</p>
         </div>
 
         <!-- Node Attributes Example Table -->
@@ -151,6 +171,18 @@
             </tr>
           </tbody>
         </table>
+
+        <!-- Instructions -->
+        <h3>{{ guideData.nodeAttributes.instructions.title }}</h3>
+        <ul>
+          <li v-for="instruction in guideData.nodeAttributes.instructions.content" :key="instruction">{{ instruction }}</li>
+        </ul>
+
+        <!-- Tips -->
+        <h3>{{ guideData.nodeAttributes.tips.title }}</h3>
+        <ul>
+          <li v-for="tip in guideData.nodeAttributes.tips.content" :key="tip">{{ tip }}</li>
+        </ul>
 
         <!-- Download Node Attributes Example -->
         <h3>Download Example File</h3>
@@ -195,11 +227,10 @@
           </table>
         </div>
       </section>
-
-
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -444,7 +475,7 @@ tr:nth-child(even) {
 }
 
 .export-simulation-table th:nth-child(4), .export-simulation-table td:nth-child(4) {
-  width: 10%; /* Adjust width for 'Potency' column */
+  width: 12%; /* Adjust width for 'Potency' column */
 }
 
 .export-simulation-table th:nth-child(5), .export-simulation-table td:nth-child(5) {

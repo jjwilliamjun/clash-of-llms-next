@@ -24,8 +24,8 @@ The Node Connections file defines how each node in the network is connected to o
 
 | Node   | Connected_Nodes | Influence_Factor |
 | ------ | --------------- | ---------------- |
-| Node_1 | Node_2, Node_3  | 0.9, 0.3         |
-| Node_2 | Node_1, Node_4  | 0.9, 0.5         |
+| Node_1 | Node_2, Node_3  | 0.4, 0.3         |
+| Node_2 | Node_1, Node_4  | 0.2, 0.5         |
 | Node_3 | Node_1          | 0.3              |
 | Node_4 | Node_2          | 0.5              |
 

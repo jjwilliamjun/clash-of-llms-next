@@ -22,8 +22,8 @@
       "title": "Example",
       "tableHeaders": ["Node", "Connected_Nodes", "Influence_Factor"],
       "tableContent": [
-        ["Node_1", "Node_2, Node_3", "0.9, 0.3"],
-        ["Node_2", "Node_1, Node_4", "0.9, 0.5"],
+        ["Node_1", "Node_2, Node_3", "0.4, 0.3"],
+        ["Node_2", "Node_1, Node_4", "0.3, 0.5"],
         ["Node_3", "Node_1", "0.3"],
         ["Node_4", "Node_2", "0.5"]
       ]
@@ -41,7 +41,7 @@
       "title": "Tips",
       "content": [
         "Ensure that the 'Connected_Nodes' and 'Influence_Factor' columns have matching numbers of entries, separated by commas.",
-        "The influence factor should be a value between 0 and 1, where a higher value indicates a stronger influence."
+        "The influence factor should be a value between 0.2 and 0.5, where a higher value indicates a stronger influence."
       ]
     }
   },
@@ -63,19 +63,20 @@
       "title": "Alignment Explanation",
       "content": [
         {
-          "range": "-1 < Alignment < -0.5",
+          "range": "Alignment ≥ (alignment_max / 2)",
           "description": "Represents a Red alignment, indicating the node is inclined towards the Red side."
         },
         {
-          "range": "-0.5 < Alignment < 0.5",
+          "range": "(alignment_min / 2) < Alignment < (alignment_max / 2)",
           "description": "Represents a Neutral alignment, indicating the node does not strongly favor either side."
         },
         {
-          "range": "0.5 < Alignment < 1",
+          "range": "Alignment ≤ (alignment_min / 2)",
           "description": "Represents a Blue alignment, indicating the node is inclined towards the Blue side."
         }
       ]
     },
+
     "example": {
       "title": "Example",
       "tableHeaders": ["Node_ID", "Alignment"],
@@ -99,7 +100,7 @@
       "title": "Tips",
       "content": [
         "Ensure that the 'Node_ID' in this file matches the 'Node' identifiers in the Node Connections file.",
-        "The 'Alignment' values should all be between -1 and 1."
+        "The 'Alignment' values should all be between `alignment_max` and `alignment_min`."
       ]
     }
   },
