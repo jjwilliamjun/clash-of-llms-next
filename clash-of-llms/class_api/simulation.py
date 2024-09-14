@@ -15,7 +15,8 @@ class Simulation:
         self._blue_team = Team(**blue_team_param)
         self._round_num = 1
         self._victor = None
-        create_node_network(node_attributes, node_connec)
+        self._green_team = create_node_network(node_attributes, node_connec)
+        print(self._green_team)
 
     def start(self):
         """Run Simulation"""
