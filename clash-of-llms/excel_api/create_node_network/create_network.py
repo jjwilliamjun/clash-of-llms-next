@@ -100,7 +100,9 @@ def create_node_network(node_attributes, node_connections):
             graph.add_edge(node_id, target_node.strip(), weight=round(influence, 2))
 #Initialises green team. TODO: pass in num. of nodes aligned towards red, and towards blue 
 #Currently hard codes them to 30 and 20
-    green_team=GreenTeam(graph, 30, 20) 
+
+    print('green team initialised')
+
     # Convert the graph to node-link data format, which is suitable for saving as JSON
     graph_data = nx.node_link_data(graph)
 
@@ -115,6 +117,7 @@ def create_node_network(node_attributes, node_connections):
         print(f"Network JSON file successfully created at: {json_path}")
     except Exception as e:
         print(f"Failed to save network JSON file: {str(e)}")
+    return graph
 # Example usage
 if __name__ == '__main__':
     # Assuming that the import_excel.py script provides the following functions
@@ -126,4 +129,5 @@ if __name__ == '__main__':
 
     # Create the network and save it as network_output.json
     create_node_network(node_attributes, node_connections)
+
 
