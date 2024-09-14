@@ -31,11 +31,10 @@ class team:
         """
         Attempt to generate and send a message. Consumes energy equal to message_cost.
         """
-        
+        #End game if energy reaches 0
         if self._energy - energy_cost <= 0 :
-            print(f"{self._team} cannot send the message")
+            self._energy = 0
         else:
-            print(f"{self._team} can send the message")
             self._energy -= energy_cost
 
     #TODO potentially bring out to game  parameters
