@@ -51,17 +51,44 @@ export default {
     drawNetwork(networkData) {
       const container = this.$refs.networkGraph;
 
+      // Helper function to interpolate between two colors
+      function interpolateColor(color1, color2, factor) {
+        const result = color1.slice(1).match(/.{1,2}/g)
+          .map((hex, i) => {
+            return Math.round(
+              parseInt(hex, 16) * (1 - factor) + parseInt(color2.slice(1).match(/.{1,2}/g)[i], 16) * factor
+            );
+          });
+        return `rgb(${result.join(',')})`;
+      }
+
+      // Function to determine color based on alignment using predefined color levels
+      function getColor(value) {
+        // Convert value from [-1, 1] to [0, 1] for interpolation
+        const normalizedValue = (value + 1) / 2;
+
+        // Define color stops
+        if (normalizedValue <= 0.25) {
+          // Interpolate between Red and Light Red
+          return interpolateColor('#FF0000', '#FF7F7F', normalizedValue / 0.25);
+        } else if (normalizedValue > 0.25 && normalizedValue <= 0.5) {
+          // Interpolate between Light Red and Green
+          return interpolateColor('#FF7F7F', '#31a354', (normalizedValue - 0.25) / 0.25);
+        } else if (normalizedValue > 0.5 && normalizedValue <= 0.75) {
+          // Interpolate between Green and Greenish Blue
+          return interpolateColor('#31a354', '#0e86d4', (normalizedValue - 0.5) / 0.25);
+        } else if (normalizedValue > 0.75 && normalizedValue <= 1) {
+          // Interpolate between Greenish Blue and Deep Blue
+          return interpolateColor('#0e86d4', '#0006b1', (normalizedValue - 0.75) / 0.25);
+        } else {
+          return '#0006b1'; // Fallback to Deep Blue
+        }
+      }
+
       const data = {
         nodes: new DataSet(
           networkData.nodes.map(node => {
-            let color;
-            if (node.Alignment > 0.5) {
-              color = 'red';
-            } else if (node.Alignment < -0.5) {
-              color = 'blue';
-            } else {
-              color = 'green';
-            }
+            const color = getColor(node.Alignment); // Use the color interpolation function
             return {
               id: node.id,
               label: node.id,
@@ -155,6 +182,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .node-details, .edge-details {

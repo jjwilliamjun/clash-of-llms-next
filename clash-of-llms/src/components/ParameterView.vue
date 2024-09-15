@@ -12,7 +12,7 @@
                 <div class="flex-child" id="game-view">
                     <div id="agents">
                         <h2 id="blueTeam">Blue Team</h2>
-                        <div v-if="blue_team">
+                        <div v-if="blue_team && !winner">
                             <p><span style="font-weight: bold;">Model: </span> {{ blue_team._model_ID }}</p>
                             <p><span style="font-weight: bold;">Alignment: </span> {{ blue_team._alignment }}</p>
                             <p><span style="font-weight: bold;">Energy Level: </span> {{ blue_team._energy }}</p>
@@ -40,15 +40,18 @@
                             <p><span style="font-weight: bold;">Number of Messages Generated Per Turn: </span> {{ red_team._message_count }}</p>
                             <p><span style="font-weight: bold;">Temperature</span> {{ red_team._temperature }}</p>
                         </div>
-                        <div v-if="red_team_turn">
+                        <div v-if="red_team_turn && !winner">
                             <button style="background-color: red; border: none" @click="nextTurn">Next round</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div v-if="message && potency">
-                <h1>Message: {{ message }}</h1>
-                <h1>Potency: {{ potency }}</h1>
+            <div v-if="message && potency && !winner" id="Message">
+                <p><span style="font-weight: bold;">Message: </span> {{ message }}</p>
+                <p><span style="font-weight: bold;">Potency: </span> {{ potency }}</p>
+            </div>
+            <div v-if="winner">
+                <h1>Winner: {{ winner }}</h1>
             </div>
         </div>
     </div>
@@ -70,7 +73,9 @@ import NetworkGraph from './NetworkGraph.vue';
         red_team_turn: true,
         blue_team_turn: false,
         message: null,
-        potency: null, 
+        potency: null,
+        winner: null,
+        currentTeam:  null,
       };
     },
     mounted() {
@@ -119,7 +124,9 @@ import NetworkGraph from './NetworkGraph.vue';
                     this.blue_team_turn = !this.blue_team_turn;
                     this.message = response.data[0];
                     this.potency = response.data[1];
-
+                    this.winner = response.data[2];
+                    this.red_team = response.data[3];
+                    this.blue_team = response.data[4];
                 })
                 .catch((error) => {
                     console.error(error);

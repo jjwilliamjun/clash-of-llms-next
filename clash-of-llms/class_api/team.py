@@ -30,7 +30,11 @@ class Team:
         #GreenNetwork.green_team.broadcast_message(self._potency, self._team, self._influence_factor)
 
     def update_energy_level(self, energy_cost):
-        """Consumes energy equal to message_cost"""
+
+        """
+        Attempt to generate and send a message. Consumes energy equal to message_cost.
+        """
+        #End game if energy reaches 0
         if self._energy - energy_cost <= 0 :
             self._energy = 0
         else:
