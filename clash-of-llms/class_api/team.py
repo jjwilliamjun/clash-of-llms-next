@@ -1,20 +1,18 @@
 """Definition of the simulation's red team"""
-
 from class_api.gpt_endpoint import get_message
 from excel_api.import_excel import *
 from excel_api.create_node_network.create_network import *
 import excel_api.create_node_network.create_network as GreenNetwork
 
-
-class Team:
-    def __init__(self, team, model_ID, energy, influence_factor, max_cost, temperature, alignment=0):
+class team:
+    def __init__(self, team, model_ID, energy, potency, msg_count, influence_factor, max_cost, temperature, alignment=0):
         """Setting parameters for team"""
         self._team = team
         self._model_ID = model_ID
         self._energy = energy
         self._potency = None
         self._message = None
-        self._message_count = 0
+        self._message_count = msg_count
         self._influence_factor = influence_factor
         self._alignment = alignment
         self._max_cost = max_cost
@@ -30,7 +28,10 @@ class Team:
         #GreenNetwork.green_team.broadcast_message(self._potency, self._team, self._influence_factor)
 
     def update_energy_level(self, energy_cost):
-        """Consumes energy equal to message_cost"""
+        """
+        Attempt to generate and send a message. Consumes energy equal to message_cost.
+        """
+        #End game if energy reaches 0
         if self._energy - energy_cost <= 0 :
             self._energy = 0
         else:
@@ -38,7 +39,16 @@ class Team:
 
     #TODO potentially bring out to game  parameters
     def energy_cost(self):
-        """Calculate the energy cost required to send a message based on its potency"""
+        """
+        Calculate the energy cost required to send a message based on its potency.
+
+        Parameters:
+        - potency (int): The strength of the message (0 to 100).
+        - max_cost (int): The max energy cost for the hightest potency (100 potency). 
+
+        Returns:
+        - float: The calculated energy cost.
+        """
 
         if not (0 <= self._potency <= 100):
             raise ValueError("Potency must be between 0 and 100.")
