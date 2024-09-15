@@ -79,7 +79,7 @@ class GreenTeam:
             self._blue_alignment+=1
 
     def print_all_node_alignments(self):
-        """Prints the alignment of all nodes in the network graph"""
+        """Prints the alignment of all nodes in the network graph: for testing purposes only"""
         alignment = nx.get_node_attributes(self._network_graph, "Alignment")
         for node_id in self._network_graph.nodes():
             node_alignment=alignment[node_id]

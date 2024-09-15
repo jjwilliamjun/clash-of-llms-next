@@ -98,10 +98,6 @@ def create_node_network(node_attributes, node_connections):
 
         for target_node, influence in zip(connected_nodes, influence_factors):
             graph.add_edge(node_id, target_node.strip(), weight=round(influence, 2))
-#Initialises green team. TODO: pass in num. of nodes aligned towards red, and towards blue 
-#Currently hard codes them to 30 and 20
-
-    print('green team initialised')
 
     # Convert the graph to node-link data format, which is suitable for saving as JSON
     graph_data = nx.node_link_data(graph)
