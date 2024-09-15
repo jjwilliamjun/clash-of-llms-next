@@ -2,7 +2,7 @@
   "title": "Export Simulation Data",
   "introduction": {
     "title": "Introduction",
-    "content": "The simulation data records every decision made by the LLM for both the Blue and Red teams, as well as the Green nodes' alignment updates for each round. The data is exported in Excel format using a pandas DataFrame. Each row of the Excel file represents one turn in the simulation, including details such as the team, the message chosen, the potency of the message, the energy level after the turn, and the changes in alignment for each node. The exported files are structured and formatted for clarity, allowing researchers to review and analyze the data efficiently. The document will be downloaded as 'clash_of_llms_{hour}{minute}{second}', to allow users to distinguish different simulation results."
+    "content": "The simulation data records every decision made by the LLM for both the Blue and Red teams, as well as the Green nodes' alignment updates for each round. The data is exported in Excel format using a pandas DataFrame. Each row of the Excel file represents one turn in the simulation, including details such as the team, the message chosen, the potency of the message, the energy level after the turn, and the changes in alignment for each node. The exported files are structured and formatted for clarity, allowing researchers to review and analyze the data efficiently. The document will be downloaded as 'clash_of_llms_hour_minute_second', to allow users to distinguish different simulation results."
   },
 
   "columnsDescription": {
