@@ -3,7 +3,7 @@ import datetime
 from flask import Flask, send_file, jsonify, request
 from flask_cors import CORS, cross_origin
 import json
-import random  # Import for random functionality
+import random
 from excel_export import *
 from import_excel import *
 from class_api import team
@@ -13,37 +13,48 @@ from create_node_network.create_network import create_node_network, generate_ran
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+# Directory to store uploaded LLM files under excel_api/llm_files
+LLM_DIRECTORY = os.path.join(os.path.dirname(__file__), 'llm_files')
+os.makedirs(LLM_DIRECTORY, exist_ok=True)
+
 # Global variables to store game data and team settings
 game_data = None  
 red_team = None
 blue_team = None
-winning_pop_percent = None
+custom_llms = {}  
 
-@app.route('/excel_api/export_excel', methods=['GET'])
-def export_excel():
-    """Exports game data to Excel"""
+def save_llm_file(team_key, file):
+    """Saves the uploaded LLM file for the specified team in the llm_files directory"""
     try:
-        if game_data is None:
-            return jsonify({"error": "No game data available"}), 400
+        # Construct the path to save the file in the llm_files directory
+        file_path = os.path.join(LLM_DIRECTORY, f"{team_key}_{file.filename}")
+        file.save(file_path)
+    except Exception as e:
+        print(f"Error saving LLM file: {e}")
 
-        excel_file = export_data_excel(game_data)
 
-        if excel_file is None:
-            return jsonify({"error": "Failed to generate the Excel file"}), 500
-        
-        now = datetime.now()
-        timestamp = now.strftime("%H_%M_%S")
-        excel_file_name = f"clash_of_llms_{timestamp}.xlsx"
+@app.route('/excel_api/upload_llm', methods=['POST'])
+@cross_origin()
+def upload_llm():
+    """Handles the upload of an LLM JSON file and saves it to the llm_files directory"""
+    try:
+        # Check if a file is part of the request
+        if 'llm_file' not in request.files:
+            return jsonify({"error": "No LLM file provided"}), 400
 
-        return send_file(
-            excel_file,
-            download_name=excel_file_name,
-            as_attachment=True,   
-            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
+        file = request.files['llm_file']
+        # Ensure the file is a JSON file
+        if not file.filename.endswith('.json'):
+            return jsonify({"error": "Invalid file type. Only JSON files are allowed."}), 400
+
+        # Save the file using the save_llm_file function
+        save_llm_file('custom', file)  # 'custom' is used as a prefix for the uploaded file
+
+        return jsonify({"message": f"LLM file '{file.filename}' uploaded successfully."}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/excel_api/excel_import', methods=['POST'])
 @cross_origin()
@@ -81,6 +92,10 @@ def import_excel():
                     connections = import_node_connections(file_path)
                     node_connections = connections  # Save for network creation
 
+                elif key in ['red_team_llm', 'blue_team_llm']:
+                    # Save the uploaded LLM file for the red or blue team
+                    save_llm_file(key, file)  # Use the save_llm_file function here
+
             # Ensure both node_attributes and node_connections are available
             if node_attributes and node_connections:
                 # Create the network and save it as a JSON file
@@ -115,8 +130,6 @@ def import_excel():
         print(f"Error during file upload: {e}")
         return jsonify({"error": str(e)}), 500
 
-
-
 # Route to serve network_output.json
 @app.route('/network_output.json', methods=['GET'])
 def serve_network_output():
@@ -126,6 +139,40 @@ def serve_network_output():
         return send_file(json_path, as_attachment=False, mimetype='application/json')
     else:
         return jsonify({"error": "JSON file not found"}), 404
+
+# Route to serve LLM file for a specific team
+@app.route('/llm_file/<team_colour>', methods=['GET'])
+def serve_llm_file(team_colour):
+    """Serves the uploaded LLM file for the specified team"""
+    if team_colour not in ['red', 'blue']:
+        return jsonify({"error": "Invalid team colour"}), 400
+    
+    file_name = f"{team_colour}_team_llm"
+    file_path = os.path.join(LLM_DIRECTORY, file_name)
+
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=False, mimetype='application/octet-stream')
+    else:
+        return jsonify({"error": "LLM file not found"}), 404
+# Route to fetch Model_IDs from JSON files in the llm_files directory
+@app.route('/excel_api/get_llm_models', methods=['GET'])
+def get_llm_models():
+    """Fetches the list of Model_IDs from the JSON files in the llm_files directory"""
+    model_ids = []
+
+    try:
+        for filename in os.listdir(LLM_DIRECTORY):
+            if filename.endswith('.json'):
+                file_path = os.path.join(LLM_DIRECTORY, filename)
+                with open(file_path, 'r') as file:
+                    llm_data = json.load(file)
+                    if 'Model_ID' in llm_data:
+                        model_ids.append(llm_data['Model_ID'])
+
+        return jsonify(model_ids), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # Route to fetch team parameters
 @app.route('/excel_api/get_parameters', methods=['GET'])
@@ -176,6 +223,32 @@ def ui_parameters():
     
     return '', 200
 
+@app.route('/excel_api/export_excel', methods=['GET'])
+def export_excel():
+    """Exports game data to Excel"""
+    try:
+        if game_data is None:
+            return jsonify({"error": "No game data available"}), 400
+
+        excel_file = export_data_excel(game_data)
+
+        if excel_file is None:
+            return jsonify({"error": "Failed to generate the Excel file"}), 500
+        
+        now = datetime.now()
+        timestamp = now.strftime("%H_%M_%S")
+        excel_file_name = f"clash_of_llms_{timestamp}.xlsx"
+
+        return send_file(
+            excel_file,
+            download_name=excel_file_name,
+            as_attachment=True,   
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 # Route to serve next round request from the frontend
 @app.route('/excel_api/next_round', methods=['GET'])
 @cross_origin()

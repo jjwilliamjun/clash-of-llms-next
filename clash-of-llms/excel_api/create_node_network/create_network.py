@@ -25,7 +25,7 @@ def generate_random_network(node_count):
         # Generate random directed connections for each node
         connected_nodes = random.sample(range(1, node_count + 1), random.randint(1, 5))
         connected_nodes = [f'Node_{n}' for n in connected_nodes if n != i]  # Exclude self-loops
-        influence_factors = [round(random.uniform(0, 1), 2) for _ in connected_nodes]
+        influence_factors = [round(random.uniform(0.2, 0.5), 2) for _ in connected_nodes]
         
         node_connections[node_id] = {
             "Connected_Nodes": ",".join(connected_nodes),
@@ -35,14 +35,14 @@ def generate_random_network(node_count):
         # Optionally, add reciprocal connections
         for target_node in connected_nodes:
             if target_node not in node_connections:
-                reverse_influence = round(random.uniform(0, 1), 2)
+                reverse_influence = round(random.uniform(0.2, 0.5), 2)
                 node_connections[target_node] = {
                     "Connected_Nodes": node_id,
                     "Influence_Factor": str(reverse_influence)
                 }
             else:
                 node_connections[target_node]["Connected_Nodes"] += f",{node_id}"
-                reverse_influence = round(random.uniform(0, 1), 2)
+                reverse_influence = round(random.uniform(0.2, 0.5), 2)
                 node_connections[target_node]["Influence_Factor"] += f",{reverse_influence}"
 
     return node_attributes, node_connections
@@ -63,7 +63,7 @@ def generate_user_input_network(node_count, connections_per_node):
         # Use user-defined connections for each node
         connected_nodes = random.sample(range(1, node_count + 1), connections_per_node)
         connected_nodes = [f'Node_{n}' for n in connected_nodes if n != i]  # Exclude self-loops
-        influence_factors = [round(random.uniform(0, 1), 2) for _ in connected_nodes]
+        influence_factors = [round(random.uniform(0.2, 0.5), 2) for _ in connected_nodes]
         
         node_connections[node_id] = {
             "Connected_Nodes": ",".join(connected_nodes),
@@ -73,14 +73,14 @@ def generate_user_input_network(node_count, connections_per_node):
         # Optionally, add reciprocal connections
         for target_node in connected_nodes:
             if target_node not in node_connections:
-                reverse_influence = round(random.uniform(0, 1), 2)
+                reverse_influence = round(random.uniform(0.2, 0.5), 2)
                 node_connections[target_node] = {
                     "Connected_Nodes": node_id,
                     "Influence_Factor": str(reverse_influence)
                 }
             else:
                 node_connections[target_node]["Connected_Nodes"] += f",{node_id}"
-                reverse_influence = round(random.uniform(0, 1), 2)
+                reverse_influence = round(random.uniform(0.2, 0.5), 2)
                 node_connections[target_node]["Influence_Factor"] += f",{reverse_influence}"
 
     return node_attributes, node_connections
