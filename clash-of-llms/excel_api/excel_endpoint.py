@@ -86,8 +86,7 @@ def import_excel():
             if node_attributes and node_connections:
                 # Create the network and save it as a JSON file
                 network_graph=create_node_network(node_attributes, node_connections)
-                green_team=GreenTeam(network_graph, 30, 20)
-                print("Green team initialised")
+                green_team=GreenTeam(network_graph, 30, 20) #TODO: change alignment initial values
                 return jsonify({"message": "Network created successfully from Excel files!"}), 200
             else:
                 return jsonify({"error": "Missing node attributes or connections"}), 400
@@ -109,7 +108,7 @@ def import_excel():
 
             # Create the network and save it as a JSON file
             network_graph=create_node_network(node_attributes, node_connections)
-            green_team=GreenTeam(network_graph, 30, 20)
+            green_team=GreenTeam(network_graph, 30, 20) #TODO: change alignment initial values
             return jsonify({"message": "Network generated successfully!"}), 200
         
         else:
@@ -174,7 +173,7 @@ def ui_parameters():
             return jsonify({"error": "Invalid green_node_count_option"}), 400
 
         network_graph=create_node_network(node_attributes, node_connections)
-        green_team=GreenTeam(network_graph, 30,20)
+        green_team=GreenTeam(network_graph, 30,20) #TODO: change alignment values
 
         return jsonify({"message": "Network generated successfully!"}), 200
 
@@ -203,8 +202,6 @@ def start_next_round():
     
     current_team.generate_message()
     green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
-    #green_team.broadcast_message(current_team._potency, current_team, current_team._influence_factor)
-    green_team.print_all_node_alignments()
     msg_content.append(current_team._message)
     msg_content.append(current_team._potency)
         
