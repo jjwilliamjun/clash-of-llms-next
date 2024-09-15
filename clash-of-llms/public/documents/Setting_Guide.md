@@ -54,15 +54,15 @@ The Node Attributes file defines the properties of each node, such as alignment.
 | Column    | Description                                                        |
 | --------- | ------------------------------------------------------------------ |
 | Node_ID   | The unique identifier for each node, consistent with the `Node` column in the Node Connections file. |
-| Alignment | A value between -1 and 1 representing the initial alignment of the node. |
+| Alignment | A value between representing the initial alignment of the node. |
 
 ### **2.3. Alignment Explanation**
 
 The **Alignment** value indicates the initial stance of the node:
 
-- **-1 < Alignment < -0.5**: Represents a **Red** alignment, indicating the node is inclined towards the Red side.
-- **-0.5 < Alignment < 0.5**: Represents a **Neutral** alignment, indicating the node does not strongly favor either side.
-- **0.5 < Alignment < 1**: Represents a **Blue** alignment, indicating the node is inclined towards the Blue side.
+- **Alignment ≤ (alignment_min / 2)**: Represents a **Red** alignment, indicating the node is inclined towards the Red side.
+- **(alignment_min / 2) < Alignment < (alignment_max / 2)**: Represents a **Neutral** alignment, indicating the node does not strongly favor either side.
+- **Alignment ≥ (alignment_max / 2)**: Represents a **Blue** alignment, indicating the node is inclined towards the Blue side.
 
 ### **2.4. Example**
 
@@ -106,7 +106,7 @@ The Simulation Settings file defines parameters for the red and blue teams. It s
 
 | Column               | Red Team         | Blue Team      |
 | -------------------- | ---------------- | -------------- |
-| Model_ID             | gemini-1.5-flash | gpt-3.5        |
+| Model_ID             | gpt-3.5-turbo    | gpt-3.5        |
 | Initial_Energy_Level | 100              | 100            |
 | Msgs_Generated       | 4                | 6              |
 | Temperature          | 0.75             | 0.4            |

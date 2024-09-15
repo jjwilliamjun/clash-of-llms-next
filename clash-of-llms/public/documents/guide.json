@@ -56,7 +56,7 @@
       "tableHeaders": ["Column", "Description"],
       "tableContent": [
         ["Node_ID", "The unique identifier for each node, consistent with the 'Node' column in the Node Connections file."],
-        ["Alignment", "A value between -1 and 1 representing the initial alignment of the node."]
+        ["Alignment", "A value representing the initial alignment of the node."]
       ]
     },
     "alignmentExplanation": {
