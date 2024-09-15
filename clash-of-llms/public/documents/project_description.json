@@ -1,0 +1,25 @@
+{
+  "title": "Project Description",
+  "sections": [
+    {
+      "subtitle": "Introduction",
+      "content": "This project simulates interactions between different entities within a network based on a 'Red vs Blue' scenario, with an additional entity called the Green Node. The objective of the simulation is to model influence dynamics and communication patterns, where the primary goal is for the Red and Blue teams to influence the Green Node Network. Both the Red and Blue teams utilize <strong>Large Language Models (LLMs)</strong> to devise efficient strategies and win influence over the Green Node Network. These teams operate under distinct attributes and rules, representing unique alignment tendencies and objectives."
+    },
+    {
+      "subtitle": "Key Objectives",
+      "content": "The key objectives of the simulation are as follows:<br><br>- <strong>Red vs Blue Dynamics</strong>: The Red and Blue teams are opposing forces, each using <strong>LLM-based strategies</strong> to influence the Green Node. With distinct starting parameters like energy levels, message generation rates, and alignment tendencies, the teams compete to shift the Green Node's alignment in their favor.<br><br>- <strong>Green Node Introduction</strong>: The Green Node's alignment dynamically shifts based on the LLM-based strategies deployed by the Red and Blue teams. It acts as a responsive entity, adjusting its alignment according to which team demonstrates stronger influence.<br><br>- <strong>Network Structure</strong>: Nodes are interconnected with predefined influence factors, which determine the strength of relationships and interactions between them.<br><br>- <strong>Simulation Parameters</strong>: Parameters such as energy levels, the number of messages generated, and the <strong>temperature</strong> (which controls randomness) influence each team's behavior and their ability to efficiently influence the Green Node."
+    },
+    {
+      "subtitle": "Green Node Role",
+      "content": "The <strong>Green Node</strong> is pivotal in the simulation, as its alignment changes dynamically in response to the influence strategies of both Red and Blue teams. It does not remain neutral but shifts its stance based on the strongest influence. Both teams aim to use <strong>LLMs</strong> to analyze, predict, and influence the Green Node, making it a key factor in determining the outcome of the simulation."
+    },
+    {
+      "subtitle": "Simulation Goals",
+      "content": "The primary goals of the simulation are:<br><br>1. <strong>Influence the Green Node Network</strong>: The Red and Blue teams compete using their respective LLMs to influence the Green Node's alignment in their favor.<br><br>2. <strong>Evaluate Communication Efficiency</strong>: Measure how effectively each team’s LLM-based message generation and energy usage contribute to their success.<br><br>3. <strong>Observe Green Node’s Shifts</strong>: Monitor how the Green Node shifts between alignments and analyze how this impacts the overall balance of power in the network."
+    },
+    {
+      "subtitle": "Technical Setup",
+      "content": "The simulation operates under predefined parameters such as <strong>energy levels</strong>, <strong>message generation rates</strong>, and <strong>temperature</strong> (which adjusts randomness in decision-making). Both teams use <strong>LLM models</strong> to predict and influence the behavior of the Green Node, aiming to shift its alignment to their side. Node attributes and connections are specified in <strong>Excel files</strong>, and the simulation is conducted based on these pre-configured setups."
+    }
+  ]
+}

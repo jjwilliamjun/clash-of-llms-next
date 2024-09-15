@@ -13,6 +13,14 @@
                 <option v-for="(item, index) in models" :key="index" :value="item">{{ item }}</option>
               </select>
             </div>
+
+            <!-- File Upload for Custom Model -->
+            <div v-if="blue_team.Model_ID === 'custom'" class="select-parameter">
+              <label for="file_upload_blue">Upload Custom File: </label>
+              <input type="file" id="file_upload_blue" @change="handleFileUploadBlue" />
+            </div>
+
+            <!-- Existing Parameters -->
             <div class="select-parameter">
               <label for="blue_energy">Energy: {{ blue_team.Energy }}</label>
               <br>
@@ -52,11 +60,18 @@
           <div id="redParameters">
             <div class="select-parameter">
               <label for="red_model">Model: </label>
-              <select name="red_model" id="model" v-model="red_team.Model_ID"> 
+              <select name="red_model" id="model" v-model="red_team.Model_ID">
                 <option v-for="(item, index) in models" :key="index" :value="item">{{ item }}</option>
               </select>
             </div>
-            
+
+            <!-- File Upload for Custom Model -->
+            <div v-if="red_team.Model_ID === 'custom'" class="select-parameter">
+              <label for="file_upload_red">Upload Custom File: </label>
+              <input type="file" id="file_upload_red" @change="handleFileUploadRed" />
+            </div>
+
+            <!-- Existing Parameters -->
             <div class="select-parameter">
               <label for="red_msgs">Number of Messages Generated per Turn: {{ red_team.Msgs_Generated }}</label>
               <br>
@@ -124,6 +139,7 @@
   </div>
 </template>
 
+
 <script>
 import axios from 'axios';
 
@@ -134,22 +150,26 @@ export default {
       blue_team: {
         Team: 'Blue',
         Model_ID: 'gpt 3.5 turbo',
+        Custom_Model: '',
         Energy: 50,
         Msgs_Generated: 5,
         Temperature: 0.5,
         Influence_Factor: 0.5,
         Alignment: 5,
-        Max_Cost: 5,
+        Max_Cost: 1,
+        Custom_File: null, // New property to store the uploaded file for the blue team
       },
       red_team: {
         Team: 'Red',
         Model_ID: 'gpt 3.5 turbo',
+        Custom_Model: '',
         Energy: 50,
         Msgs_Generated: 5,
         Temperature: 0.5,
         Influence_Factor: 0.5,
         Alignment: 5,
-        Max_Cost: 5,
+        Max_Cost: 1,
+        Custom_File: null, // New property to store the uploaded file for the red team
       },
       green_node_count_option: 'userData',  // Default to user data
       green_nodes_count: 30, // Default to 30 green nodes
@@ -159,18 +179,82 @@ export default {
       display_params: false,
     };
   },
+  computed: {
+    showFileUpload() {
+      // Show file upload if any team's model is 'custom'
+      return this.red_team.Model_ID === 'custom' || this.blue_team.Model_ID === 'custom';
+    }
+  },
   methods: {
     updateAlignments() {
       this.green_alignments = Math.max(0, 100 - this.red_alignments - this.blue_alignments);
     },
+    handleFileUploadBlue(event) {
+      const file = event.target.files[0];
+      this.blue_team.Custom_File = file; // Store the file for later use
+    },
+    handleFileUploadRed(event) {
+      const file = event.target.files[0];
+      this.red_team.Custom_File = file; // Store the file for later use
+    },
+    async uploadLLMFiles() {
+      // Uploads the LLM files for both teams if they exist
+      const uploadPromises = [];
+
+      if (this.blue_team.Model_ID === 'custom' && this.blue_team.Custom_File) {
+        const formData = new FormData();
+        formData.append('llm_file', this.blue_team.Custom_File);
+
+        uploadPromises.push(
+          axios.post('http://127.0.0.1:5000/excel_api/upload_llm', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          })
+        );
+      }
+
+      if (this.red_team.Model_ID === 'custom' && this.red_team.Custom_File) {
+        const formData = new FormData();
+        formData.append('llm_file', this.red_team.Custom_File);
+
+        uploadPromises.push(
+          axios.post('http://127.0.0.1:5000/excel_api/upload_llm', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          })
+        );
+      }
+
+      // Wait for all upload requests to complete
+      try {
+        await Promise.all(uploadPromises);
+        console.log("All custom LLM files uploaded successfully.");
+      } catch (error) {
+        console.error("Error uploading LLM files:", error.response ? error.response.data : error.message);
+        throw error; // Re-throw the error to handle it in handleFormSubmit
+      }
+    },
     async handleFormSubmit() {
-      if (this.green_node_count_option === 'userData') {
-        // Navigate to the FileUpload.vue page (assuming it's associated with the '/upload' route)
-        this.$router.push('/upload');
-      } else {
+      try {
+        // Redirect to FileUpload.vue if 'userData' is selected
+        if (this.green_node_count_option === 'userData') {
+          this.$router.push('/upload');
+          return; // Stop further execution
+        }
+
+        if (this.showFileUpload) {
+          // Upload LLM files before proceeding
+          await this.uploadLLMFiles();
+        }
+
+        // Prepare the data for submission
         const data = {
-          red_team: this.red_team,
-          blue_team: this.blue_team,
+          red_team: {
+            ...this.red_team,
+            Custom_Model: this.red_team.Model_ID === 'custom' ? this.red_team.Custom_Model : ''
+          },
+          blue_team: {
+            ...this.blue_team,
+            Custom_Model: this.blue_team.Model_ID === 'custom' ? this.blue_team.Custom_Model : ''
+          },
           green_node_count_option: this.green_node_count_option,
           green_nodes_count: this.green_nodes_count,
           red_alignments: this.red_alignments,
@@ -179,18 +263,25 @@ export default {
 
         const path = 'http://127.0.0.1:5000/excel_api/ui_parameters';
 
-        try {
-          const response = axios.post(path, data);
-          this.params = (await response).data;
-          this.display_params = true;
+        const response = await axios.post(path, data);
+        this.params = response.data;
+        this.display_params = true;
 
-          // Optional: Add a redirection after the successful simulation parameter set
-          // this.$router.push('/parameters'); // This assumes you have a route for viewing the parameters.
-        } catch (error) {
-          console.log("Error: ", error);
-        }
+        // Optional: Redirect after successful submission
+        // this.$router.push('/parameters'); // Uncomment if you want to redirect to parameters view
+
+      } catch (error) {
+        console.error("Error submitting form:", error.response ? error.response.data : error.message);
       }
     },
+  },
+  watch: {
+    red_alignments: 'updateAlignments',
+    blue_alignments: 'updateAlignments',
   }
 };
 </script>
+
+
+
+

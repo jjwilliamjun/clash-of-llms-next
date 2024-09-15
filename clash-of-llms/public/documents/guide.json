@@ -1,0 +1,172 @@
+{
+  "introduction": {
+    "title": "Guide to Setting Up Excel Files",
+    "content": "This guide is designed to help researchers set up their own node connections, node attributes, and system settings for use in the simulation environment. The setup involves creating three Excel files: one for defining the connections between nodes and their corresponding influence factors, another for specifying node attributes such as alignment, and a third for setting system parameters for the red and blue teams. This guide provides step-by-step instructions on how to format these files, what each column represents, and how to ensure compatibility with the simulation system."
+  },
+  "nodeConnections": {
+    "title": "Node Connections File",
+    "overview": {
+      "title": "Overview",
+      "content": "The Node Connections file defines how each node in the network is connected to other nodes and the strength of those connections (influence factors). This file should be saved as an Excel file with the sheet named 'NodeConnections'."
+    },
+    "structure": {
+      "title": "File Structure",
+      "tableHeaders": ["Column", "Description"],
+      "tableContent": [
+        ["Node", "The unique identifier for each node in the network."],
+        ["Connected_Nodes", "A comma-separated list of nodes directly connected to the node in the first column."],
+        ["Influence_Factor", "A comma-separated list of influence factors corresponding to each connected node."]
+      ]
+    },
+    "example": {
+      "title": "Example",
+      "tableHeaders": ["Node", "Connected_Nodes", "Influence_Factor"],
+      "tableContent": [
+        ["Node_1", "Node_2, Node_3", "0.4, 0.3"],
+        ["Node_2", "Node_1, Node_4", "0.3, 0.5"],
+        ["Node_3", "Node_1", "0.3"],
+        ["Node_4", "Node_2", "0.5"]
+      ]
+    },
+    "instructions": {
+      "title": "Instructions",
+      "content": [
+        "Open Excel and create a new workbook.",
+        "Rename the first sheet to 'NodeConnections'.",
+        "Enter the data as shown in the example, ensuring that each node's connections and influence factors are correctly listed.",
+        "Save the file with an appropriate name (e.g., 'NodeConnections.xlsx')."
+      ]
+    },
+    "tips": {
+      "title": "Tips",
+      "content": [
+        "Ensure that the 'Connected_Nodes' and 'Influence_Factor' columns have matching numbers of entries, separated by commas.",
+        "The influence factor should be a value between 0.2 and 0.5, where a higher value indicates a stronger influence."
+      ]
+    }
+  },
+  "nodeAttributes": {
+    "title": "Node Attributes File",
+    "overview": {
+      "title": "Overview",
+      "content": "The Node Attributes file defines the properties of each node, such as alignment. This file should be saved as an Excel file with the sheet named 'NodeAttributes'."
+    },
+    "structure": {
+      "title": "File Structure",
+      "tableHeaders": ["Column", "Description"],
+      "tableContent": [
+        ["Node_ID", "The unique identifier for each node, consistent with the 'Node' column in the Node Connections file."],
+        ["Alignment", "A value representing the initial alignment of the node."]
+      ]
+    },
+    "alignmentExplanation": {
+      "title": "Alignment Explanation",
+      "content": [
+        {
+          "range": "Alignment ≥ (alignment_max / 2)",
+          "description": "Represents a Red alignment, indicating the node is inclined towards the Red side."
+        },
+        {
+          "range": "(alignment_min / 2) < Alignment < (alignment_max / 2)",
+          "description": "Represents a Neutral alignment, indicating the node does not strongly favor either side."
+        },
+        {
+          "range": "Alignment ≤ (alignment_min / 2)",
+          "description": "Represents a Blue alignment, indicating the node is inclined towards the Blue side."
+        }
+      ]
+    },
+
+    "example": {
+      "title": "Example",
+      "tableHeaders": ["Node_ID", "Alignment"],
+      "tableContent": [
+        ["Node_1", "-0.75"],
+        ["Node_2", "0.60"],
+        ["Node_3", "-0.40"],
+        ["Node_4", "0.85"]
+      ]
+    },
+    "instructions": {
+      "title": "Instructions",
+      "content": [
+        "Open Excel and create a new workbook.",
+        "Rename the first sheet to 'NodeAttributes'.",
+        "Enter the data as shown in the example, ensuring that each node's attributes are correctly listed.",
+        "Save the file with an appropriate name (e.g., 'NodeAttributes.xlsx')."
+      ]
+    },
+    "tips": {
+      "title": "Tips",
+      "content": [
+        "Ensure that the 'Node_ID' in this file matches the 'Node' identifiers in the Node Connections file.",
+        "The 'Alignment' values should all be between `alignment_max` and `alignment_min`."
+      ]
+    }
+  },
+  "simulationSettings": {
+    "title": "Simulation Settings File",
+    "overview": {
+      "title": "Overview",
+      "content": "The simulation settings file defines parameters for the red and blue teams. It specifies LLMs for both the red and blue teams, and the necessary parameters which influence how the models play in the simulation. It is important to note that models specified in this file must be already connected to the simulation system."
+    },
+    "structure": {
+      "title": "File Structure",
+      "tableHeaders": ["Column", "Description", "Default"],
+      "tableContent": [
+        ["Model_ID", "The unique identifier for each LLM connected to the simulation.", "gpt-3.5 turbo"],
+        ["Energy", "A whole number/integer/value between 1 and 100 (inclusive) representing the initial energy levels of the blue team only (any input for the red team is discarded as the red team has infinite energy). This value depletes after every turn the blue team takes, depending on the message’s energy cost.", "100"],
+        ["Msgs_Generated", "A whole number/integer/value between 1 and 10 (inclusive) which dictates the number of messages at different potency levels the model generates per turn.", "5"],
+        ["Temperature", "A value between 0 and 1 that determines how random or predictable the model’s output should be. A lower temperature will result in more deterministic output whereas higher values like 0.8 will result in more random output.", "0.5"],
+        ["Influence_Factor", "A value between 0 and 1 that represents the influence the team has over other nodes in the simulation.", "0.5"],
+        ["Alignment", "A percentage representing the number of green nodes aligned to each team.", "50"],
+        ["Max_Cost", "An integer value that represents the maximum cost a message can have.", "5"]
+      ]
+    },
+    "energyExplanation": {
+      "title": "'Energy' Explanation",
+      "content": "The Energy value represents how much 'energy' the blue team begins with. This can be thought of as the resources available to the blue team. Upon each turn, the blue team generates messages of varying potency levels and assigns an 'energy cost' to each one. The blue team’s overall energy level decreases by the energy cost of a message sent out to the simulation on a given turn. The red team does not have an energy level, as they are acting with 'unlimited resources'."
+    },
+    "msgsGeneratedExplanation": {
+      "title": "'Msgs_Generated' Explanation",
+      "content": "The Msgs_Generated value specifies how many messages a model should generate on their turn. Each message will be of a different potency level, ranging from low to high potency. For example, if Msgs_Generated is set to 3, the model will generate three messages: one low potency message, one medium potency message, and one high potency message. The minimum value is 1 and the maximum is 10."
+    },
+    "temperatureExplanation": {
+      "title": "'Temperature' Explanation",
+      "content": "The Temperature value determines how random or predictable the model’s output should be: Low temperature (0.0 to 0.25): more deterministic and predictable output. Neutral temperature (0.5): balanced output. High temperature (0.75 to 1.0): more random and non-deterministic output."
+    },
+    "example": {
+      "title": "Example",
+      "tableHeaders": ["Column", "Red Team", "Blue Team"],
+      "tableContent": [
+        ["Model_ID", "gemini-1.5-flash", "gpt-3.5"],
+        ["Initial_Energy_Level", "100", "100"],
+        ["Msgs_Generated", "4", "6"],
+        ["Temperature", "0.75", "0.4"],
+        ["Influence_Factor", "0.7", "0.8"],
+        ["Alignment", "50", "50"],
+        ["Max_Cost", "1", "1"]
+      ]
+    },
+    "instructions": {
+      "title": "Instructions",
+      "content": [
+        "Open Excel and create a new workbook.",
+        "Rename the first sheet to 'SimulationSettings'.",
+        "Enter the data as shown in the example, ensuring that each parameter is correctly entered and is within the correct range.",
+        "Save the file with an appropriate name (e.g., 'SimulationSettings.xlsx').",
+        "Upload the file into the simulation system following the standard importing process."
+      ]
+    }
+  },
+  "importingFiles": {
+    "title": "Importing the Files into the Simulation",
+    "steps": [
+      "Upload the Excel files (NodeConnections, NodeAttributes, and SimulationSettings) to the simulation system.",
+      "Verify the connections and attributes by running a test simulation.",
+      "If necessary, adjust the files based on test results and re-upload them.",
+      "Run the simulation after confirming all data is correctly imported."
+    ]
+  }
+}
+

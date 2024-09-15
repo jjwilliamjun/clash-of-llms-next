@@ -71,9 +71,6 @@ export default {
         if (normalizedValue <= 0.25) {
           // Interpolate between Red and Light Red
           return interpolateColor('#FF0000', '#FF7F7F', normalizedValue / 0.25);
-        } else if (normalizedValue > 0.25 && normalizedValue <= 0.5) {
-          // Interpolate between Light Red and Green
-          return interpolateColor('#FF7F7F', '#31a354', (normalizedValue - 0.25) / 0.25);
         } else if (normalizedValue > 0.5 && normalizedValue <= 0.75) {
           // Interpolate between Green and Greenish Blue
           return interpolateColor('#31a354', '#0e86d4', (normalizedValue - 0.5) / 0.25);
