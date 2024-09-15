@@ -10,7 +10,7 @@ This guide is designed to help researchers set up their own node connections, no
 
 ### **1.1. Overview**
 
-The Node Connections file defines how each node in the network is connected to other nodes and the strength of those connections (influence factors). This file should be saved as an Excel file with the sheet named `NodeConnections`.
+The Node Connections file defines how each node in the network is connected to other nodes and the strength of those connections (influence factors). The file should be saved as an Excel file with the appropriate sheet name: `NodeConnections`.
 
 ### **1.2. File Structure**
 
@@ -47,7 +47,7 @@ The Node Connections file defines how each node in the network is connected to o
 
 ### **2.1. Overview**
 
-The Node Attributes file defines the properties of each node, such as alignment. This file should be saved as an Excel file with the sheet named `NodeAttributes`.
+The Node Attributes file defines the properties of each node, such as alignment. The file should be saved as an Excel file with the appropriate sheet name: `NodeAttributes`.
 
 ### **2.2. File Structure**
 
@@ -91,8 +91,7 @@ The **Alignment** value indicates the initial stance of the node:
 
 ### **3.1. Overview**
 
-The Simulation Settings file defines parameters for the red and blue teams. It specifies LLMs for both the red and blue teams and the necessary parameters which influence how the models play in the simulation. Models specified in this file must be already connected to the simulation system. The file should be saved as an Excel file with the sheet named `SimulationSettings`.
-
+The Simulation Settings file defines parameters for the red and blue teams. It specifies LLMs for both the red and blue teams and the necessary parameters which influence how the models play in the simulation. Models specified in this file must be already connected to the simulation system. The file should be saved as an Excel file with the appropriate sheet name: `SimulationSettings`.
 ### **3.2. File Structure**
 
 | Column              | Description                                              |
