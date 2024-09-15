@@ -4,7 +4,6 @@
     "graph": {},
     "nodes": [
         {
-
             "Alignment": 0.02,
             "id": "Node_1"
         },
@@ -82,9 +81,7 @@
             "target": "Node_1"
         },
         {
-
-
-            "weight": 0.67,
+            "weight": 0.03,
             "source": "Node_3",
             "target": "Node_7"
         },
@@ -124,14 +121,12 @@
             "target": "Node_6"
         },
         {
-
             "weight": 0.58,
             "source": "Node_4",
             "target": "Node_3"
         },
         {
             "weight": 0.77,
-
             "source": "Node_5",
             "target": "Node_3"
         },
@@ -181,7 +176,6 @@
             "target": "Node_10"
         },
         {
-
             "weight": 0.21,
             "source": "Node_7",
             "target": "Node_8"
@@ -192,16 +186,11 @@
             "target": "Node_7"
         },
         {
-
             "weight": 0.3,
             "source": "Node_8",
             "target": "Node_2"
         },
         {
-
-
-            "weight": 0.71,
-            "source": "Node_9",
             "weight": 0.61,
             "source": "Node_8",
             "target": "Node_3"
