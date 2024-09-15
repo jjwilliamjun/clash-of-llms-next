@@ -60,9 +60,9 @@ The Node Attributes file defines the properties of each node, such as alignment.
 
 The **Alignment** value indicates the initial stance of the node:
 
-- **Alignment ≤ (alignment_min / 2)**: Represents a **Red** alignment, indicating the node is inclined towards the Red side.
+- **Alignment ≥ (alignment_max / 2)**: Represents a **Red** alignment, indicating the node is inclined towards the Red side.
 - **(alignment_min / 2) < Alignment < (alignment_max / 2)**: Represents a **Neutral** alignment, indicating the node does not strongly favor either side.
-- **Alignment ≥ (alignment_max / 2)**: Represents a **Blue** alignment, indicating the node is inclined towards the Blue side.
+- **Alignment ≤ (alignment_min / 2)**: Represents a **Blue** alignment, indicating the node is inclined towards the Blue side.
 
 ### **2.4. Example**
 
