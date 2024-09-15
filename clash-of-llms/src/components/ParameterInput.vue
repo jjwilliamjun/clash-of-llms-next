@@ -49,7 +49,7 @@
             <div class="select-parameter">
               <label for="blue_max_cost">Max Cost: {{ blue_team.Max_Cost }}</label>
               <br>
-              <input type="range" id="blue_max_cost" min="0" max="100" value="5" step="1" v-model="blue_team.Max_Cost">
+              <input type="range" id="blue_max_cost" min="20" max="100" value="5" step="5" v-model="blue_team.Max_Cost">
             </div>
           </div>
         </div>
@@ -91,11 +91,6 @@
               <label for="red_alignment">Alignment: {{ red_team.Alignment }}</label>
               <br>
               <input type="range" id="red_alignment" class="accent" min="0" max="100" value="5" step="1" v-model="red_team.Alignment">
-            </div>
-            <div class="select-parameter">
-              <label for="red_max_cost">Max Cost: {{ red_team.Max_Cost }}</label>
-              <br>
-              <input type="range" id="red_max_cost" class="accent" min="0" max="100" value="5" step="1" v-model="red_team.Max_Cost">
             </div>
           </div>
         </div>
@@ -139,7 +134,7 @@
     </form>
 
     <div v-if="display_params">
-      <router-link to="/parameters">View Parameters</router-link>
+      <router-link to="/parameters" class="submit-button">View Parameters</router-link>
     </div>
   </div>
 </template>
@@ -162,7 +157,7 @@ export default {
         Influence_Factor: 0.5,
         Alignment: 5,
         Max_Cost: 1,
-        Custom_File: null, // New property to store the uploaded file for the blue team
+        Custom_File: null, 
       },
       red_team: {
         Team: 'Red',
@@ -175,6 +170,7 @@ export default {
         Alignment: 5,
         Max_Cost: 1,
         Custom_File: null, // New property to store the uploaded file for the red team
+
       },
       green_node_count_option: 'userData',  // Default to user data
       green_nodes_count: 30, // Default to 30 green nodes

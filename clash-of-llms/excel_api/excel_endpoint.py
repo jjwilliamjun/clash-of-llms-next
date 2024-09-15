@@ -21,7 +21,7 @@ os.makedirs(LLM_DIRECTORY, exist_ok=True)
 game_data = None  
 red_team = None
 blue_team = None
-custom_llms = {}  # Placeholder to store custom LLMs
+custom_llms = {}  
 
 def save_llm_file(team_key, file):
     """Saves the uploaded LLM file for the specified team in the llm_files directory"""
@@ -254,6 +254,7 @@ def export_excel():
 @cross_origin()
 def start_next_round():
     msg_content = []
+    victor = None
     
     team_colour = request.args.get('team')
 
@@ -268,9 +269,28 @@ def start_next_round():
         return jsonify({"error": "Incorrect team colour"}), 404
     
     current_team.generate_message()
+    if current_team._team.lower() == 'blue':
+        energy_cost = current_team.energy_cost()
+        current_team.update_energy_level(energy_cost)
+        print(current_team._energy)
+    
+    #Winning by majority
+    if winning_pop_percent is not None:
+        if current_team._alignment >= winning_pop_percent:
+            victor = current_team._team
+
+    #Winning by energy loss
+    if current_team._team.lower() == 'blue' and current_team._energy == 0:
+        victor = 'Red'
+    
+    print(current_team._energy)
+    
     msg_content.append(current_team._message)
     msg_content.append(current_team._potency)
-        
+    msg_content.append(victor)
+    msg_content.append(red_team.__dict__)
+    msg_content.append(blue_team.__dict__)
+    
     return jsonify(msg_content), 200
 
 if __name__ == '__main__':
