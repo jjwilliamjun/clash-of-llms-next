@@ -1,9 +1,11 @@
 import networkx as nx
 import json
 import os
+
 import random
 from excel_api.create_node_network.green_team import GreenTeam
 from excel_api.import_excel import import_node_attributes, import_node_connections
+
 
 green_team=None
 
@@ -103,9 +105,12 @@ def create_node_network(node_attributes, node_connections):
     green_team=GreenTeam(graph, 30, 20) 
     # Convert the graph to node-link data format, which is suitable for saving as JSON
     graph_data = nx.node_link_data(graph)
+    print("Graph Data:", graph_data)
 
     # Define the correct path for saving the JSON file
+
     json_path = os.path.join(os.getcwd(), 'excel_api', 'create_node_network', 'network_output.json')
+
     print(f"Saving network to: {json_path}")
 
     # Save the graph data as a JSON file
