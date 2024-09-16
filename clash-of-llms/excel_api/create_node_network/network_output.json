@@ -269,6 +269,7 @@
             "weight": 0.38,
             "source": "Node_6",
             "target": "Node_26"
+            "target": "Node_26"
         },
         {
             "weight": 0.33,
