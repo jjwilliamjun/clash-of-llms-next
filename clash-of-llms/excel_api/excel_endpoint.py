@@ -1,5 +1,4 @@
 import math
-import math
 import os
 import datetime
 from flask import Flask, send_file, jsonify, request
@@ -149,18 +148,6 @@ def convert_alignment_to_node_count(graph, red, blue):
         return jsonify({"error": "Alignment percentages must sum up to 100. Please enter valid percentages."}), 400
     #print('as node count with size',graph.number_of_nodes(),blue_alignment, red_alignment)
     return blue_alignment, red_alignment
-
-def convert_alignment_to_node_count(graph, red, blue):
-    size= graph.number_of_nodes()
-    print('blue')
-    blue_alignment= math.floor((blue / 100) * size)
-    red_alignment=math.floor((red / 100) * size)
-    if blue_alignment + red_alignment > size:
-        print('ERROR')
-        return jsonify({"error": "Alignment percentages must sum up to 100. Please enter valid percentages."}), 400
-    #print('as node count with size',graph.number_of_nodes(),blue_alignment, red_alignment)
-    return blue_alignment, red_alignment
-
 
 # Route to serve network_output.json
 @app.route('/network_output.json', methods=['GET'])
@@ -313,7 +300,7 @@ def start_next_round():
         current_team.update_energy_level(energy_cost)
     
     #Winning by majority
-    if winning_pop_percent is not None or turn_counter == 5:#to change back
+    if winning_pop_percent is not None:
         if current_team._alignment >= winning_pop_percent:
             victor = current_team._team
 
