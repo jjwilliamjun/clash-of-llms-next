@@ -35,9 +35,6 @@ class GreenTeam:
                         new_alignment=current_alignment[neighbor] + influence_factor
                         self.update_node_alignment(neighbor, new_alignment)
         self.update_team_alignments()
-                      
-        
-        self.new_alignments()
 
     def new_alignments(self):
         alignment=nx.get_node_attributes(self._network_graph, "Alignment")
@@ -110,14 +107,10 @@ class GreenTeam:
     
     def blue_alignment(self):
         """Returns the % of the population that aligns with the blue team"""
-        print("size: ",self._size)
-        print('blue alignment', self._blue_alignment)
-        print("decimal split", self._blue_alignment/self._size)
         return (self._blue_alignment/self._size)*100
 
     def red_alignment(self):
         """Returns the % of the population that aligns with the red team"""
-        print('red',self._red_alignment)
         return (self._red_alignment/self._size)*100
 
         

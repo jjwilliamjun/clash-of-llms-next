@@ -7,7 +7,6 @@ from game_data import GameData, GameTurnData
 def export_data_excel(simulation_data_list):
     """Saving file using pd dataframe"""
     try:
-        print(simulation_data_list.get_results())
         df = pd.DataFrame(simulation_data_list.get_results())
         output = BytesIO()
 

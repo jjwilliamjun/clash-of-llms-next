@@ -12,11 +12,7 @@ from class_api import team
 from set_parameters import *
 import game_data
 from create_node_network.create_network import * 
-
-import game_data
-from create_node_network.create_network import * 
-
-
+ 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
@@ -112,9 +108,6 @@ def import_excel():
                 network_graph=create_node_network(node_attributes, node_connections)
                 blue_alignment, red_alignment=convert_alignment_to_node_count(network_graph, red_team._alignment, blue_team._alignment)
                 green_team=GreenTeam(network_graph, blue_alignment,red_alignment)
-                network_graph=create_node_network(node_attributes, node_connections)
-                blue_alignment, red_alignment=convert_alignment_to_node_count(network_graph, red_team._alignment, blue_team._alignment)
-                green_team=GreenTeam(network_graph, blue_alignment,red_alignment)
                 return jsonify({"message": "Network created successfully from Excel files!"}), 200
             else:
                 return jsonify({"error": "Missing node attributes or connections"}), 400
@@ -138,9 +131,6 @@ def import_excel():
             network_graph=create_node_network(node_attributes, node_connections)
             blue_alignment, red_alignment=convert_alignment_to_node_count(network_graph, red_team._alignment, blue_team._alignment)
             green_team=GreenTeam(network_graph, blue_alignment,red_alignment) #change alignment initial values
-            network_graph=create_node_network(node_attributes, node_connections)
-            blue_alignment, red_alignment=convert_alignment_to_node_count(network_graph, red_team._alignment, blue_team._alignment)
-            green_team=GreenTeam(network_graph, blue_alignment,red_alignment) #change alignment initial values
             return jsonify({"message": "Network generated successfully!"}), 200
         
         else:
@@ -152,14 +142,14 @@ def import_excel():
 
 def convert_alignment_to_node_count(graph, red, blue):
     size= graph.number_of_nodes()
-    print('blue')
     blue_alignment= math.floor((blue / 100) * size)
     red_alignment=math.floor((red / 100) * size)
     if blue_alignment + red_alignment > size:
         print('ERROR')
         return jsonify({"error": "Alignment percentages must sum up to 100. Please enter valid percentages."}), 400
-    print('as node count with size',graph.number_of_nodes(),blue_alignment, red_alignment)
+    #print('as node count with size',graph.number_of_nodes(),blue_alignment, red_alignment)
     return blue_alignment, red_alignment
+
 def convert_alignment_to_node_count(graph, red, blue):
     size= graph.number_of_nodes()
     print('blue')
@@ -168,7 +158,7 @@ def convert_alignment_to_node_count(graph, red, blue):
     if blue_alignment + red_alignment > size:
         print('ERROR')
         return jsonify({"error": "Alignment percentages must sum up to 100. Please enter valid percentages."}), 400
-    print('as node count with size',graph.number_of_nodes(),blue_alignment, red_alignment)
+    #print('as node count with size',graph.number_of_nodes(),blue_alignment, red_alignment)
     return blue_alignment, red_alignment
 
 
@@ -237,7 +227,6 @@ def get_parameters():
 def ui_parameters():
     """Handles the UI parameters input, including random network generation"""
     global green_team
-    global green_team
     try:
         parameters = request.get_json()
 
@@ -260,16 +249,8 @@ def ui_parameters():
             return jsonify({"error": "Invalid green_node_count_option"}), 400
 
         network_graph=create_node_network(node_attributes, node_connections)
-        print('created')
-        print('alignemnt of blue team: ', blue_team._alignment)
         blue_alignment, red_alignment=convert_alignment_to_node_count(network_graph, red_team._alignment, blue_team._alignment)
-        green_team=GreenTeam(network_graph, blue_alignment,red_alignment) #TODO: change alignment values
-
-        network_graph=create_node_network(node_attributes, node_connections)
-        print('created')
-        print('alignemnt of blue team: ', blue_team._alignment)
-        blue_alignment, red_alignment=convert_alignment_to_node_count(network_graph, red_team._alignment, blue_team._alignment)
-        green_team=GreenTeam(network_graph, blue_alignment,red_alignment) #TODO: change alignment values
+        green_team=GreenTeam(network_graph, blue_alignment,red_alignment)
 
         return jsonify({"message": "Network generated successfully!"}), 200
 
@@ -285,17 +266,13 @@ def export_excel():
     try:
         if game_data is None:
             return jsonify({"error": "No game data available"}), 400
-        print('found excel file')
-        print(game_data)
         excel_file = export_data_excel(game_data)
-        print(excel_file)
 
         if excel_file is None:
             return jsonify({"error": "Failed to generate the Excel file"}), 500
         #now = datetime.now()
         #timestamp = now.strftime("%H_%M_%S")
         excel_file_name = f"clash_of_llms.xlsx"
-        print('sending file now')
         return send_file(
             excel_file,
             download_name=excel_file_name,
@@ -313,14 +290,7 @@ def start_next_round():
     global green_team
     turn_data=GameTurnData()
     turn_counter = turn_counter + 1
-    
-    global turn_counter
-    global green_team
-    turn_data=GameTurnData()
-    turn_counter = turn_counter + 1
-    
     msg_content = []
-    victor = None
     victor = None
     
     team_colour = request.args.get('team')
@@ -341,25 +311,6 @@ def start_next_round():
     if current_team._team.lower() == 'blue':
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)
-        print('team energy:', current_team._energy)
-    
-    #Winning by majority
-    if winning_pop_percent is not None or turn_counter == 5:#to change back
-        if current_team._alignment >= winning_pop_percent:
-            victor = current_team._team
-
-    #Winning by energy loss
-    if current_team._team.lower() == 'blue' and current_team._energy == 0:
-        victor = 'Red'
-    
-    print(current_team._energy)
-    
-    green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
-    green_team.update_green_network()
-    if current_team._team.lower() == 'blue':
-        energy_cost = current_team.energy_cost()
-        current_team.update_energy_level(energy_cost)
-        print('team energy:', current_team._energy)
     
     #Winning by majority
     if winning_pop_percent is not None or turn_counter == 5:#to change back
@@ -374,11 +325,6 @@ def start_next_round():
     
     msg_content.append(current_team._message)
     msg_content.append(current_team._potency)
-    msg_content.append(victor)
-    msg_content.append(red_team.__dict__)
-    msg_content.append(blue_team.__dict__)
-    turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, current_team._potency, current_team._energy, green_team.red_alignment(), green_team.blue_alignment())
-    game_data.add_entry(turn_data)
     msg_content.append(victor)
     msg_content.append(red_team.__dict__)
     msg_content.append(blue_team.__dict__)

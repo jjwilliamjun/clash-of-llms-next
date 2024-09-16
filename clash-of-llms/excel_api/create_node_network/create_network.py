@@ -84,8 +84,6 @@ def generate_user_input_network(node_count, connections_per_node):
 
     return node_attributes, node_connections
 
-
-
 def create_node_network(node_attributes, node_connections):
     graph = nx.DiGraph()  # Create a directed graph
     global green_team
