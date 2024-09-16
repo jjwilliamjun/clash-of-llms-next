@@ -1,3 +1,4 @@
+import math
 import networkx as nx
 import json
 import os
@@ -82,6 +83,8 @@ def generate_user_input_network(node_count, connections_per_node):
                 node_connections[target_node]["Influence_Factor"] += f",{reverse_influence}"
 
     return node_attributes, node_connections
+
+
 
 def create_node_network(node_attributes, node_connections):
     graph = nx.DiGraph()  # Create a directed graph
