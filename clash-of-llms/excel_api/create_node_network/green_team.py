@@ -34,8 +34,9 @@ class GreenTeam:
                     else:
                         new_alignment=current_alignment[neighbor] + influence_factor
                         self.update_node_alignment(neighbor, new_alignment)
+        self.update_team_alignments()
                       
-        self.update_team_alignments(new_alignment)
+        
         self.new_alignments()
 
     def new_alignments(self):
@@ -46,6 +47,8 @@ class GreenTeam:
     def broadcast_message(self, potency, team, influence_factor):
         "Updates the green nodes when a message is broadcasted from red or blue teams"
         current_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
+        if isinstance(potency, str):
+            return
         alignment_influence=(float(potency)/100)*influence_factor
         for node in self._network_graph.nodes():
             #Assumes blue alignment is negative, and red alignment is positive
@@ -55,12 +58,15 @@ class GreenTeam:
             else:
                 new_alignment=current_alignment[node] + alignment_influence
                 self.update_node_alignment(node, new_alignment)
-        self.new_alignments()
+        self.update_team_alignments()
+            
+        #self.new_alignments()
 
 
     def update_node_alignment(self, current_node, new_alignment):
         """Updates the alignment of a green node"""
-        nx.set_node_attributes(self._network_graph, {current_node: new_alignment}, "Alignment")
+        if(new_alignment > self.alignment_min and new_alignment < self.alignment_max):
+            nx.set_node_attributes(self._network_graph, {current_node: new_alignment}, "Alignment")
         return
 
     def influence_neighbours(self, neighbour_influence, node_alignment):
@@ -70,13 +76,30 @@ class GreenTeam:
         return update_factor
 
 
-    def update_team_alignments(self, node_alignment):
+    def update_team_alignments(self):
         """Updates the alignment of the graph after both teams have broadcasted a message, and each node has influenced their neighbours"""
         """Operates under the assumption that alignment_max represents complete red team alignment, and blue team alignment is alignment_min"""
-        if node_alignment > self.alignment_max/2:
-            self._red_alignment+=1
-        elif node_alignment < self.alignment_min/2:
-            self._blue_alignment+=1
+        current_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
+        old_alignment=nx.get_node_attributes(self._previous_network_graph, "Alignment")
+        for node in self._network_graph.nodes():
+            if current_alignment[node] >= self.alignment_max/2:
+                if old_alignment[node] < self.alignment_max/2:
+                    self._red_alignment+=1
+                    if old_alignment[node] <= self.alignment_min/2:
+                        self._blue_alignment -=1 
+            elif current_alignment[node] <= self.alignment_min/2:
+                if old_alignment[node] > self.alignment_min/2:
+                    self._blue_alignment += 1
+                    if old_alignment[node] >= self.alignment_max/2:
+                        self._red_alignment -=1
+            elif current_alignment[node] > self.alignment_min/2 and current_alignment[node] < self.alignment_max/2:
+                if old_alignment[node] >= self.alignment_max/2:
+                    #Previously red
+                    self._red_alignment -=1
+                elif old_alignment[node] <= self.alignment_min/2:
+                    # Previosuly blue
+                    self._blue_alignment -=1 
+        print('balance of alignment', self._blue_alignment + self._red_alignment, 'for size', self._network_graph.number_of_nodes())
 
     def print_all_node_alignments(self):
         """Prints the alignment of all nodes in the network graph: for testing purposes only"""
@@ -87,10 +110,14 @@ class GreenTeam:
     
     def blue_alignment(self):
         """Returns the % of the population that aligns with the blue team"""
+        print("size: ",self._size)
+        print('blue alignment', self._blue_alignment)
+        print("decimal split", self._blue_alignment/self._size)
         return (self._blue_alignment/self._size)*100
 
     def red_alignment(self):
         """Returns the % of the population that aligns with the red team"""
+        print('red',self._red_alignment)
         return (self._red_alignment/self._size)*100
 
         

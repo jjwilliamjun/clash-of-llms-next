@@ -25,13 +25,21 @@ class GameTurnData:
         self.message_chosen = None
         self.potency = None
         self.energy_level = None
-        self.increased_alignment = None
-        self.decreased_alignment = None
+        self.red_alignment = None
+        self.blue_alignment = None
 
     def set_turn(self, turn):
         """Setting turn to self"""
         self.turn = turn
-
+    def set_all_turn_data(self, turn, team, message_chosen, potency, energy_level, red_alignment, blue_alignment):
+        self.set_turn(turn)
+        self.set_team(team)
+        self.set_message_chosen(message_chosen)
+        self.set_potency(potency)
+        self.set_energy_level(energy_level)
+        self.set_red_alignment(red_alignment)
+        self.set_blue_alignment(blue_alignment)
+        
     def set_team(self, team):
         """Setting team"""
         self.team = team
@@ -48,13 +56,13 @@ class GameTurnData:
         """Energy level"""
         self.energy_level = energy_level
 
-    def set_increased_alignment(self, increased_alignment):
+    def set_red_alignment(self, red_alignment):
         """increase in alignment"""
-        self.increased_alignment = increased_alignment
+        self.red_alignment = red_alignment
 
-    def set_decreased_alignment(self, decreased_alignment):
+    def set_blue_alignment(self, blue_alignment):
         """decrease in alignment"""
-        self.decreased_alignment = decreased_alignment
+        self.blue_alignment = blue_alignment
 
     def get_turn_data(self):
         """Data associated with the turn"""
@@ -64,6 +72,6 @@ class GameTurnData:
             'Message chosen': self.message_chosen, 
             'Potency of message': self.potency, 
             'Energy level': self.energy_level, 
-            '% of nodes with increased alignment towards team': self.increased_alignment, 
-            '% of nodes with decreased alignment towards team': self.decreased_alignment
+            '% of nodes red-aligned': self.red_alignment, 
+            '% of nodes blue_aligned': self.blue_alignment
         }
