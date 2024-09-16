@@ -103,18 +103,19 @@ def create_node_network(node_attributes, node_connections):
     # Convert the graph to node-link data format, which is suitable for saving as JSON
     graph_data = nx.node_link_data(graph)
 
-    # Define the correct path for saving the JSON file
-    json_path = os.path.join(os.getcwd(), 'excel_api', 'create_node_network', 'network_output.json')
+    # Save the graph data as `round_0.json`
+    json_path = os.path.join(os.getcwd(), 'excel_api', 'create_node_network', 'round_data', 'round_0.json')
     print(f"Saving network to: {json_path}")
 
     # Save the graph data as a JSON file
     try:
         with open(json_path, 'w') as f:
             json.dump(graph_data, f, indent=4)
-        print(f"Network JSON file successfully created at: {json_path}")
+        print(f"Initial network JSON file successfully created at: {json_path}")
     except Exception as e:
-        print(f"Failed to save network JSON file: {str(e)}")
+        print(f"Failed to save initial network JSON file: {str(e)}")
     return graph
+
 # Example usage
 if __name__ == '__main__':
     # Assuming that the import_excel.py script provides the following functions

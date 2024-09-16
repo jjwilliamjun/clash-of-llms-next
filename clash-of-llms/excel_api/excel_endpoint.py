@@ -149,15 +149,20 @@ def convert_alignment_to_node_count(graph, red, blue):
     print('as node count with size',graph.number_of_nodes(),blue_alignment, red_alignment)
     return blue_alignment, red_alignment
 
-# Route to serve network_output.json
-@app.route('/network_output.json', methods=['GET'])
-def serve_network_output():
-    """Serves the network output JSON file"""
-    json_path = os.path.join(os.path.dirname(__file__), 'create_node_network', 'network_output.json')
+# Route to serve the JSON file for a specific round
+@app.route('/excel_api/round_data/<int:round_number>', methods=['GET'])
+@cross_origin()
+def serve_round_data(round_number):
+    """Serves the JSON file for the specified round"""
+    # Construct the filename and path based on the round number
+    json_filename = f'round_{round_number}.json'
+    json_path = os.path.join(os.getcwd(), 'excel_api', 'create_node_network', 'round_data', json_filename)
+    
+    # Check if the file exists and serve it
     if os.path.exists(json_path):
         return send_file(json_path, as_attachment=False, mimetype='application/json')
     else:
-        return jsonify({"error": "JSON file not found"}), 404
+        return jsonify({"error": f"Round JSON file not found: {json_filename}"}), 404
 
 # Route to serve LLM file for a specific team
 @app.route('/llm_file/<team_colour>', methods=['GET'])
@@ -292,20 +297,26 @@ def start_next_round():
     else:
         return jsonify({"error": "Incorrect team colour"}), 404
     
+    # Generate message and update green network
     current_team.generate_message()
-    if(not isinstance(current_team._potency,str)):
+    if not isinstance(current_team._potency, str):
         green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
         green_team.update_green_network()
+
+        # Add the new function to create and save a JSON file for the current round
+        create_round_json(turn_counter, green_team._network_graph)
+    
+    # Update energy level if the current team is blue
     if current_team._team.lower() == 'blue':
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)
     
-    #Winning by majority
+    # Winning by majority
     if winning_pop_percent is not None:
         if current_team._alignment >= winning_pop_percent:
             victor = current_team._team
 
-    #Winning by energy loss
+    # Winning by energy loss
     if current_team._team.lower() == 'blue' and current_team._energy == 0:
         victor = 'Red'
     
@@ -319,6 +330,27 @@ def start_next_round():
     turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, current_team._potency, current_team._energy, green_team.red_alignment(), green_team.blue_alignment())
     game_data.add_entry(turn_data)
     return jsonify(msg_content), 200
+
+def create_round_json(round_number, network_graph):
+    """Creates a JSON file for the network graph for the given round"""
+    # Convert the graph to node-link data format
+    graph_data = nx.node_link_data(network_graph)
+    
+    # Define the path to save the JSON file (e.g., round_1.json, round_2.json)
+    json_filename = f'round_{round_number}.json'
+    json_path = os.path.join(os.getcwd(), 'excel_api', 'create_node_network', 'round_data', json_filename)
+
+    # Ensure the 'round_data' directory exists
+    os.makedirs(os.path.dirname(json_path), exist_ok=True)
+
+    # Save the graph data to the JSON file
+    try:
+        with open(json_path, 'w') as f:
+            json.dump(graph_data, f, indent=4)
+        print(f"Round {round_number} JSON file successfully created at: {json_path}")
+    except Exception as e:
+        print(f"Failed to save Round {round_number} JSON file: {str(e)}")
+
 
 if __name__ == '__main__':
     #game_data = generate_game_data()  # Testing purposes
