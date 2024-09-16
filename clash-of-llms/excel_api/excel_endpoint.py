@@ -146,7 +146,7 @@ def convert_alignment_to_node_count(graph, red, blue):
     if blue_alignment + red_alignment > size:
         print('ERROR')
         return jsonify({"error": "Alignment percentages must sum up to 100. Please enter valid percentages."}), 400
-    #print('as node count with size',graph.number_of_nodes(),blue_alignment, red_alignment)
+    print('as node count with size',graph.number_of_nodes(),blue_alignment, red_alignment)
     return blue_alignment, red_alignment
 
 # Route to serve network_output.json
@@ -293,8 +293,9 @@ def start_next_round():
         return jsonify({"error": "Incorrect team colour"}), 404
     
     current_team.generate_message()
-    green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
-    green_team.update_green_network()
+    if(not isinstance(current_team._potency,str)):
+        green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
+        green_team.update_green_network()
     if current_team._team.lower() == 'blue':
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)

@@ -13,6 +13,7 @@ class GreenTeam:
         self.alignment_max=1 #To change once that's parsed in from excel files
 
     def update_green_network(self):
+        print('updating green network')
         self._previous_network_graph=copy.deepcopy(self._network_graph)
 
         for old_node in self._previous_network_graph.nodes():
@@ -42,10 +43,10 @@ class GreenTeam:
             print(node, alignment[node])
 
     def broadcast_message(self, potency, team, influence_factor):
+        print('broadcasting message')
         "Updates the green nodes when a message is broadcasted from red or blue teams"
         current_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
-        if isinstance(potency, str):
-            return
+        self._previous_network_graph=copy.deepcopy(self._network_graph)
         alignment_influence=(float(potency)/100)*influence_factor
         for node in self._network_graph.nodes():
             #Assumes blue alignment is negative, and red alignment is positive
@@ -62,8 +63,16 @@ class GreenTeam:
 
     def update_node_alignment(self, current_node, new_alignment):
         """Updates the alignment of a green node"""
-        if(new_alignment > self.alignment_min and new_alignment < self.alignment_max):
+        current_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
+        print('updating node, old alignment was' , current_alignment[current_node], 'new alignment is ', new_alignment)
+        if(new_alignment <= self.alignment_min):
+            nx.set_node_attributes(self._network_graph, {current_node: self.alignment_min}, "Alignment")
+        elif (new_alignment >= self.alignment_max):
+            nx.set_node_attributes(self._network_graph, {current_node: self.alignment_max}, "Alignment")
+        else:
             nx.set_node_attributes(self._network_graph, {current_node: new_alignment}, "Alignment")
+        new_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
+        print('alignemnt set to', new_alignment[current_node] )
         return
 
     def influence_neighbours(self, neighbour_influence, node_alignment):
@@ -78,24 +87,14 @@ class GreenTeam:
         """Operates under the assumption that alignment_max represents complete red team alignment, and blue team alignment is alignment_min"""
         current_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
         old_alignment=nx.get_node_attributes(self._previous_network_graph, "Alignment")
+        self._red_alignment=0
+        self._blue_alignment=0
         for node in self._network_graph.nodes():
             if current_alignment[node] >= self.alignment_max/2:
-                if old_alignment[node] < self.alignment_max/2:
-                    self._red_alignment+=1
-                    if old_alignment[node] <= self.alignment_min/2:
-                        self._blue_alignment -=1 
+                self._red_alignment += 1
             elif current_alignment[node] <= self.alignment_min/2:
-                if old_alignment[node] > self.alignment_min/2:
-                    self._blue_alignment += 1
-                    if old_alignment[node] >= self.alignment_max/2:
-                        self._red_alignment -=1
-            elif current_alignment[node] > self.alignment_min/2 and current_alignment[node] < self.alignment_max/2:
-                if old_alignment[node] >= self.alignment_max/2:
-                    #Previously red
-                    self._red_alignment -=1
-                elif old_alignment[node] <= self.alignment_min/2:
-                    # Previosuly blue
-                    self._blue_alignment -=1 
+                self._blue_alignment +=1
+
         print('balance of alignment', self._blue_alignment + self._red_alignment, 'for size', self._network_graph.number_of_nodes())
 
     def print_all_node_alignments(self):

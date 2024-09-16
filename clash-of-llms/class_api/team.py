@@ -32,10 +32,11 @@ class team:
         Attempt to generate and send a message. Consumes energy equal to message_cost.
         """
         #End game if energy reaches 0
-        if self._energy - energy_cost <= 0 :
-            self._energy = 0
-        else:
-            self._energy -= energy_cost
+        if isinstance(energy_cost,float): #Sanitising GPT output
+            if self._energy - energy_cost <= 0 :
+                self._energy = 0
+            else:
+                self._energy -= energy_cost
     
     #TODO potentially bring out to game  parameters
     def energy_cost(self):
