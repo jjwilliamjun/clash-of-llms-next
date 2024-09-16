@@ -44,17 +44,20 @@ const interpolateColor = (color1, color2, factor) => {
  * @returns {string} - The color of the node.
  */
 const getColor = (value) => {
-  const normalizedValue = (value + 1) / 2;
-  if (normalizedValue <= 0.25) {
-    return interpolateColor('#FF0000', '#FF7F7F', normalizedValue / 0.25);
-  } else if (normalizedValue > 0.5 && normalizedValue <= 0.75) {
-    return interpolateColor('#31a354', '#0e86d4', (normalizedValue - 0.5) / 0.25);
-  } else if (normalizedValue > 0.75 && normalizedValue <= 1) {
-    return interpolateColor('#0e86d4', '#0006b1', (normalizedValue - 0.75) / 0.25);
-  } else {
-    return '#0006b1';
-  }
-};
+    const normalizedValue = (value + 1) / 2;
+    if (normalizedValue <= 0.25) {
+      return interpolateColor('#0006b1', '#0e86d4', normalizedValue / 0.25);
+    } else if (normalizedValue > 0.25 && normalizedValue <= 0.5) {
+      return interpolateColor('#0e86d4', '#31a354', (normalizedValue - 0.25) / 0.25);
+    } else if (normalizedValue > 0.5 && normalizedValue <= 0.75) {
+      return interpolateColor('#31a354', '#FF7F7F', (normalizedValue - 0.5) / 0.25);
+    } else if (normalizedValue > 0.75 && normalizedValue <= 1) {
+      return interpolateColor('#FF7F7F', '#FF0000', (normalizedValue - 0.75) / 0.25);
+    } else {
+      return '#FF0000';
+    }
+  };
+  
 
 /**
  * Draws the network graph on a given container element.
