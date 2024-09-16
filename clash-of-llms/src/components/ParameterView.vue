@@ -19,6 +19,7 @@
                             <p><span style="font-weight: bold;">Influence Factor: </span> {{ blue_team._influence_factor }}</p>
                             <p><span style="font-weight: bold;">Number of Messages Generated Per Turn: </span> {{ blue_team._message_count }}</p>
                             <p><span style="font-weight: bold;">Temperature</span> {{ blue_team._temperature }}</p>
+                            
                         </div>
                         <div v-if="blue_team_turn">
                             <button style="background-color: #0b7ffc;; border: none" @click="nextTurn">Next round</button>
@@ -49,6 +50,8 @@
             <div v-if="message && potency && !winner" id="Message">
                 <p><span style="font-weight: bold;">Message: </span> {{ message }}</p>
                 <p><span style="font-weight: bold;">Potency: </span> {{ potency }}</p>
+                <button @click="downloadExcel" class="!py-20">Download Excel upon simulation end</button>
+
             </div>
             <div v-if="winner">
                 <h1>Winner: {{ winner }}</h1>
@@ -85,6 +88,31 @@ import NetworkGraph from './NetworkGraph.vue';
         NetworkGraph
     },
     methods: {
+        downloadExcel() {
+      axios({
+        url: 'http://localhost:5000/excel_api/excel_export', 
+        method: 'GET',
+        responseType: 'blob', 
+      })
+      .then((response) => {
+        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const link = document.createElement('a');
+
+        link.href = window.URL.createObjectURL(blob);
+        const now = new Date();
+        const timestamp = now.getHours() + "_" + now.getMinutes() + "_" + now.getSeconds();
+    
+        const excel_file_name = `clash_of_llms_${timestamp}.xlsx`;
+        link.download = excel_file_name; 
+        
+        link.click();
+        
+        window.URL.revokeObjectURL(link.href);
+      })
+      .catch((error) => {
+        console.error('Error downloading the Excel file:', error);
+      });
+    },
         getParameters() {
             const path = 'http://127.0.0.1:5000/excel_api/get_parameters'
             axios.get(path)

@@ -1,3 +1,4 @@
+import math
 import os
 import datetime
 from flask import Flask, send_file, jsonify, request
@@ -8,8 +9,9 @@ from excel_export import *
 from import_excel import *
 from class_api import team
 from set_parameters import *
-from create_node_network.create_network import create_node_network, generate_random_network, generate_user_input_network
-
+import game_data
+from create_node_network.create_network import * 
+ 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
@@ -18,9 +20,11 @@ LLM_DIRECTORY = os.path.join(os.path.dirname(__file__), 'llm_files')
 os.makedirs(LLM_DIRECTORY, exist_ok=True)
 
 # Global variables to store game data and team settings
-game_data = None  
+game_data = GameData()  
+turn_counter=0
 red_team = None
 blue_team = None
+green_team = None
 winning_pop_percent = None
 custom_llms = {}  # Placeholder to store custom LLMs
 
@@ -63,7 +67,7 @@ def import_excel():
     """Handles the import of Excel files or random generation of network data"""
     node_attributes = None
     node_connections = None
-
+    global green_team
     try:
         if request.files:
             for key, file_storage in request.files.items():
@@ -100,7 +104,9 @@ def import_excel():
             # Ensure both node_attributes and node_connections are available
             if node_attributes and node_connections:
                 # Create the network and save it as a JSON file
-                create_node_network(node_attributes, node_connections)
+                network_graph=create_node_network(node_attributes, node_connections)
+                blue_alignment, red_alignment=convert_alignment_to_node_count(network_graph, red_team._alignment, blue_team._alignment)
+                green_team=GreenTeam(network_graph, blue_alignment,red_alignment)
                 return jsonify({"message": "Network created successfully from Excel files!"}), 200
             else:
                 return jsonify({"error": "Missing node attributes or connections"}), 400
@@ -121,7 +127,9 @@ def import_excel():
                 return jsonify({"error": "Invalid option provided"}), 400
 
             # Create the network and save it as a JSON file
-            create_node_network(node_attributes, node_connections)
+            network_graph=create_node_network(node_attributes, node_connections)
+            blue_alignment, red_alignment=convert_alignment_to_node_count(network_graph, red_team._alignment, blue_team._alignment)
+            green_team=GreenTeam(network_graph, blue_alignment,red_alignment) #change alignment initial values
             return jsonify({"message": "Network generated successfully!"}), 200
         
         else:
@@ -130,6 +138,16 @@ def import_excel():
     except Exception as e:
         print(f"Error during file upload: {e}")
         return jsonify({"error": str(e)}), 500
+
+def convert_alignment_to_node_count(graph, red, blue):
+    size= graph.number_of_nodes()
+    blue_alignment= math.floor((blue / 100) * size)
+    red_alignment=math.floor((red / 100) * size)
+    if blue_alignment + red_alignment > size:
+        print('ERROR')
+        return jsonify({"error": "Alignment percentages must sum up to 100. Please enter valid percentages."}), 400
+    print('as node count with size',graph.number_of_nodes(),blue_alignment, red_alignment)
+    return blue_alignment, red_alignment
 
 # Route to serve network_output.json
 @app.route('/network_output.json', methods=['GET'])
@@ -195,6 +213,7 @@ def get_parameters():
 @cross_origin()
 def ui_parameters():
     """Handles the UI parameters input, including random network generation"""
+    global green_team
     try:
         parameters = request.get_json()
 
@@ -216,7 +235,10 @@ def ui_parameters():
         else:
             return jsonify({"error": "Invalid green_node_count_option"}), 400
 
-        create_node_network(node_attributes, node_connections)
+        network_graph=create_node_network(node_attributes, node_connections)
+        blue_alignment, red_alignment=convert_alignment_to_node_count(network_graph, red_team._alignment, blue_team._alignment)
+        green_team=GreenTeam(network_graph, blue_alignment,red_alignment)
+
         return jsonify({"message": "Network generated successfully!"}), 200
 
     except Exception as e:
@@ -224,22 +246,20 @@ def ui_parameters():
     
     return '', 200
 
-@app.route('/excel_api/export_excel', methods=['GET'])
+
+@app.route('/excel_api/excel_export', methods=['GET'])
 def export_excel():
     """Exports game data to Excel"""
     try:
         if game_data is None:
             return jsonify({"error": "No game data available"}), 400
-
         excel_file = export_data_excel(game_data)
 
         if excel_file is None:
             return jsonify({"error": "Failed to generate the Excel file"}), 500
-        
-        now = datetime.now()
-        timestamp = now.strftime("%H_%M_%S")
-        excel_file_name = f"clash_of_llms_{timestamp}.xlsx"
-
+        #now = datetime.now()
+        #timestamp = now.strftime("%H_%M_%S")
+        excel_file_name = f"clash_of_llms.xlsx"
         return send_file(
             excel_file,
             download_name=excel_file_name,
@@ -249,11 +269,14 @@ def export_excel():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
 # Route to serve next round request from the frontend
 @app.route('/excel_api/next_round', methods=['GET'])
 @cross_origin()
 def start_next_round():
+    global turn_counter
+    global green_team
+    turn_data=GameTurnData()
+    turn_counter = turn_counter + 1
     msg_content = []
     victor = None
     
@@ -270,10 +293,12 @@ def start_next_round():
         return jsonify({"error": "Incorrect team colour"}), 404
     
     current_team.generate_message()
+    if(not isinstance(current_team._potency,str)):
+        green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
+        green_team.update_green_network()
     if current_team._team.lower() == 'blue':
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)
-        print(current_team._energy)
     
     #Winning by majority
     if winning_pop_percent is not None:
@@ -291,9 +316,10 @@ def start_next_round():
     msg_content.append(victor)
     msg_content.append(red_team.__dict__)
     msg_content.append(blue_team.__dict__)
-    
+    turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, current_team._potency, current_team._energy, green_team.red_alignment(), green_team.blue_alignment())
+    game_data.add_entry(turn_data)
     return jsonify(msg_content), 200
 
 if __name__ == '__main__':
-    game_data = generate_game_data()  # Testing purposes
+    #game_data = generate_game_data()  # Testing purposes
     app.run(debug=True)

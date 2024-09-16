@@ -32,11 +32,12 @@ class team:
         Attempt to generate and send a message. Consumes energy equal to message_cost.
         """
         #End game if energy reaches 0
-        if self._energy - energy_cost <= 0 :
-            self._energy = 0
-        else:
-            self._energy -= energy_cost
-
+        if isinstance(energy_cost,float): #Sanitising GPT output
+            if self._energy - energy_cost <= 0 :
+                self._energy = 0
+            else:
+                self._energy -= energy_cost
+    
     #TODO potentially bring out to game  parameters
     def energy_cost(self):
         """
@@ -49,7 +50,8 @@ class team:
         Returns:
         - float: The calculated energy cost.
         """
-
+        if isinstance(self._potency, str): 
+            return
         if not (0 <= self._potency <= 100):
             raise ValueError("Potency must be between 0 and 100.")
         #TODO more research needed on the way to get energy cost from potency
