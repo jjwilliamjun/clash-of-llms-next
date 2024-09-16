@@ -64,7 +64,7 @@ class GreenTeam:
     def update_node_alignment(self, current_node, new_alignment):
         """Updates the alignment of a green node"""
         current_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
-        print('updating node, old alignment was' , current_alignment[current_node], 'new alignment is ', new_alignment)
+        #print('updating node, old alignment was' , current_alignment[current_node], 'new alignment is ', new_alignment)
         if(new_alignment <= self.alignment_min):
             nx.set_node_attributes(self._network_graph, {current_node: self.alignment_min}, "Alignment")
         elif (new_alignment >= self.alignment_max):
@@ -72,7 +72,7 @@ class GreenTeam:
         else:
             nx.set_node_attributes(self._network_graph, {current_node: new_alignment}, "Alignment")
         new_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
-        print('alignemnt set to', new_alignment[current_node] )
+        #print('alignemnt set to', new_alignment[current_node] )
         return
 
     def influence_neighbours(self, neighbour_influence, node_alignment):
@@ -86,7 +86,6 @@ class GreenTeam:
         """Updates the alignment of the graph after both teams have broadcasted a message, and each node has influenced their neighbours"""
         """Operates under the assumption that alignment_max represents complete red team alignment, and blue team alignment is alignment_min"""
         current_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
-        old_alignment=nx.get_node_attributes(self._previous_network_graph, "Alignment")
         self._red_alignment=0
         self._blue_alignment=0
         for node in self._network_graph.nodes():
@@ -95,7 +94,7 @@ class GreenTeam:
             elif current_alignment[node] <= self.alignment_min/2:
                 self._blue_alignment +=1
 
-        print('balance of alignment', self._blue_alignment + self._red_alignment, 'for size', self._network_graph.number_of_nodes())
+        #print('balance of alignment', self._blue_alignment + self._red_alignment, 'for size', self._network_graph.number_of_nodes())
 
     def print_all_node_alignments(self):
         """Prints the alignment of all nodes in the network graph: for testing purposes only"""
