@@ -61,12 +61,13 @@
             <div v-if="message && potency && !winner" id="Message">
                 <p><span style="font-weight: bold;">Message: </span> {{ message }}</p>
                 <p><span style="font-weight: bold;">Potency: </span> {{ potency }}</p>
-                <button @click="downloadExcel" class="!py-20">Download Excel upon simulation end</button>
+                
             </div>
             
             <!-- Winner Announcement -->
             <div v-if="winner">
                 <h1>Winner: {{ winner }}</h1>
+                <button @click="downloadExcel" class="!py-20">Download Excel upon simulation end</button>
             </div>
         </div>
     </div>
