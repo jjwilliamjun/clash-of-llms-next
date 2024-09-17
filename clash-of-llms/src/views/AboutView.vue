@@ -175,12 +175,14 @@
         <h1>{{ guideData.nodeAttributes.title }}</h1>
         <h3>{{ guideData.nodeAttributes.overview.title }}</h3>
         <p>{{ guideData.nodeAttributes.overview.content }}</p>
-
         <!-- Alignment Explanation -->
         <h3>{{ guideData.nodeAttributes.alignmentExplanation.title }}</h3>
-        <div v-for="alignment in guideData.nodeAttributes.alignmentExplanation.content" :key="alignment.range">
-          <p><strong>{{ alignment.range }}:</strong> {{ alignment.description }}</p>
-        </div>
+        <ul>
+          <li v-for="alignment in guideData.nodeAttributes.alignmentExplanation.content" :key="alignment.range">
+            <strong>{{ alignment.range }}:</strong> {{ alignment.description }}
+          </li>
+        </ul>
+
 
         <!-- Node Attributes Example Table -->
         <h3>{{ guideData.nodeAttributes.example.title }}</h3>
