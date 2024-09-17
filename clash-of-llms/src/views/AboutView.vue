@@ -6,6 +6,7 @@
         <li><a href="javascript:void(0)" @click="scrollToSection('project-description')">Project Description</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('importing-files')">Importing Files</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('simulation-settings')">Simulation Settings</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('custom-llm-guide')">Custom LLM Guide</a></li> <!-- New Section -->
         <li><a href="javascript:void(0)" @click="scrollToSection('node-connections')">Node Connections</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('node-attributes')">Node Attributes</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('export-simulation-data')">Export Simulation Data</a></li>
@@ -88,10 +89,32 @@
           <li v-for="instruction in guideData.simulationSettings.instructions.content" :key="instruction">{{ instruction }}</li>
         </ul>
         <!-- Download Simulation Settings Example -->
-        <h3>Download Example File</h3>
-        <a href="/documents/SimulationSettings.xlsx" download="SimulationSettings.xlsx">SimulationSettings.xlsx</a>
+        <div class="download-section">
+          <h3>Download Example File</h3>
+          <a href="/documents/SimulationSettings.xlsx" download="SimulationSettings.xlsx">SimulationSettings.xlsx</a>
+        </div>
       </section>
       
+      <!-- Custom LLM Guide Section -->
+      <section id="custom-llm-guide" v-if="!loading && customLLMGuide">
+        <h1>{{ customLLMGuide.title }}</h1>
+        <p>{{ customLLMGuide.description }}</p>
+        
+        <!-- Steps to create Custom LLM File -->
+        <div v-for="step in customLLMGuide.steps" :key="step.title">
+          <h3>{{ step.title }}</h3>
+          <ul>
+            <li v-for="(content, index) in step.content" :key="index">
+              <template v-if="typeof content === 'string'">
+                {{ content }}
+              </template>
+              <template v-else>
+                <pre>{{ JSON.stringify(content.template, null, 2) }}</pre>
+              </template>
+            </li>
+          </ul>
+        </div>
+      </section>      
 
       <!-- Node Connections Section -->
       <section id="node-connections" v-if="!loading && guideData.nodeConnections">
@@ -141,8 +164,10 @@
           <li v-for="tip in guideData.nodeConnections.tips.content" :key="tip">{{ tip }}</li>
         </ul>
         <!-- Download Node Connections Example -->
-        <h3>Download Example File</h3>
-        <a href="/documents/NodeConnections.xlsx" download="NodeConnections.xlsx">NodeConnections.xlsx</a>        
+        <div class="download-section">
+          <h3>Download Example File</h3>
+          <a href="/documents/NodeConnections.xlsx" download="NodeConnections.xlsx">NodeConnections.xlsx</a> 
+        </div>  
       </section>
 
       <!-- Node Attributes Section -->
@@ -185,8 +210,11 @@
         </ul>
 
         <!-- Download Node Attributes Example -->
-        <h3>Download Example File</h3>
-        <a href="/documents/NodeAttributes.xlsx" download="NodeAttributes.xlsx">NodeAttributes.xlsx</a>        
+        <div class="download-section">
+          <h3>Download Example File</h3>
+          <a href="/documents/NodeAttributes.xlsx" download="NodeAttributes.xlsx">NodeAttributes.xlsx</a>
+        </div>
+        
       </section>
 
       <!-- Export Simulation Data Section -->
@@ -241,6 +269,7 @@ export default {
       guideData: {},              // For storing data from guide.json (Excel Guide)
       projectDescription: null,   // For storing data from project_description.json
       exportSimulationData: null, // For storing data from export_simulation.json
+      customLLMGuide: null,       // For storing data from custom_llm_option.json
       loading: true               // Loading state
     };
   },
@@ -255,7 +284,8 @@ export default {
         await Promise.all([
           this.fetchProjectDescription(),
           this.fetchGuideData(),
-          this.fetchExportSimulationData()
+          this.fetchExportSimulationData(),
+          this.fetchCustomLLMGuide() // Fetch the custom LLM guide
         ]);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -291,6 +321,15 @@ export default {
       }
     },
 
+    async fetchCustomLLMGuide() {
+      try {
+        const response = await axios.get('/documents/custom_llm_option.json');
+        this.customLLMGuide = response.data.custom_llm_guide;
+      } catch (error) {
+        console.error('Error fetching custom LLM guide:', error);
+      }
+    },
+
     // Method to scroll to the section smoothly
     scrollToSection(sectionId) {
       const section = document.getElementById(sectionId);
@@ -301,6 +340,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .container {
@@ -345,10 +385,10 @@ nav ul li a:focus {
 
 /* Content area for sections */
 .content-area {
-  margin-left: 220px;
+  margin: 0 auto; /* Center the content area */
   padding: 20px;
   flex: 1;
-  text-align: left; /* Ensure the content is aligned left */
+  max-width: 800px; /* Set a maximum width for the content */
 }
 
 html {
@@ -515,6 +555,21 @@ ol, ul {
 html {
   scroll-behavior: smooth;
 }
+
+/* Add this to your style section */
+.download-section {
+  text-align: left; /* Aligns text to the left */
+  margin-top: 20px; /* Add some margin if needed */
+}
+
+/* You can also apply this rule directly to h3 and a if needed */
+.download-section h3,
+.download-section a {
+  display: block; /* Makes sure each element starts on a new line */
+  margin: 0; /* Remove any default margin */
+  text-align: left; /* Aligns text to the left */
+}
+
 
 </style>
 
