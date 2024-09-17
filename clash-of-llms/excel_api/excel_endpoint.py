@@ -316,16 +316,22 @@ def start_next_round():
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)
     
-    # Winning by majority
-    print(current_team._alignment)
-    if current_team._alignment >= winning_pop_percent:
-        victor = current_team._team
+    print(f'Current team has alignment {current_team._alignment}%')
+    
+    # Winning by majority support
+    if red_team._alignment >= winning_pop_percent:
+        victor = red_team._team
+    elif blue_team._alignment >= winning_pop_percent:
+        victor = blue_team._team
     
     # Winning by energy loss
     if current_team._team.lower() == 'blue' and current_team._energy == 0:
         victor = 'Red'
     
-    print(current_team._energy)
+    #Reset turn counter if winner is determined
+    if victor:
+        turn_counter = 0
+    print(f'Blue team has {blue_team._energy} energy left')
     
     msg_content.append(current_team._message)
     msg_content.append(current_team._potency)
