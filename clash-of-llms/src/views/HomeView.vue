@@ -19,9 +19,6 @@
     <ParameterInputForm v-if="inputOption === 'manual'" />
     <FileUploadForm v-else />
   </div>
-  <div>
-    <button @click="downloadExcel" class="!py-20">Download Excel</button>
-  </div>
 </template>
 
 <script>
