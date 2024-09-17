@@ -299,7 +299,7 @@ def start_next_round():
     
     # Generate message and update green network
     current_team.generate_message()
-    if not isinstance(current_team._potency, str):
+    if (not isinstance(current_team._potency, str)):
         green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
         green_team.update_green_network()
 
