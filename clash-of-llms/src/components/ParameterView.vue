@@ -17,7 +17,7 @@
                 <div class="flex-child" id="game-view">
                     <div id="agents">
                         <h2 id="blueTeam">Blue Team</h2>
-                        <div v-if="blue_team && !winner">
+                        <div v-if="blue_team">
                             <p><span style="font-weight: bold;">Model: </span> {{ blue_team._model_ID }}</p>
                             <p><span style="font-weight: bold;">Alignment: </span> {{ blue_team._alignment }}</p>
                             <p><span style="font-weight: bold;">Energy Level: </span> {{ blue_team._energy }}</p>
@@ -25,7 +25,8 @@
                             <p><span style="font-weight: bold;">Number of Messages Generated Per Turn: </span> {{ blue_team._message_count }}</p>
                             <p><span style="font-weight: bold;">Temperature</span> {{ blue_team._temperature }}</p>
                         </div>
-                        <div v-if="blue_team_turn">
+                        <!--only display if winner has not been decided-->
+                        <div v-if="blue_team_turn && !winner">
                             <button style="background-color: #0b7ffc; border: none" @click="nextTurn">Next round</button>
                         </div>
                     </div>
@@ -48,6 +49,7 @@
                             <p><span style="font-weight: bold;">Number of Messages Generated Per Turn: </span> {{ red_team._message_count }}</p>
                             <p><span style="font-weight: bold;">Temperature</span> {{ red_team._temperature }}</p>
                         </div>
+                        <!--only display if winner has not been decided-->
                         <div v-if="red_team_turn && !winner">
                             <button style="background-color: red; border: none" @click="nextTurn">Next round</button>
                         </div>
