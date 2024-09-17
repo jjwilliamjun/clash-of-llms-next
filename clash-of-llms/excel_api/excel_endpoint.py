@@ -25,7 +25,7 @@ turn_counter=0
 red_team = None
 blue_team = None
 green_team = None
-winning_pop_percent = None
+winning_pop_percent = 80
 custom_llms = {}  # Placeholder to store custom LLMs
 
 def save_llm_file(team_key, file):
@@ -284,12 +284,13 @@ def start_next_round():
     turn_counter = turn_counter + 1
     msg_content = []
     victor = None
-    
-    team_colour = request.args.get('team')
 
+    team_colour = request.args.get('team')
+    
     if blue_team is None or red_team is None: 
         return jsonify({"error": "Team not found"}), 404
     
+    # Assignment of current team
     if team_colour == 'red':
         current_team = red_team
     elif team_colour == 'blue':
@@ -297,6 +298,10 @@ def start_next_round():
     else:
         return jsonify({"error": "Incorrect team colour"}), 404
     
+    # Update alignment for the two teams
+    red_team._alignment = green_team.red_alignment()
+    blue_team._alignment = green_team.blue_alignment()
+
     # Generate message and update green network
     current_team.generate_message()
     if not isinstance(current_team._potency, str):
@@ -312,10 +317,10 @@ def start_next_round():
         current_team.update_energy_level(energy_cost)
     
     # Winning by majority
-    if winning_pop_percent is not None:
-        if current_team._alignment >= winning_pop_percent:
-            victor = current_team._team
-
+    print(current_team._alignment)
+    if current_team._alignment >= winning_pop_percent:
+        victor = current_team._team
+    
     # Winning by energy loss
     if current_team._team.lower() == 'blue' and current_team._energy == 0:
         victor = 'Red'
