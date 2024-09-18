@@ -38,6 +38,9 @@ class team:
             else:
                 self._energy -= energy_cost
     
+    def update_alignment(self, alignment):
+        self._alignment = alignment
+    
     #TODO potentially bring out to game  parameters
     def energy_cost(self):
         """

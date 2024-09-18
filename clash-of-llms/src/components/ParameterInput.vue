@@ -42,11 +42,6 @@
               <input type="range" id="blue_factor" min="0" max="1" value="0.5" step="0.01" v-model="blue_team.Influence_Factor">
             </div>
             <div class="select-parameter">
-              <label for="blue_alignment">Alignment: {{ blue_team.Alignment }}</label>
-              <br>
-              <input type="range" id="blue_alignment" min="0" max="100" value="5" step="1" v-model="blue_team.Alignment">
-            </div>
-            <div class="select-parameter">
               <label for="blue_max_cost">Max Cost: {{ blue_team.Max_Cost }}</label>
               <br>
               <input type="range" id="blue_max_cost" min="20" max="100" value="5" step="5" v-model="blue_team.Max_Cost">
@@ -87,11 +82,6 @@
               <br>
               <input type="range" id="red_factor" class="accent" min="0" max="1" value="0.5" step="0.01" v-model="red_team.Influence_Factor">
             </div>
-            <div class="select-parameter">
-              <label for="red_alignment">Alignment: {{ red_team.Alignment }}</label>
-              <br>
-              <input type="range" id="red_alignment" class="accent" min="0" max="100" value="5" step="1" v-model="red_team.Alignment">
-            </div>
           </div>
         </div>
 
@@ -130,12 +120,8 @@
         </div>
       </div>
 
-      <button type="submit" class="submit-button">{{ green_node_count_option === 'userData' ? 'Next' : 'Start Simulation' }}</button>
+      <button type="submit" class="submit-button">{{ green_node_count_option === 'userData' ? 'To Excel File Upload' : 'Next' }}</button>
     </form>
-
-    <div v-if="display_params">
-      <router-link to="/parameters" class="submit-button">View Parameters</router-link>
-    </div>
   </div>
 </template>
 
@@ -155,8 +141,8 @@ export default {
         Msgs_Generated: 5,
         Temperature: 0.5,
         Influence_Factor: 0.5,
-        Alignment: 5,
-        Max_Cost: 1,
+        Alignment: 50,
+        Max_Cost: 20,
         Custom_File: null, // New property to store the uploaded file for the blue team
       },
       red_team: {
@@ -167,8 +153,8 @@ export default {
         Msgs_Generated: 5,
         Temperature: 0.5,
         Influence_Factor: 0.5,
-        Alignment: 5,
-        Max_Cost: 1,
+        Alignment: 50,
+        Max_Cost: 20,
         Custom_File: null, // New property to store the uploaded file for the red team
       },
       green_node_count_option: 'userData',  // Default to user data
@@ -177,6 +163,7 @@ export default {
       blue_alignments: 50,   // Default to 50% blue alignments
       green_alignments: 0,   // Automatically calculated as 100 - red_alignments - blue_alignments
       display_params: false,
+      errors: null
     };
   },
   computed: {
@@ -240,6 +227,11 @@ export default {
           return; // Stop further execution
         }
 
+        if (this.green_node_count_option === 'userInput') {
+          this.red_team.Alignment = this.red_alignments
+          this.blue_team.Alignment = this.blue_alignments
+        }
+
         if (this.showFileUpload) {
           // Upload LLM files before proceeding
           await this.uploadLLMFiles();
@@ -261,6 +253,9 @@ export default {
           blue_alignments: this.blue_alignments,
         };
 
+        console.log("working");
+        console.log(data);
+
         const path = 'http://127.0.0.1:5000/excel_api/ui_parameters';
 
         const response = await axios.post(path, data);
@@ -268,12 +263,12 @@ export default {
         this.display_params = true;
 
         // Optional: Redirect after successful submission
-        // this.$router.push('/parameters'); // Uncomment if you want to redirect to parameters view
+        this.$router.push('/preview'); // Uncomment if you want to redirect to parameters view
 
       } catch (error) {
         console.error("Error submitting form:", error.response ? error.response.data : error.message);
       }
-    },
+    }
   },
   watch: {
     red_alignments: 'updateAlignments',

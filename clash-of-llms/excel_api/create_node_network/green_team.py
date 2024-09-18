@@ -45,6 +45,7 @@ class GreenTeam:
     def broadcast_message(self, potency, team, influence_factor):
         print('broadcasting message')
         "Updates the green nodes when a message is broadcasted from red or blue teams"
+        team = str(team)
         current_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
         self._previous_network_graph=copy.deepcopy(self._network_graph)
         alignment_influence=(float(potency)/100)*influence_factor

@@ -1,8 +1,9 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import NetworkGraph from '../components/NetworkGraph.vue';
-import ParameterView from '@/components/ParameterView.vue';
+import GamePlay from '@/components/GamePlay.vue';
 import FileUpload from '@/components/FileUpload.vue';
+import PreviewSettings from '@/components/PreviewSettings.vue';
 
 const routes = [
   {
@@ -16,9 +17,9 @@ const routes = [
     component: NetworkGraph,
   },
   {
-    path: '/parameters',
-    name: 'parameters',
-    component: ParameterView,
+    path: '/gameplay',
+    name: 'gameplay',
+    component: GamePlay,
   },
   {
     path: '/upload',
@@ -30,6 +31,11 @@ const routes = [
     name: 'about',
     component: () => import('../views/AboutView.vue'),
   },
+  {
+    path: '/preview',
+    name: 'preview',
+    component: PreviewSettings
+  }
 ];
 
 const router = createRouter({
