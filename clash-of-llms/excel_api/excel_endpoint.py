@@ -329,9 +329,8 @@ def start_next_round():
         victor = 'Red'
     
     #Reset turn counter if winner is determined
-    if victor:
-        turn_counter = 0
-    print(f'Blue team has {blue_team._energy} energy left')
+    #TODO: move this to start of loop potentially
+
     
     msg_content.append(current_team._message)
     msg_content.append(current_team._potency)
@@ -340,6 +339,9 @@ def start_next_round():
     msg_content.append(blue_team.__dict__)
     turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, current_team._potency, current_team._energy, green_team.red_alignment(), green_team.blue_alignment())
     game_data.add_entry(turn_data)
+    if victor:
+        turn_counter = 0
+    print(f'Blue team has {blue_team._energy} energy left')
     return jsonify(msg_content), 200
 
 def create_round_json(round_number, network_graph):
