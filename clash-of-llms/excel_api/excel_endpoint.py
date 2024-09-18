@@ -11,6 +11,7 @@ from class_api import team
 from set_parameters import *
 import game_data
 from create_node_network.create_network import * 
+from class_api.simulation import Simulation
  
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -27,6 +28,9 @@ blue_team = None
 green_team = None
 winning_pop_percent = 80
 custom_llms = {}  # Placeholder to store custom LLMs
+game_style = None
+continuous_game = None
+
 
 def save_llm_file(team_key, file):
     """Saves the uploaded LLM file for the specified team in the llm_files directory"""
@@ -178,6 +182,7 @@ def serve_llm_file(team_colour):
         return send_file(file_path, as_attachment=False, mimetype='application/octet-stream')
     else:
         return jsonify({"error": "LLM file not found"}), 404
+
 # Route to fetch Model_IDs from JSON files in the llm_files directory
 @app.route('/excel_api/get_llm_models', methods=['GET'])
 def get_llm_models():
@@ -197,7 +202,6 @@ def get_llm_models():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 # Route to fetch team parameters
 @app.route('/excel_api/get_parameters', methods=['GET'])
 @cross_origin()
@@ -205,11 +209,23 @@ def get_parameters():
     """Fetches the parameters for the Red and Blue teams"""
     global blue_team
     global red_team
+    global green_team
+
+    green_attributes = {
+        "size": green_team._size,
+        "blue_alignment": green_team._blue_alignment,
+        "red_alignment": green_team._red_alignment,
+        "neutral": green_team._size - green_team._blue_alignment - green_team._red_alignment
+    }
+
+    # TO DO --> currently rounding down - may need to change
+    red_team.update_alignment(round(green_team.red_alignment(), 2))
+    blue_team.update_alignment(round(green_team.blue_alignment(), 2))
 
     if blue_team is None or red_team is None: 
         return jsonify({"error": "Parameters not found"}), 404
 
-    output = [red_team.__dict__, blue_team.__dict__]
+    output = [red_team.__dict__, blue_team.__dict__, green_attributes, game_style]
     
     return jsonify(output), 200
 
@@ -236,6 +252,10 @@ def ui_parameters():
             node_count = parameters.get('green_nodes_count')
             connections_per_node = parameters.get('connections_per_node', 3)  # Default to 3 connections per node
             node_attributes, node_connections = generate_user_input_network(node_count, connections_per_node)
+
+        # Already handled in "import_excel"
+        elif parameters.get('green_node_count_option') == 'userData':
+            return '', 200
         
         else:
             return jsonify({"error": "Invalid green_node_count_option"}), 400
@@ -250,6 +270,29 @@ def ui_parameters():
         return jsonify({"error": str(e)}), 500
     
     return '', 200
+
+# Route to set game play style (continuously or in turns)
+@app.route('/excel_api/set_gameplay', methods=['POST'])
+@cross_origin()
+def set_gameplay():
+    try:
+        global game_style
+        global red_team
+        global blue_team
+        global green_team
+
+        data = request.get_json()
+        game_style = data['play_option']
+
+        if game_style == "continuous":
+            global continuous_game
+            continuous_game = Simulation(red_team, blue_team, green_team)
+
+        return '', 200
+    
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route('/excel_api/excel_export', methods=['GET'])
@@ -274,12 +317,16 @@ def export_excel():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 # Route to serve next round request from the frontend
 @app.route('/excel_api/next_round', methods=['GET'])
 @cross_origin()
 def start_next_round():
     global turn_counter
     global green_team
+    global red_team
+    global blue_team
+
     turn_data=GameTurnData()
     turn_counter = turn_counter + 1
     msg_content = []
@@ -315,6 +362,10 @@ def start_next_round():
     if current_team._team.lower() == 'blue':
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)
+
+    # TO DO --> currently rounding down - may need to change
+    red_team.update_alignment(round(green_team.red_alignment(), 2))
+    blue_team.update_alignment(round(green_team.blue_alignment(), 2))
     
     print(f'Current team has alignment {current_team._alignment}%')
     
@@ -329,9 +380,8 @@ def start_next_round():
         victor = 'Red'
     
     #Reset turn counter if winner is determined
-    if victor:
-        turn_counter = 0
-    print(f'Blue team has {blue_team._energy} energy left')
+    #TODO: move this to start of loop potentially
+
     
     msg_content.append(current_team._message)
     msg_content.append(current_team._potency)
@@ -340,6 +390,9 @@ def start_next_round():
     msg_content.append(blue_team.__dict__)
     turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, current_team._potency, current_team._energy, green_team.red_alignment(), green_team.blue_alignment())
     game_data.add_entry(turn_data)
+    if victor:
+        turn_counter = 0
+    print(f'Blue team has {blue_team._energy} energy left')
     return jsonify(msg_content), 200
 
 def create_round_json(round_number, network_graph):
@@ -363,6 +416,48 @@ def create_round_json(round_number, network_graph):
         print(f"Failed to save Round {round_number} JSON file: {str(e)}")
 
 
+# Route to serve continuous gameplay request from the frontend
+@app.route('/excel_api/continuous_game', methods=['GET'])
+@cross_origin()
+def continuous_game():
+    '''Runs a single round of the simulation when playing continuously'''
+    try: 
+        global continuous_game
+        
+        if continuous_game._victor is None:
+            victor = continuous_game.next_round()
+
+            # Add the new function to create and save a JSON file for the current round
+            create_round_json(continuous_game._round_num, continuous_game._green_team._network_graph)
+
+            current_team = None
+            if continuous_game._current_team == "red":
+                current_team = continuous_game._red_team
+            else:
+                current_team = continuous_game._blue_team
+            
+            msg_content = {
+                "message": current_team._message,
+                "potency": current_team._potency,
+                "victor": victor,
+                "red_team": continuous_game._red_team.__dict__,
+                "blue_team": continuous_game._blue_team.__dict__
+            }
+            game_data.add_entry(continuous_game._turn_data)
+
+            continuous_game.switch_teams()
+            
+            return jsonify(msg_content), 200
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == '__main__':
     #game_data = generate_game_data()  # Testing purposes
     app.run(debug=True)
+
+    
+
+
+

@@ -19,7 +19,7 @@
                         <h2 id="blueTeam">Blue Team</h2>
                         <div v-if="blue_team">
                             <p><span style="font-weight: bold;">Model: </span> {{ blue_team._model_ID }}</p>
-                            <p><span style="font-weight: bold;">Alignment: </span> {{ blue_team._alignment }}</p>
+                            <p><span style="font-weight: bold;">Alignment: </span> {{ blue_team._alignment }} %</p>
                             <p><span style="font-weight: bold;">Energy Level: </span> {{ blue_team._energy }}</p>
                             <p><span style="font-weight: bold;">Influence Factor: </span> {{ blue_team._influence_factor }}</p>
                             <p><span style="font-weight: bold;">Number of Messages Generated Per Turn: </span> {{ blue_team._message_count }}</p>
@@ -44,7 +44,7 @@
                         <h2 id="redTeam">Red Team</h2>
                         <div v-if="red_team">
                             <p><span style="font-weight: bold;">Model: </span> {{ red_team._model_ID }}</p>
-                            <p><span style="font-weight: bold;">Alignment: </span> {{ red_team._alignment }}</p>
+                            <p><span style="font-weight: bold;">Alignment: </span> {{ red_team._alignment }} %</p>
                             <p><span style="font-weight: bold;">Influence Factor: </span> {{ red_team._influence_factor }}</p>
                             <p><span style="font-weight: bold;">Number of Messages Generated Per Turn: </span> {{ red_team._message_count }}</p>
                             <p><span style="font-weight: bold;">Temperature</span> {{ red_team._temperature }}</p>
@@ -59,7 +59,9 @@
             
             <!-- Message and Potency Display -->
             <div v-if="message && potency && !winner" id="Message">
-                <p><span style="font-weight: bold;">Message: </span> {{ message }}</p>
+                <div v-if="red_team_turn"><p><span style="font-weight: bold;">Blue Team Message: </span> {{ message }}</p></div>
+                <div v-else><p><span style="font-weight: bold;">Red Team Message: </span> {{ message }}</p></div>
+                <!-- <p><span style="font-weight: bold;">Message: </span> {{ message }}</p> -->
                 <p><span style="font-weight: bold;">Potency: </span> {{ potency }}</p>
                 
             </div>
@@ -70,7 +72,8 @@
                 <button @click="downloadExcel" class="!py-20">Download Excel upon simulation end</button>
             </div>
         </div>
-    </div>
+    </div>    
+
 </template>
 
 <script>
@@ -91,6 +94,8 @@ export default {
       potency: null,
       winner: null,
       currentRound: 0, // Track the current round number
+      game_style: null,
+      test: null
     };
   },
   mounted() {
@@ -99,14 +104,14 @@ export default {
   },
   methods: {
     downloadExcel() {
-      axios({
-        url: 'http://localhost:5000/excel_api/excel_export', 
-        method: 'GET',
-        responseType: 'blob', 
-      })
-      .then((response) => {
-        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const link = document.createElement('a');
+            axios({
+                url: 'http://localhost:5000/excel_api/excel_export', 
+                method: 'GET',
+                responseType: 'blob', 
+            })
+            .then((response) => {
+                const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const link = document.createElement('a');
 
         link.href = window.URL.createObjectURL(blob);
         const now = new Date();
@@ -135,17 +140,22 @@ export default {
 
           this.red_team = response.data[0];
           this.blue_team = response.data[1];
-        })
-        .catch((error) => {
-          console.error(error);
-          this.display_error = true;
-          this.errors = error;
+          this.game_style = response.data[3]; 
+
+          if (this.game_style == "continuous") {
+            this.startContinuousGame();
+            return
+          }
+        }).catch((error) => {
+            console.error(error);
+            this.display_error = true;
+            this.errors = error;
         });
     },
-    nextTurn() {
-      const path = 'http://127.0.0.1:5000/excel_api/next_round';
+    nextTurn(){
+      const path = 'http://127.0.0.1:5000/excel_api/next_round'
       let team = '';
-      if (this.red_team_turn) {
+      if (this.red_team_turn){
         team = 'red';
       } else {
         team = 'blue';
@@ -191,8 +201,46 @@ export default {
         console.error(`Error fetching or drawing network for round ${roundNumber}:`, error);
       }
     },
-  }
-};
+    async startContinuousGame() {
+      const path = 'http://127.0.0.1:5000/excel_api/continuous_game';
+
+            while (this.red_team_turn || this.blue_team_turn) {
+                try {
+                    const response = await axios.get(path);
+
+                    this.red_team_turn = !this.red_team_turn;
+                    this.blue_team_turn = !this.blue_team_turn;
+                    this.message = response.data.message;
+                    this.potency = response.data.potency;
+                    this.winner = response.data.victor;
+                    this.red_team = response.data.red_team;
+                    this.blue_team = response.data.blue_team;
+
+                    // Increment the round number after each turn
+                    this.currentRound++;
+
+                    // Fetch and draw the network for the new round
+                    this.fetchAndDrawNetwork(this.currentRound);
+
+                } catch (error) {
+                    console.error(error);
+                    this.errors = error.response.data.error;
+                    this.display_error = true;
+                    return;
+                }
+
+                if (this.winner == 'red' || this.winner == 'blue') {
+                    break;
+                }
+                
+                console.log("waiting")
+                // Wait 25 seconds before next round - chatgpt query takes time
+                await new Promise(resolve => setTimeout(resolve, 25000));
+            }
+            return;
+        }
+    }
+  };
 </script>
 
 <style scoped>

@@ -1,22 +1,26 @@
 """Module provides access to chatGPT API"""
 from openai import OpenAI
 
-def get_sys_content(team: str):
+def get_sys_content(_team: str):
     """return system configuration context"""
-    if team.lower() == 'red':
+    _team = str(_team)
+    if _team.lower() == 'red':
         return "You are a foreign agent spreading misinformation on social media"
     return "You are a government official combatting misinformation"
 
-def get_message(team: str, model_ID: str, alignment: str, temperature: str, msg_count: str, energy: str):
+def get_message(_team: str, model_ID: str, alignment: str, temperature: str, msg_count: str, energy: str):
     """Returns message and potency based on team and alignment of population"""
     # Initialize variables with default values
     message = None
     potency = None
     
     client = OpenAI()
-    sys_content = get_sys_content(team)
+
+    sys_content = get_sys_content(_team)
     optional_msg = None
-    if team.lower() == "blue":
+    _team = str(_team)
+    if _team.lower() == "blue":
+
         optional_msg = ("You are working with an energy constraint."
                         + f"{energy} energy remaining."
                         + " You lose if your energy runs out.")

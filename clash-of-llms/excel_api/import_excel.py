@@ -3,29 +3,39 @@ sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]))
 from class_api import team, gpt_endpoint
 import pandas as pd
 
-# {'Team': 'Blue Team', 'Model_ID': 'gpt-3.5', 'Energy': 100, 'Msgs_Generated': 5, 'Temperature': 0.4, 'Influence_Factor': 0.4}
 
 def validate_settings(team: dict) -> list:
-    errors = []
+    try: 
 
-    models = ["gpt 3.5 turbo", "custom"]
-    _energy = int(team["Energy"])
-    _msgs = int(team["Msgs_Generated"])
-    _temp = float(team["Temperature"])
-    _influence = float(team["Influence_Factor"])
+        errors = []
 
-    if team["Model_ID"] not in models:
-        errors.append("invalid model ID: " + team["Model_ID"])
-    if _energy > 100 or _energy < 1:
-        errors.append("invalid energy value: " + str(team["Energy"]))
-    if _msgs > 10 or _msgs < 1:
-        errors.append("invalid msgs value: " + str(team["Msgs_Generated"]))
-    if _temp > 1 or _temp < 0:
-        errors.append("invalid temp value" + str(team["Temperature"]))
-    if _influence > 1 or _influence < 0:
-        errors.append("invalid influence factor value: " + str(team["Influence_Factor"]))
+        models = ["gpt 3.5 turbo", "custom"]
+        _energy = int(team["Energy"])
+        _msgs = int(team["Msgs_Generated"])
+        _temp = float(team["Temperature"])
+        _influence = float(team["Influence_Factor"])
+        _alignment = float(team["Alignment"])
 
-    return errors
+        if team["Model_ID"] not in models:
+            errors.append("invalid model ID: " + team["Model_ID"])
+        if _energy > 100 or _energy < 1:
+            errors.append("invalid energy value: " + str(team["Energy"]))
+        if _msgs > 10 or _msgs < 1:
+            errors.append("invalid msgs value: " + str(team["Msgs_Generated"]))
+        if _temp > 1 or _temp < 0:
+            errors.append("invalid temp value" + str(team["Temperature"]))
+        if _influence > 1 or _influence < 0:
+            errors.append("invalid influence factor value: " + str(team["Influence_Factor"]))
+        if _alignment > 100 or _alignment < 0:
+            errors.append("invalid alignment value: " + str(team["Alignment"]))
+        
+        return errors
+    
+    # will delete later
+    except Exception as e:
+        print("validate settings")
+        print(e)
+        return
 
 
 # Returns settings for red and blue teams as dictionaries
