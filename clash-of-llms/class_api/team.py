@@ -24,7 +24,7 @@ class team:
     
     def generate_message(self):
         """generate a message with the team's current parameters"""
-        self._message, self._potency = get_message(self._team, self._alignment, self._energy)
+        self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, self._energy)
         #GreenNetwork.green_team.broadcast_message(self._potency, self._team, self._influence_factor)
 
     def update_energy_level(self, energy_cost):
