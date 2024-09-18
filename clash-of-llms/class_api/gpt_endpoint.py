@@ -35,7 +35,7 @@ def get_message(team: str, model_ID: str, alignment: str, temperature: str, msg_
                 "content": f"Generate {msg_count} messages of differing potencies. {optional_msg} "
                 f"Your current support percentage is {alignment}. Choose the best message"
                 "in the current situation. Only return the best message and its potency(a number between 0 to 100)"
-                " in the format Message: message_generate, Potency: potency_of_msg"
+                " in the format Message: message_generate\nPotency: potency_of_msg"
             },
             ],
             temperature=temperature
@@ -47,7 +47,7 @@ def get_message(team: str, model_ID: str, alignment: str, temperature: str, msg_
 
             print(content)
             # Split content by newlines
-            msg_array = content.split(',')
+            msg_array = content.split('\n')
 
             # Extract message and potency from the first two lines
             message = msg_array[0].split(':')[1].strip()  # Strip any extra spaces
