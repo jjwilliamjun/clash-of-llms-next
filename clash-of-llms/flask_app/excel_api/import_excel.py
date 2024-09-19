@@ -9,25 +9,28 @@ def validate_settings(team: dict) -> list:
 
         errors = []
 
-        models = ["gpt 3.5 turbo", "custom"]
+        models = ['gpt-4o-mini', 'gpt-4o', 'gpt-4o-turbo', 'gpt-3.5-turbo', 'custom']
         _energy = int(team["Energy"])
         _msgs = int(team["Msgs_Generated"])
         _temp = float(team["Temperature"])
         _influence = float(team["Influence_Factor"])
         _alignment = float(team["Alignment"])
+        _max_cost = int(team["Max_Cost"])
 
         if team["Model_ID"] not in models:
-            errors.append("invalid model ID: " + team["Model_ID"])
+            errors.append("invalid model ID for " + team["Team"] + " agent")
         if _energy > 100 or _energy < 1:
-            errors.append("invalid energy value: " + str(team["Energy"]))
+            errors.append("invalid energy value: for " + team["Team"] + " agent")
         if _msgs > 10 or _msgs < 1:
-            errors.append("invalid msgs value: " + str(team["Msgs_Generated"]))
+            errors.append("invalid msgs value: for " + team["Team"] + " agent")
         if _temp > 1 or _temp < 0:
-            errors.append("invalid temp value" + str(team["Temperature"]))
+            errors.append("invalid temp value: for " + team["Team"] + " agent")
         if _influence > 1 or _influence < 0:
-            errors.append("invalid influence factor value: " + str(team["Influence_Factor"]))
+            errors.append("invalid influence factor value: for " + team["Team"] + " agent")
         if _alignment > 100 or _alignment < 0:
-            errors.append("invalid alignment value: " + str(team["Alignment"]))
+            errors.append("invalid alignment value: for " + team["Team"] + " agent")
+        if _max_cost < 0 or _max_cost > 100:
+            errors.append("invalid max cost value: for " + team["Team"] + " agent")
         
         return errors
     

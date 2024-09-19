@@ -65,15 +65,11 @@ def upload_llm():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/test', methods=['GET'])
-def test_refactoring():
-    return jsonify({"yay": "wooo"}), 200
 
 @app.route('/excel_import', methods=['POST'])
 @cross_origin()
 def import_excel():
     """Handles the import of Excel files or random generation of network data"""
-    print("import excel")
     node_attributes = None
     node_connections = None
     global green_team
@@ -239,7 +235,6 @@ def get_parameters():
 @cross_origin()
 def ui_parameters():
     """Handles the UI parameters input, including random network generation"""
-    print("in ui params")
     global green_team
     try:
         parameters = request.get_json()
@@ -462,8 +457,6 @@ def continuous_game():
 if __name__ == '__main__':
     #game_data = generate_game_data()  # Testing purposes
     app.run(debug=True)
-    print("running app hereeee")
-
     
 
 
