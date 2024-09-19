@@ -1,43 +1,38 @@
 import os, sys
 sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]))
-from class_api import team, gpt_endpoint
+from class_api import gpt_endpoint
+from class_api.team import Team
 import pandas as pd
 
 
 def validate_settings(team: dict) -> list:
-    try: 
 
-        errors = []
+    errors = []
 
-        models = ['gpt-4o-mini', 'gpt-4o', 'gpt-4o-turbo', 'gpt-3.5-turbo', 'custom']
-        _energy = int(team["Energy"])
-        _msgs = int(team["Msgs_Generated"])
-        _temp = float(team["Temperature"])
-        _influence = float(team["Influence_Factor"])
-        _alignment = float(team["Alignment"])
-        _max_cost = int(team["Max_Cost"])
+    models = ['gpt-4o-mini', 'gpt-4o', 'gpt-4o-turbo', 'gpt-3.5-turbo', 'custom']
+    _energy = int(team["Energy"])
+    _msgs = int(team["Msgs_Generated"])
+    _temp = float(team["Temperature"])
+    _influence = float(team["Influence_Factor"])
+    _alignment = float(team["Alignment"])
+    _max_cost = int(team["Max_Cost"])
 
-        if team["Model_ID"] not in models:
-            errors.append("invalid model ID for " + team["Team"] + " agent")
-        if _energy > 100 or _energy < 1:
-            errors.append("invalid energy value: for " + team["Team"] + " agent")
-        if _msgs > 10 or _msgs < 1:
-            errors.append("invalid msgs value: for " + team["Team"] + " agent")
-        if _temp > 1 or _temp < 0:
-            errors.append("invalid temp value: for " + team["Team"] + " agent")
-        if _influence > 1 or _influence < 0:
-            errors.append("invalid influence factor value: for " + team["Team"] + " agent")
-        if _alignment > 100 or _alignment < 0:
-            errors.append("invalid alignment value: for " + team["Team"] + " agent")
-        if _max_cost < 0 or _max_cost > 100:
-            errors.append("invalid max cost value: for " + team["Team"] + " agent")
-        
-        return errors
+    if team["Model_ID"] not in models:
+        errors.append("invalid model ID for " + team["Team"] + " agent")
+    if _energy > 100 or _energy < 1:
+        errors.append("invalid energy value: for " + team["Team"] + " agent")
+    if _msgs > 10 or _msgs < 1:
+        errors.append("invalid msgs value: for " + team["Team"] + " agent")
+    if _temp > 1 or _temp < 0:
+        errors.append("invalid temp value: for " + team["Team"] + " agent")
+    if _influence > 1 or _influence < 0:
+        errors.append("invalid influence factor value: for " + team["Team"] + " agent")
+    if _alignment > 100 or _alignment < 0:
+        errors.append("invalid alignment value: for " + team["Team"] + " agent")
+    if _max_cost < 0 or _max_cost > 100:
+        errors.append("invalid max cost value: for " + team["Team"] + " agent")
     
-    # will delete later
-    except Exception as e:
-        print(e)
-        return
+    return errors
 
 
 # Returns settings for red and blue teams as dictionaries

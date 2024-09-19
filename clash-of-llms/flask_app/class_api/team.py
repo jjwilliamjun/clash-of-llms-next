@@ -6,7 +6,7 @@ from excel_api.import_excel import *
 from create_node_network.create_network import * 
 import create_node_network.create_network as GreenNetwork
 
-class team:
+class Team:
     def __init__(self, team, model_ID, energy, potency, msg_count, influence_factor, max_cost, temperature, alignment=0):
         """Setting parameters for team"""
         self._team = team

@@ -1,6 +1,6 @@
 """test for red_team"""
 import unittest
-from team import team
+from team import Team
 
 class TestRedTeam(unittest.TestCase):
     def setUp(self):
@@ -10,7 +10,7 @@ class TestRedTeam(unittest.TestCase):
         self.potency = 80
         self.influence_factor = 1.5
         self.alignment = 50
-        self.red_team_instance = team(self.model_ID, self.energy, self.potency, self.influence_factor, self.alignment)
+        self.red_team_instance = Team(self.model_ID, self.energy, self.potency, self.influence_factor, self.alignment)
 
     def test_initialization(self):
         """Test the initialization of the red_team class."""
