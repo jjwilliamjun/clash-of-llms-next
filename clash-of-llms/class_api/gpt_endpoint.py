@@ -8,25 +8,19 @@ def get_sys_content(_team: str):
         return "You are a foreign agent spreading misinformation on social media"
     return "You are a government official combatting misinformation"
 
-def get_optional_msg(_team: str, energy: str):
-    """return message to pass to AI API"""
-    _team = str(_team)
-    if _team.lower() == "blue":
-        return ("You are working with an energy constraint."
-                + f" {energy} energy remaining. You lose if your energy runs out.")
-    return ""
-
-def get_message(_team: str, alignment: str, energy: str):
+def get_message(_team: str, model_ID: str, alignment: str, temperature: str, msg_count: str, energy: str):
     """Returns message and potency based on team and alignment of population"""
     # Initialize variables with default values
     message = None
     potency = None
     
     client = OpenAI()
+
     sys_content = get_sys_content(_team)
-    optional_msg = ""
+    optional_msg = None
     _team = str(_team)
     if _team.lower() == "blue":
+
         optional_msg = ("You are working with an energy constraint."
                         + f"{energy} energy remaining."
                         + " You lose if your energy runs out.")
@@ -34,7 +28,7 @@ def get_message(_team: str, alignment: str, energy: str):
     #Continue querying the LLM until a valid response
     while(message == None or potency == None):
         completion = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=model_ID,
             messages=[
             {
                 "role": "system", 
@@ -42,18 +36,20 @@ def get_message(_team: str, alignment: str, energy: str):
             },
             {
                 "role": "user", 
-                "content": f"Generate 10 messages of differing potencies. {optional_msg} "
+                "content": f"Generate {msg_count} messages of differing potencies. {optional_msg} "
                 f"Your current support percentage is {alignment}. Choose the best message"
-                "in the current situation. Always return the best message and its potency(number between 0 to 100) in the format"
-                " message: potency"
+                "in the current situation. Only return the best message and its potency(a number between 0 to 100)"
+                " in the format Message: message_generate\nPotency: potency_of_msg"
             },
-        ]
+            ],
+            temperature=temperature
         )
         
         try:
             # Extract the message content
             content = completion.choices[0].message.content
 
+            print(content)
             # Split content by newlines
             msg_array = content.split('\n')
 
@@ -68,6 +64,5 @@ def get_message(_team: str, alignment: str, energy: str):
         
         except (IndexError, ValueError) as e:
             print("Querying AI")
-            #print(f"Error processing response: {e}")
 
     return message, potency

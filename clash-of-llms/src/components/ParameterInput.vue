@@ -132,10 +132,11 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      models: ['gpt 3.5 turbo', 'custom'],
+    //When testing pls use gpt-4o and gpt-4o-turbo as few times as possible
+      models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4o-turbo', 'gpt-3.5-turbo', 'custom'],
       blue_team: {
         Team: 'Blue',
-        Model_ID: 'gpt 3.5 turbo',
+        Model_ID: 'gpt-4o-mini',
         Custom_Model: '',
         Energy: 50,
         Msgs_Generated: 5,
@@ -147,7 +148,7 @@ export default {
       },
       red_team: {
         Team: 'Red',
-        Model_ID: 'gpt 3.5 turbo',
+        Model_ID: 'gpt-4o-mini',
         Custom_Model: '',
         Energy: 50,
         Msgs_Generated: 5,
