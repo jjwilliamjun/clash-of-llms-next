@@ -47,5 +47,3 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-clash-of-llms/flask_app/create_node_network/round_data/round_0.json
-/clash-of-llms/flask_app/create_node_network/round_data
