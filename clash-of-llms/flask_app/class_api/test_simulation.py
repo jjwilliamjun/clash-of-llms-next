@@ -3,9 +3,9 @@ import unittest
 import os
 import sys
 from simulation import Simulation
+
 # Add the parent directory of class_api to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from excel_api.import_excel import import_node_attributes, import_node_connections
 
 red_team_params = {

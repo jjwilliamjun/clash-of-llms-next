@@ -1,9 +1,9 @@
 """Simulation class"""
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '...')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from create_node_network.green_team import GreenTeam
-from game_data import GameTurnData
+from excel_api.game_data import GameTurnData
 from class_api.team import team
 
 

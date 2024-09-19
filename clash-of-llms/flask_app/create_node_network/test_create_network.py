@@ -1,7 +1,7 @@
 import unittest
 import os
 from create_network import create_node_network
-from import_excel import import_node_attributes, import_node_connections
+from excel_api.import_excel import import_node_attributes, import_node_connections
 
 class TestCreateNetwork(unittest.TestCase):
 

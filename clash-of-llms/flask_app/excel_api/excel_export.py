@@ -26,8 +26,6 @@ def export_data_excel(simulation_data_list):
         return None
 
 
-
-
 def set_col_width(excel_file):
     """Setting column width for excel file"""
     workbook = load_workbook(filename=excel_file)

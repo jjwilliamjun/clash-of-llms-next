@@ -5,14 +5,15 @@ from flask import Flask, send_file, jsonify, request
 from flask_cors import CORS, cross_origin
 import json
 import random
-from excel_export import *
-from import_excel import *
-from class_api import team
-from set_parameters import *
-import game_data
-from create_node_network.create_network import * 
-from class_api.simulation import Simulation
- 
+from excel_api.excel_export import *
+from excel_api.game_data import GameData
+from excel_api.import_excel import *
+from excel_api.set_parameters import *
+from create_node_network.create_network import *
+from create_node_network.green_team import *
+from class_api.team import *
+from class_api.simulation import *
+
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
@@ -22,7 +23,7 @@ os.makedirs(LLM_DIRECTORY, exist_ok=True)
 
 # Global variables to store game data and team settings
 game_data = GameData()  
-turn_counter=0
+turn_counter = 0
 red_team = None
 blue_team = None
 green_team = None
@@ -42,7 +43,7 @@ def save_llm_file(team_key, file):
         print(f"Error saving LLM file: {e}")
 
 
-@app.route('/excel_api/upload_llm', methods=['POST'])
+@app.route('/upload_llm', methods=['POST'])
 @cross_origin()
 def upload_llm():
     """Handles the upload of an LLM JSON file and saves it to the llm_files directory"""
@@ -65,7 +66,7 @@ def upload_llm():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/excel_api/excel_import', methods=['POST'])
+@app.route('/excel_import', methods=['POST'])
 @cross_origin()
 def import_excel():
     """Handles the import of Excel files or random generation of network data"""
@@ -108,9 +109,9 @@ def import_excel():
             # Ensure both node_attributes and node_connections are available
             if node_attributes and node_connections:
                 # Create the network and save it as a JSON file
-                network_graph=create_node_network(node_attributes, node_connections)
-                blue_alignment, red_alignment=convert_alignment_to_node_count(network_graph, red_team._alignment, blue_team._alignment)
-                green_team=GreenTeam(network_graph, blue_alignment,red_alignment)
+                network_graph = create_node_network(node_attributes, node_connections)
+                blue_alignment, red_alignment = convert_alignment_to_node_count(network_graph, red_team._alignment, blue_team._alignment)
+                green_team = GreenTeam(network_graph, blue_alignment,red_alignment)
                 return jsonify({"message": "Network created successfully from Excel files!"}), 200
             else:
                 return jsonify({"error": "Missing node attributes or connections"}), 400
@@ -144,7 +145,7 @@ def import_excel():
         return jsonify({"error": str(e)}), 500
 
 def convert_alignment_to_node_count(graph, red, blue):
-    size= graph.number_of_nodes()
+    size = graph.number_of_nodes()
     blue_alignment= math.floor((blue / 100) * size)
     red_alignment=math.floor((red / 100) * size)
     if blue_alignment + red_alignment > size:
@@ -154,7 +155,7 @@ def convert_alignment_to_node_count(graph, red, blue):
     return blue_alignment, red_alignment
 
 # Route to serve the JSON file for a specific round
-@app.route('/excel_api/round_data/<int:round_number>', methods=['GET'])
+@app.route('/round_data/<int:round_number>', methods=['GET'])
 @cross_origin()
 def serve_round_data(round_number):
     """Serves the JSON file for the specified round"""
@@ -184,7 +185,7 @@ def serve_llm_file(team_colour):
         return jsonify({"error": "LLM file not found"}), 404
 
 # Route to fetch Model_IDs from JSON files in the llm_files directory
-@app.route('/excel_api/get_llm_models', methods=['GET'])
+@app.route('/get_llm_models', methods=['GET'])
 def get_llm_models():
     """Fetches the list of Model_IDs from the JSON files in the llm_files directory"""
     model_ids = []
@@ -203,7 +204,7 @@ def get_llm_models():
         return jsonify({"error": str(e)}), 500
 
 # Route to fetch team parameters
-@app.route('/excel_api/get_parameters', methods=['GET'])
+@app.route('/get_parameters', methods=['GET'])
 @cross_origin()
 def get_parameters():
     """Fetches the parameters for the Red and Blue teams"""
@@ -230,7 +231,7 @@ def get_parameters():
     return jsonify(output), 200
 
 # Route to handle UI parameters input
-@app.route('/excel_api/ui_parameters', methods=['POST'])
+@app.route('/ui_parameters', methods=['POST'])
 @cross_origin()
 def ui_parameters():
     """Handles the UI parameters input, including random network generation"""
@@ -272,7 +273,7 @@ def ui_parameters():
     return '', 200
 
 # Route to set game play style (continuously or in turns)
-@app.route('/excel_api/set_gameplay', methods=['POST'])
+@app.route('/set_gameplay', methods=['POST'])
 @cross_origin()
 def set_gameplay():
     try:
@@ -295,7 +296,7 @@ def set_gameplay():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/excel_api/excel_export', methods=['GET'])
+@app.route('/excel_export', methods=['GET'])
 def export_excel():
     """Exports game data to Excel"""
     try:
@@ -319,7 +320,7 @@ def export_excel():
         return jsonify({"error": str(e)}), 500
 
 # Route to serve next round request from the frontend
-@app.route('/excel_api/next_round', methods=['GET'])
+@app.route('/next_round', methods=['GET'])
 @cross_origin()
 def start_next_round():
     global turn_counter
@@ -417,7 +418,7 @@ def create_round_json(round_number, network_graph):
 
 
 # Route to serve continuous gameplay request from the frontend
-@app.route('/excel_api/continuous_game', methods=['GET'])
+@app.route('/continuous_game', methods=['GET'])
 @cross_origin()
 def continuous_game():
     '''Runs a single round of the simulation when playing continuously'''
