@@ -65,11 +65,15 @@ def upload_llm():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/test', methods=['GET'])
+def test_refactoring():
+    return jsonify({"yay": "wooo"}), 200
 
 @app.route('/excel_import', methods=['POST'])
 @cross_origin()
 def import_excel():
     """Handles the import of Excel files or random generation of network data"""
+    print("import excel")
     node_attributes = None
     node_connections = None
     global green_team
@@ -161,7 +165,7 @@ def serve_round_data(round_number):
     """Serves the JSON file for the specified round"""
     # Construct the filename and path based on the round number
     json_filename = f'round_{round_number}.json'
-    json_path = os.path.join(os.getcwd(), 'excel_api', 'create_node_network', 'round_data', json_filename)
+    json_path = os.path.join(os.getcwd(), 'flask_app', 'create_node_network', 'round_data', json_filename)
     
     # Check if the file exists and serve it
     if os.path.exists(json_path):
@@ -235,6 +239,7 @@ def get_parameters():
 @cross_origin()
 def ui_parameters():
     """Handles the UI parameters input, including random network generation"""
+    print("in ui params")
     global green_team
     try:
         parameters = request.get_json()
@@ -403,7 +408,7 @@ def create_round_json(round_number, network_graph):
     
     # Define the path to save the JSON file (e.g., round_1.json, round_2.json)
     json_filename = f'round_{round_number}.json'
-    json_path = os.path.join(os.getcwd(), 'excel_api', 'create_node_network', 'round_data', json_filename)
+    json_path = os.path.join(os.getcwd(), 'flask_app', 'create_node_network', 'round_data', json_filename)
 
     # Ensure the 'round_data' directory exists
     os.makedirs(os.path.dirname(json_path), exist_ok=True)
@@ -457,6 +462,7 @@ def continuous_game():
 if __name__ == '__main__':
     #game_data = generate_game_data()  # Testing purposes
     app.run(debug=True)
+    print("running app hereeee")
 
     
 

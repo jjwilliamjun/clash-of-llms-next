@@ -1,5 +1,5 @@
 """Definition of the simulation's red team"""
-import os
+import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from class_api.gpt_endpoint import get_message
 from excel_api.import_excel import *

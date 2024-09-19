@@ -3,9 +3,9 @@ import networkx as nx
 import json
 import random
 import os, sys
-from green_team import GreenTeam
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from excel_api.import_excel import import_node_attributes, import_node_connections
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '...')))
+from .green_team import GreenTeam
+from excel_api.import_excel import *
 
 green_team = None
 
@@ -105,7 +105,7 @@ def create_node_network(node_attributes, node_connections):
     graph_data = nx.node_link_data(graph)
 
     # Save the graph data as `round_0.json`
-    json_path = os.path.join(os.getcwd(), 'create_node_network', 'round_data', 'round_0.json')
+    json_path = os.path.join(os.getcwd(), 'flask_app', 'create_node_network', 'round_data', 'round_0.json')
     print(f"Saving network to: {json_path}")
 
     # Save the graph data as a JSON file

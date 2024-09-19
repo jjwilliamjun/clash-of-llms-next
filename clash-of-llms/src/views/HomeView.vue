@@ -39,7 +39,7 @@ export default {
   methods: {
     downloadExcel() {
       axios({
-        url: 'http://localhost:5000/excel_api/excel_export', 
+        url: 'http://localhost:5000/excel_export', 
         method: 'GET',
         responseType: 'blob', 
       })

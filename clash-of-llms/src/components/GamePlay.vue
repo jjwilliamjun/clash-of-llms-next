@@ -105,7 +105,7 @@ export default {
   methods: {
     downloadExcel() {
             axios({
-                url: 'http://localhost:5000/excel_api/excel_export', 
+                url: 'http://localhost:5000/excel_export', 
                 method: 'GET',
                 responseType: 'blob', 
             })
@@ -129,7 +129,7 @@ export default {
       });
     },
     getParameters() {
-      const path = 'http://127.0.0.1:5000/excel_api/get_parameters';
+      const path = 'http://127.0.0.1:5000/get_parameters';
       axios.get(path)
         .then((response) => {
           if (response.data.length < 2) {
@@ -137,6 +137,8 @@ export default {
             this.errors = "No parameters uploaded";
             return;
           }
+
+          console.log(response.data);
 
           this.red_team = response.data[0];
           this.blue_team = response.data[1];
@@ -153,7 +155,7 @@ export default {
         });
     },
     nextTurn(){
-      const path = 'http://127.0.0.1:5000/excel_api/next_round'
+      const path = 'http://127.0.0.1:5000/next_round'
       let team = '';
       if (this.red_team_turn){
         team = 'red';
@@ -202,7 +204,7 @@ export default {
       }
     },
     async startContinuousGame() {
-      const path = 'http://127.0.0.1:5000/excel_api/continuous_game';
+      const path = 'http://127.0.0.1:5000/continuous_game';
 
             while (this.red_team_turn || this.blue_team_turn) {
                 try {

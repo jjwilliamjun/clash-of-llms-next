@@ -2,7 +2,7 @@
 from io import BytesIO
 import pandas as pd
 from openpyxl import load_workbook
-from game_data import GameData, GameTurnData
+from .game_data import GameData, GameTurnData
 
 def export_data_excel(simulation_data_list):
     """Saving file using pd dataframe"""
