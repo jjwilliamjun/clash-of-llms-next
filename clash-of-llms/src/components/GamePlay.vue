@@ -72,6 +72,10 @@
                 <button @click="downloadExcel" class="!py-20">Download Excel upon simulation end</button>
             </div>
         </div>
+        <div v-if="cors_errors">
+          <br>
+          <p id="errors">{{ errors }}</p>
+        </div>
     </div>    
 
 </template>
@@ -95,7 +99,7 @@ export default {
       winner: null,
       currentRound: 0, // Track the current round number
       game_style: null,
-      test: null
+      cors_errors: false
     };
   },
   mounted() {
@@ -126,6 +130,8 @@ export default {
       })
       .catch((error) => {
         console.error('Error downloading the Excel file:', error);
+        this.errors = "Experiencing CORS issues (browser security issues).";
+        this.cors_errors = true;
       });
     },
     getParameters() {
