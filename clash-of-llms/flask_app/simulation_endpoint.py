@@ -15,7 +15,9 @@ from class_api.team import *
 from class_api.simulation import *
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+
+# Allow requests from http://localhost: 8080
+CORS (app, resources={r"/*": {"origins": "http: //127.0.0.1:5000:8088"}})
 
 # Directory to store uploaded LLM files under excel_api/llm_files
 LLM_DIRECTORY = os.path.join(os.path.dirname(__file__), 'llm_files')
@@ -297,6 +299,7 @@ def set_gameplay():
 
 
 @app.route('/excel_export', methods=['GET'])
+@cross_origin()
 def export_excel():
     """Exports game data to Excel"""
     try:
@@ -457,7 +460,3 @@ def continuous_game():
 if __name__ == '__main__':
     #game_data = generate_game_data()  # Testing purposes
     app.run(debug=True)
-    
-
-
-
