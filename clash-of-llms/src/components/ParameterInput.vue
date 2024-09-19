@@ -122,10 +122,6 @@
 
       <button type="submit" class="submit-button">{{ green_node_count_option === 'userData' ? 'To Excel File Upload' : 'Next' }}</button>
     </form>
-    
-    <button @click="myFunction">Click me</button>
-    <div v-if="test_display">{{ test_ref }}</div>
-
   </div>
 </template>
 
@@ -168,9 +164,7 @@ export default {
       blue_alignments: 50,   // Default to 50% blue alignments
       green_alignments: 0,   // Automatically calculated as 100 - red_alignments - blue_alignments
       display_params: false,
-      errors: null,
-      test_display: false,
-      test_ref: null
+      errors: null
     };
   },
   computed: {
@@ -274,20 +268,6 @@ export default {
       } catch (error) {
         console.error("Error submitting form:", error.response ? error.response.data : error.message);
       }
-    },
-    myFunction() {
-      const path = 'http://127.0.0.1:5000/test';
-      axios.get(path)
-        .then((response) => {
-          console.log(response.data);
-          this.test_ref = response.data;
-          return;
-
-        })
-        .catch((error) => {
-          this.test_ref = error.response;
-          return;
-        });
     }
   },
   watch: {

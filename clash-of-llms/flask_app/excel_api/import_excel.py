@@ -33,7 +33,6 @@ def validate_settings(team: dict) -> list:
     
     # will delete later
     except Exception as e:
-        print("validate settings")
         print(e)
         return
 
