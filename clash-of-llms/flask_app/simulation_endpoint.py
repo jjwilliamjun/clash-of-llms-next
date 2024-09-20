@@ -17,7 +17,7 @@ from class_api.simulation import *
 app = Flask(__name__)
 
 # Allow requests from http://localhost: 8080
-CORS (app, resources={r"/*": {"origins": "http: //127.0.0.1:5000:8088"}})
+CORS(app, resources={r"/*": {"origins":"http://127.0.0.1:5000:8080"}})
 
 # Directory to store uploaded LLM files under excel_api/llm_files
 LLM_DIRECTORY = os.path.join(os.path.dirname(__file__), 'llm_files')
