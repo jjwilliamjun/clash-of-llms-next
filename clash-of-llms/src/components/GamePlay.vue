@@ -45,6 +45,7 @@
                         <div v-if="red_team">
                             <p><span style="font-weight: bold;">Model: </span> {{ red_team._model_ID }}</p>
                             <p><span style="font-weight: bold;">Alignment: </span> {{ red_team._alignment }} %</p>
+                            <p><span style="font-weight: bold;">Penalty: </span> {{ red_team._penalty }} %</p>
                             <p><span style="font-weight: bold;">Influence Factor: </span> {{ red_team._influence_factor }}</p>
                             <p><span style="font-weight: bold;">Number of Messages Generated Per Turn: </span> {{ red_team._message_count }}</p>
                             <p><span style="font-weight: bold;">Temperature</span> {{ red_team._temperature }}</p>

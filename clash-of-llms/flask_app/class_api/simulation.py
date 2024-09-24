@@ -98,6 +98,7 @@ class Simulation:
         
         if self._current_team == 'red':
             self._red_team.generate_message()
+            self._red_team.apply_penalty()
             if(not isinstance(self._red_team._potency,str)):
                 self._green_team.broadcast_message(self._red_team._potency, self._red_team, self._red_team._influence_factor)
                 self._green_team.update_green_network()

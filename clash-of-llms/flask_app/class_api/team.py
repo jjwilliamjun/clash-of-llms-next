@@ -7,7 +7,7 @@ from create_node_network.create_network import *
 import create_node_network.create_network as GreenNetwork
 
 class Team:
-    def __init__(self, team, model_ID, energy, potency, msg_count, influence_factor, max_cost, temperature, alignment=0):
+    def __init__(self, team, model_ID, energy, potency, msg_count, influence_factor, max_cost, temperature, penalty, penalty_threshold, alignment=0):
         """Setting parameters for team"""
         self._team = team
         self._model_ID = model_ID
@@ -19,6 +19,8 @@ class Team:
         self._alignment = alignment
         self._max_cost = max_cost
         self._temperature = temperature
+        self._penalty = penalty
+        self._penalty_potency_threshold = penalty_threshold
     
     def next_round(self):
         """Increment number of messages sent"""
@@ -62,3 +64,20 @@ class Team:
         #TODO more research needed on the way to get energy cost from potency
         energy_cost = self._max_cost * (self._potency / 100)
         return energy_cost
+    
+    def apply_penalty(self):
+        """
+        Applies penalty to messages with a potency over a specified threshold.
+        """
+
+        # Update potency of red team only
+        if self._team.lower() == "blue":
+            return
+        
+        if self._penalty_potency_threshold <= self._potency:
+            print("penalty applied")
+            print("old: ", self._potency)
+            self._potency -= (self._potency * (self._penalty / 100))
+            print("new: ", self._potency)
+        
+        return

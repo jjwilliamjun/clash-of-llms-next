@@ -353,8 +353,14 @@ def start_next_round():
     red_team._alignment = green_team.red_alignment()
     blue_team._alignment = green_team.blue_alignment()
 
-    # Generate message and update green network
+    # Generate message 
     current_team.generate_message()
+
+    # Apply penalty to potency of red team message
+    if current_team._team.lower() == 'red':
+        current_team.apply_penalty()
+
+    # Update green network
     if (not isinstance(current_team._potency, str)):
         green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
         green_team.update_green_network()
@@ -367,7 +373,7 @@ def start_next_round():
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)
 
-    # TO DO --> currently rounding down - may need to change
+    #TODO: currently rounding down - may need to change
     red_team.update_alignment(round(green_team.red_alignment(), 2))
     blue_team.update_alignment(round(green_team.blue_alignment(), 2))
     

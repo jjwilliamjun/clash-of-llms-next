@@ -42,7 +42,7 @@
               <input type="range" id="blue_factor" min="0" max="1" value="0.5" step="0.01" v-model="blue_team.Influence_Factor">
             </div>
             <div class="select-parameter">
-              <label for="blue_max_cost">Max Cost: {{ blue_team.Max_Cost }}</label>
+              <label for="blue_max_cost">Maximum Energy Cost of Messages: {{ blue_team.Max_Cost }}</label>
               <br>
               <input type="range" id="blue_max_cost" min="20" max="100" value="5" step="5" v-model="blue_team.Max_Cost">
             </div>
@@ -68,6 +68,11 @@
 
             <!-- Existing Parameters -->
             <div class="select-parameter">
+              <label for="red_penalty">Penalty: {{ red_team.Penalty }} %</label>
+              <br>
+              <input type="range" id="red_penalty" class="accent" max="100" value="50" step="1" v-model="red_team.Penalty">
+            </div>
+            <div class="select-parameter">
               <label for="red_msgs">Number of Messages Generated per Turn: {{ red_team.Msgs_Generated }}</label>
               <br>
               <input type="range" id="red_msgs" class="accent" min="1" max="10" value="5" step="1" v-model="red_team.Msgs_Generated">
@@ -81,6 +86,11 @@
               <label for="red_factor">Influence Factor: {{ red_team.Influence_Factor }}</label>
               <br>
               <input type="range" id="red_factor" class="accent" min="0" max="1" value="0.5" step="0.01" v-model="red_team.Influence_Factor">
+            </div>
+            <div class="select-parameter">
+              <label for="red_penalty">Penalise Messages with Potency of: {{ red_team.Penalty_Threshold }}</label>
+              <br>
+              <input type="range" id="red_penalty" class="accent" max="100" value="50" step="1" v-model="red_team.Penalty_Threshold">
             </div>
           </div>
         </div>
@@ -145,6 +155,8 @@ export default {
         Alignment: 50,
         Max_Cost: 20,
         Custom_File: null, // New property to store the uploaded file for the blue team
+        Penalty: 50,
+        Penalty_Threshold: 50
       },
       red_team: {
         Team: 'Red',
@@ -157,6 +169,8 @@ export default {
         Alignment: 50,
         Max_Cost: 20,
         Custom_File: null, // New property to store the uploaded file for the red team
+        Penalty: 50,
+        Penalty_Threshold: 50
       },
       green_node_count_option: 'userData',  // Default to user data
       green_nodes_count: 30, // Default to 30 green nodes
@@ -259,8 +273,6 @@ export default {
         const response = await axios.post(path, data);
         this.params = response.data;
         this.display_params = true;
-
-        console.log("parameter upload success");
 
         // Optional: Redirect after successful submission
         this.$router.push('/preview'); // Uncomment if you want to redirect to parameters view

@@ -15,6 +15,8 @@ def set_team(team_parameters: dict) -> Team:
     team_parameters["Influence_Factor"] = float(team_parameters["Influence_Factor"])
     team_parameters["Alignment"] = float(team_parameters["Alignment"])
     team_parameters["Max_Cost"] = float(team_parameters["Max_Cost"])
+    team_parameters["Penalty"] = float(team_parameters["Penalty"])
+    team_parameters["Penalty_Threshold"] = float(team_parameters["Penalty_Threshold"])
     
     # Initialize and return the new team object
     new_team = Team(
@@ -26,7 +28,9 @@ def set_team(team_parameters: dict) -> Team:
         influence_factor=team_parameters["Influence_Factor"],
         alignment=team_parameters["Alignment"],
         max_cost=team_parameters["Max_Cost"],
-        temperature=team_parameters["Temperature"]
+        temperature=team_parameters["Temperature"],
+        penalty=team_parameters["Penalty"],
+        penalty_threshold=team_parameters["Penalty_Threshold"]
     )
 
     return new_team
