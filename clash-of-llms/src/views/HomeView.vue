@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="home">
     <!-- Always visible title -->
-    <h1>Red vs Blue Team Simulation</h1>
+    <h1>Clash of LLMs</h1>
     
     <!-- Option toggle for selecting input method -->
     <div class="option-toggle">

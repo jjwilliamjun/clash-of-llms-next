@@ -16,7 +16,7 @@
                 <!-- Blue Team Display -->
                 <div class="flex-child" id="game-view">
                     <div id="agents">
-                        <h2 id="blueTeam">Blue Team</h2>
+                        <h2 id="blueTeam">Blue Agent</h2>
                         <div v-if="blue_team">
                             <p><span style="font-weight: bold;">Model: </span> {{ blue_team._model_ID }}</p>
                             <p><span style="font-weight: bold;">Alignment: </span> {{ blue_team._alignment }} %</p>
@@ -41,7 +41,7 @@
                 <!-- Red Team Display -->
                 <div class="flex-child" id="game-view">
                     <div id="agents">
-                        <h2 id="redTeam">Red Team</h2>
+                        <h2 id="redTeam">Red Agent</h2>
                         <div v-if="red_team">
                             <p><span style="font-weight: bold;">Model: </span> {{ red_team._model_ID }}</p>
                             <p><span style="font-weight: bold;">Alignment: </span> {{ red_team._alignment }} %</p>

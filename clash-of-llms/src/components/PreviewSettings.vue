@@ -11,7 +11,7 @@
             <div class="flex-container">
 
                 <div class="flex-child">
-                    <h2 id="blueTeam">Blue Team</h2>
+                    <h2 id="blueTeam">Blue Agent</h2>
                     <div id="blueParameters">
                         <div class="select-parameter">
                             <div v-if="blue_team && !winner">
@@ -27,7 +27,7 @@
                 </div>
 
                 <div class="flex-child">
-                    <h2 id="redTeam">Red Team</h2>
+                    <h2 id="redTeam">Red Agent</h2>
                     <div id="redParameters">
                         <div class="select-parameter">
                             <div v-if="red_team">
@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="flex-child">
-                    <h2 id="greenTeam">Green Team</h2>
+                    <h2 id="greenTeam">Green Network</h2>
                     <div id="greenParameters">
                         <div class="select-parameter">
                             <div v-if="green_team">
