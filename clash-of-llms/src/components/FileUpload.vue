@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     async startSimulation() {
-      const path = 'http://127.0.0.1:5000/excel_api/excel_import';
+      const path = 'http://127.0.0.1:5000/excel_import';
       try {
         const response = await axios.post(path, this.file_data);
         this.params = response.data;

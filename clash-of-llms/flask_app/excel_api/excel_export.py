@@ -2,7 +2,7 @@
 from io import BytesIO
 import pandas as pd
 from openpyxl import load_workbook
-from game_data import GameData, GameTurnData
+from .game_data import GameData, GameTurnData
 
 def export_data_excel(simulation_data_list):
     """Saving file using pd dataframe"""
@@ -24,8 +24,6 @@ def export_data_excel(simulation_data_list):
     except (OSError, TypeError) as error:
         print(f"An error occurred while saving the Excel file: {error}")
         return None
-
-
 
 
 def set_col_width(excel_file):

@@ -1,10 +1,12 @@
 """Definition of the simulation's red team"""
+import os, sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from class_api.gpt_endpoint import get_message
 from excel_api.import_excel import *
-from excel_api.create_node_network.create_network import *
-import excel_api.create_node_network.create_network as GreenNetwork
+from create_node_network.create_network import * 
+import create_node_network.create_network as GreenNetwork
 
-class team:
+class Team:
     def __init__(self, team, model_ID, energy, potency, msg_count, influence_factor, max_cost, temperature, alignment=0):
         """Setting parameters for team"""
         self._team = team

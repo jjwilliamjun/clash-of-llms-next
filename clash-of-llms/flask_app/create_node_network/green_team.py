@@ -115,7 +115,7 @@ class GreenTeam:
         
     def test_scripts():
         #WIP
-        green_team_test=green_team(network, 30, 20)
+        green_team_test=GreenTeam(network, 30, 20)
         print("The number of nodes in this network is ", green_team_test._size)
         green_team_test.blue_alignment()
         green_team_test._red_alignment()

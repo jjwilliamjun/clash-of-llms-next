@@ -194,7 +194,7 @@ export default {
         formData.append('llm_file', this.blue_team.Custom_File);
 
         uploadPromises.push(
-          axios.post('http://127.0.0.1:5000/excel_api/upload_llm', formData, {
+          axios.post('http://127.0.0.1:5000/upload_llm', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           })
         );
@@ -205,7 +205,7 @@ export default {
         formData.append('llm_file', this.red_team.Custom_File);
 
         uploadPromises.push(
-          axios.post('http://127.0.0.1:5000/excel_api/upload_llm', formData, {
+          axios.post('http://127.0.0.1:5000/upload_llm', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           })
         );
@@ -254,14 +254,13 @@ export default {
           blue_alignments: this.blue_alignments,
         };
 
-        console.log("working");
-        console.log(data);
-
-        const path = 'http://127.0.0.1:5000/excel_api/ui_parameters';
+        const path = 'http://127.0.0.1:5000/ui_parameters';
 
         const response = await axios.post(path, data);
         this.params = response.data;
         this.display_params = true;
+
+        console.log("parameter upload success");
 
         // Optional: Redirect after successful submission
         this.$router.push('/preview'); // Uncomment if you want to redirect to parameters view

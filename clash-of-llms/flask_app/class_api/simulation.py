@@ -1,15 +1,14 @@
 """Simulation class"""
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '...')))
+import os, sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from create_node_network.green_team import GreenTeam
-from game_data import GameTurnData
-from class_api.team import team
+from excel_api.game_data import GameTurnData
+from class_api.team import Team
 
 
 class Simulation:
     """The main simulation loop"""
-    def __init__(self, red_team: team, blue_team: team, green_team: GreenTeam):
+    def __init__(self, red_team: Team, blue_team: Team, green_team: GreenTeam):
         """Initialization"""
         self._red_team= red_team
         self._blue_team = blue_team

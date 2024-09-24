@@ -9,7 +9,7 @@ import axios from 'axios';
  */
 export const fetchGraphDataForRound = async (roundNumber) => {
   try {
-    const response = await axios.get(`http://127.0.0.1:5000/excel_api/round_data/${roundNumber}`);
+    const response = await axios.get(`http://127.0.0.1:5000/round_data/${roundNumber}`);
     if (response.status === 200) {
       return response.data; // Network data for the specified round
     } else {

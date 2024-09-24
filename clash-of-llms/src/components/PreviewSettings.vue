@@ -102,7 +102,7 @@ export default {
     methods: {
         downloadExcel() {
         axios({
-            url: 'http://localhost:5000/excel_api/excel_export', 
+            url: 'http://localhost:5000/excel_export', 
             method: 'GET',
             responseType: 'blob', 
         })
@@ -126,7 +126,7 @@ export default {
         });
         },
         getParameters() {
-            const path = 'http://127.0.0.1:5000/excel_api/get_parameters';
+            const path = 'http://127.0.0.1:5000/get_parameters';
             axios.get(path)
                 .then((response) => {
                     if (response.data.length < 2) {
@@ -146,7 +146,7 @@ export default {
                 });
         },
         async submitGameStyle() {
-            const path = 'http://127.0.0.1:5000/excel_api/set_gameplay';
+            const path = 'http://127.0.0.1:5000/set_gameplay';
             try {
                 // Send selected option to backend
                 const response = await axios.post(path, { play_option: this.play_option });

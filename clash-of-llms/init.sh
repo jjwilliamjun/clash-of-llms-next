@@ -5,7 +5,7 @@ npm run serve &
 
 #Backend
 (
-    export FLASK_APP=excel_api/excel_endpoint.py
+    export FLASK_APP=flask_app/simulation_endpoint.py
     export FLASK_ENV=development
     flask run
 )
