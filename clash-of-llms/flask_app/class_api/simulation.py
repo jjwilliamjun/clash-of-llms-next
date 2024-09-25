@@ -3,20 +3,19 @@ import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from create_node_network.green_team import GreenTeam
 from excel_api.game_data import GameTurnData
-from class_api.team import Team
+from class_api.team import Team, BlueTeam, RedTeam
 
 
 class Simulation:
     """The main simulation loop"""
-    def __init__(self, red_team: Team, blue_team: Team, green_team: GreenTeam):
+    def __init__(self, red_team: RedTeam, blue_team: BlueTeam, green_team: GreenTeam):
         """Initialization"""
         self._red_team= red_team
         self._blue_team = blue_team
-        self._round_num = 0
+        # self._round_num = 0
         self._victor = None
         # self._green_team = create_node_network(node_attributes, node_connec)
         self._green_team = green_team
-        self._turn_data = GameTurnData()
         self._msg_content = []
         self._current_team = 'red'
 
@@ -95,6 +94,12 @@ class Simulation:
             self._victor = "blue"
             print("Blue Team has gained majority support")
             return self._victor
+    
+        # If there is no winner yet, play the next round
+        # previous = self._round_num
+        # self._round_num += 1
+        # assert(self._round_num > previous)
+        # print("ROUND NUMBER: ", self._round_num)
         
         if self._current_team == 'red':
             self._red_team.generate_message()
@@ -116,34 +121,9 @@ class Simulation:
         self._red_team.update_alignment(round(self._green_team.red_alignment(), 2))
         self._blue_team.update_alignment(round(self._green_team.blue_alignment(), 2))
 
-        if self._current_team == 'red':
-            # Update turn data        
-            self._turn_data.set_all_turn_data(
-                turn=self._round_num,
-                team=self._red_team,
-                message_chosen=self._red_team._message,
-                potency=self._red_team._potency,
-                energy_level=self._red_team._energy,
-                red_alignment=self._red_team._alignment,
-                blue_alignment=self._blue_team._alignment
-            )
-
-        elif self._current_team == 'blue':
-            # Update turn data        
-            self._turn_data.set_all_turn_data(
-                turn=self._round_num,
-                team=self._blue_team,
-                message_chosen=self._blue_team._message,
-                potency=self._blue_team._potency,
-                energy_level=self._blue_team._energy,
-                red_alignment=self._red_team._alignment,
-                blue_alignment=self._blue_team._alignment
-            )
-
         # Move to the next round
         self._red_team.next_round()
         self._blue_team.next_round()
-        self._round_num += 1
         
         # End Simulation
         return self._victor
@@ -154,3 +134,31 @@ class Simulation:
             self._current_team = 'blue'
         else:
             self._current_team = 'red'
+    
+    def get_turn_data(self, round_num) -> GameTurnData:
+        """Returns a GameTurnData object for last turn"""
+        turn_data = GameTurnData()
+
+        if self._current_team == 'red':
+            turn_data.set_all_turn_data(
+                turn=round_num,
+                team=self._red_team._team,
+                message_chosen=self._red_team._message,
+                potency=self._red_team._potency,
+                energy_level="NA",
+                red_alignment=self._red_team._alignment,
+                blue_alignment=self._blue_team._alignment
+            )
+
+        elif self._current_team == 'blue':
+            turn_data.set_all_turn_data(
+                turn=round_num,
+                team=self._blue_team._team,
+                message_chosen=self._blue_team._message,
+                potency=self._blue_team._potency,
+                energy_level=self._blue_team._energy,
+                red_alignment=self._red_team._alignment,
+                blue_alignment=self._blue_team._alignment
+            )
+        
+        return turn_data

@@ -63,7 +63,13 @@
                 <div v-if="red_team_turn"><p><span style="font-weight: bold;">Blue Team Message: </span> {{ message }}</p></div>
                 <div v-else><p><span style="font-weight: bold;">Red Team Message: </span> {{ message }}</p></div>
                 <!-- <p><span style="font-weight: bold;">Message: </span> {{ message }}</p> -->
-                <p><span style="font-weight: bold;">Potency: </span> {{ potency }}</p>
+                <div v-if="!red_team_turn && penalty_applied">
+                  <p><span style="font-weight: bold;">Potency (Penalty Applied): </span> {{ red_team._potency }}</p>
+                  <p><span style="font-weight: bold;">Original Potency (before penalty): </span> {{ red_team._unpenalised_potency }}</p>
+                </div>
+                <div v-else>
+                  <p><span style="font-weight: bold;">Potency: </span> {{ potency }}</p>
+                </div>
                 
             </div>
             
@@ -100,7 +106,8 @@ export default {
       winner: null,
       currentRound: 0, // Track the current round number
       game_style: null,
-      cors_errors: false
+      cors_errors: false,
+      penalty_applied: false
     };
   },
   mounted() {
@@ -178,6 +185,8 @@ export default {
             return;
           }
 
+          console.log("Receievd: ", response);
+
           this.red_team_turn = !this.red_team_turn;
           this.blue_team_turn = !this.blue_team_turn;
           this.message = response.data[0];
@@ -185,6 +194,11 @@ export default {
           this.winner = response.data[2];
           this.red_team = response.data[3];
           this.blue_team = response.data[4];
+
+          if (!this.red_team_turn && (this.red_team._potency != this.red_team._unpenalised_potency)) {
+            this.penalty_applied = true;
+            console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
+          }
 
           // Increment the round number after each turn
           this.currentRound++;
@@ -224,6 +238,11 @@ export default {
                     this.winner = response.data.victor;
                     this.red_team = response.data.red_team;
                     this.blue_team = response.data.blue_team;
+
+                    if (!this.red_team_turn && (this.red_team._potency !== this.red_team._unpenalised_potency)) {
+                      this.penalty_applied = true;
+                      console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
+                    }
 
                     // Increment the round number after each turn
                     this.currentRound++;

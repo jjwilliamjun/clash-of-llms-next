@@ -9,7 +9,9 @@ def validate_settings(team: dict) -> list:
 
     errors = []
 
+    # TODO: will need to retrieve this list rather than hardcode it
     models = ['gpt-4o-mini', 'gpt-4o', 'gpt-4o-turbo', 'gpt-3.5-turbo', 'custom']
+    _model_id = team["Model_ID"].strip()
     _energy = int(team["Energy"])
     _msgs = int(team["Msgs_Generated"])
     _temp = float(team["Temperature"])
@@ -17,7 +19,7 @@ def validate_settings(team: dict) -> list:
     _alignment = float(team["Alignment"])
     _max_cost = int(team["Max_Cost"])
 
-    if team["Model_ID"] not in models:
+    if _model_id not in models:
         errors.append("invalid model ID for " + team["Team"] + " agent")
     if _energy > 100 or _energy < 1:
         errors.append("invalid energy value: for " + team["Team"] + " agent")

@@ -240,6 +240,9 @@ def ui_parameters():
     global green_team
     try:
         parameters = request.get_json()
+        print("------------UI PARAMS------------")
+        print(parameters)
+        print("---------------------------------")
 
         global red_team
         red_team = set_team(parameters['red_team'])
@@ -398,7 +401,17 @@ def start_next_round():
     msg_content.append(victor)
     msg_content.append(red_team.__dict__)
     msg_content.append(blue_team.__dict__)
-    turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, current_team._potency, current_team._energy, green_team.red_alignment(), green_team.blue_alignment())
+
+    if current_team._team.lower() == 'blue':
+        turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, 
+                                    current_team._potency, current_team._energy, green_team.red_alignment(), 
+                                    green_team.blue_alignment())
+    else: 
+        turn_data.set_all_turn_data(turn=turn_counter, 
+                                    team=current_team._team, message_chosen=current_team._message, 
+                                    potency=current_team._potency, energy_level="NA", 
+                                    red_alignment=green_team.red_alignment(), blue_alignment=green_team.blue_alignment())
+    
     game_data.add_entry(turn_data)
     if victor:
         turn_counter = 0
@@ -433,12 +446,15 @@ def continuous_game():
     '''Runs a single round of the simulation when playing continuously'''
     try: 
         global continuous_game
+        global game_data
+        global turn_counter
         
         if continuous_game._victor is None:
+            turn_counter = turn_counter + 1
             victor = continuous_game.next_round()
 
             # Add the new function to create and save a JSON file for the current round
-            create_round_json(continuous_game._round_num, continuous_game._green_team._network_graph)
+            create_round_json(turn_counter, continuous_game._green_team._network_graph)
 
             current_team = None
             if continuous_game._current_team == "red":
@@ -453,7 +469,7 @@ def continuous_game():
                 "red_team": continuous_game._red_team.__dict__,
                 "blue_team": continuous_game._blue_team.__dict__
             }
-            game_data.add_entry(continuous_game._turn_data)
+            game_data.add_entry(continuous_game.get_turn_data(turn_counter))
 
             continuous_game.switch_teams()
             
@@ -461,6 +477,13 @@ def continuous_game():
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# TODO: DELETE LATER - FOR TESTING
+@app.route('/get_gamedata', methods=['GET'])
+@cross_origin()
+def get_gd():
+    global game_data
+    return jsonify(game_data.__dict__), 200
 
 
 if __name__ == '__main__':
