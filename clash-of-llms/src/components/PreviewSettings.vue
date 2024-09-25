@@ -38,7 +38,7 @@
                             <p><span style="font-weight: bold;">Influence Factor: </span> {{ red_team._influence_factor }}</p>
                             <p><span style="font-weight: bold;">Number of Messages Generated Per Turn: </span> {{ red_team._message_count }}</p>
                             <p><span style="font-weight: bold;">Temperature</span> {{ red_team._temperature }}</p>
-                            <p><span style="font-weight: bold;">Penalise Messages with Potency of: </span> {{ red_team._penalty_potency_threshold }} %</p>
+                            <p><span style="font-weight: bold;">Penalise Messages with Potency of: </span> {{ red_team._penalty_threshold }}</p>
                         </div>
                         </div>
                     </div>
