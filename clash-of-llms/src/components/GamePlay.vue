@@ -423,12 +423,4 @@ export default {
     padding: 20px;
   }
 }
-.error-message {
-  color: white;
-  background-color: red;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 5px;
-  text-align: center;
-}
 </style>
