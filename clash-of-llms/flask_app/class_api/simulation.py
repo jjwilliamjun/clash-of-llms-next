@@ -94,12 +94,7 @@ class Simulation:
             print("Blue Team has gained majority support")
             return self._victor
     
-        # If there is no winner yet, play the next round
-        # previous = self._round_num
-        # self._round_num += 1
-        # assert(self._round_num > previous)
-        # print("ROUND NUMBER: ", self._round_num)
-        
+        # If there is no winner yet, play the next round        
         if self._current_team == 'red':
             self._red_team.generate_message()
             self._red_team.apply_penalty()
