@@ -159,10 +159,6 @@
         </div>
       </div>
     </div>
-    <div v-if="cors_errors">
-      <br />
-      <p id="errors">{{ errors }}</p>
-    </div>
   </div>
 </template>
 
@@ -188,7 +184,6 @@ export default {
       winner: null,
       currentRound: 0, // Track the current round number
       game_style: null,
-      cors_errors: false,
     };
   },
   mounted() {
@@ -196,7 +191,6 @@ export default {
     this.fetchAndDrawNetwork(this.currentRound); // Fetch and draw the initial network
   },
   methods: {
-    openPopup() {},
     downloadExcel() {
       axios({
         url: "http://127.0.0.1:5000/excel_export",
@@ -223,8 +217,13 @@ export default {
         })
         .catch((error) => {
           console.error("Error downloading the Excel file:", error);
-          this.errors = "Experiencing CORS issues (browser security issues).";
-          this.cors_errors = true;
+          this.errors = `Error downloading the Excel file: ${error.response?.data?.error || error.message || error}`;
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors || "An unexpected error occurred.",
+            },
+          });
         });
     },
     getParameters() {
@@ -289,8 +288,15 @@ export default {
         })
         .catch((error) => {
           console.error(error);
-          this.display_error = true;
-          this.errors = error;
+          //this.display_error = true;
+          this.errors = `Error occurred when running simulation: ${error.response?.data?.error || error.message || error}`;
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors || "An unexpected error occurred.",
+            },
+          });
+
         });
     },
     async fetchAndDrawNetwork(roundNumber) {
@@ -302,10 +308,17 @@ export default {
           console.error("Graph container not found.");
         }
       } catch (error) {
+        this.errors=`Error occurred when displaying network: ${error.response?.data?.error || error.message || error}`;
         console.error(
           `Error fetching or drawing network for round ${roundNumber}:`,
           error
         );
+        this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
       }
     },
     async startContinuousGame() {
@@ -330,8 +343,14 @@ export default {
           this.fetchAndDrawNetwork(this.currentRound);
         } catch (error) {
           console.error(error);
-          this.errors = error.response.data.error;
-          this.display_error = true;
+          this.errors = `Error occurred when running continuous simulation: ${error.response?.data?.error || error.message || error}`;
+          //this.display_error = true;
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
           return;
         }
 
@@ -401,7 +420,15 @@ export default {
   .button-group {
     display: flex;
     gap: 8px;
-    padding: 20px
+    padding: 20px;
   }
+}
+.error-message {
+  color: white;
+  background-color: red;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  text-align: center;
 }
 </style>
