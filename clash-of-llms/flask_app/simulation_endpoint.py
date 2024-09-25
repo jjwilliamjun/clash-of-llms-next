@@ -151,7 +151,6 @@ def convert_alignment_to_node_count(graph, red, blue):
     blue_alignment= math.floor((blue / 100) * size)
     red_alignment=math.floor((red / 100) * size)
     if blue_alignment + red_alignment > size:
-        print('ERROR')
         return jsonify({"error": "Alignment percentages must sum up to 100. Please enter valid percentages."}), 400
     print('as node count with size',graph.number_of_nodes(),blue_alignment, red_alignment)
     return blue_alignment, red_alignment
@@ -240,9 +239,6 @@ def ui_parameters():
     global green_team
     try:
         parameters = request.get_json()
-        print("------------UI PARAMS------------")
-        print(parameters)
-        print("---------------------------------")
 
         global red_team
         red_team = set_team(parameters['red_team'])

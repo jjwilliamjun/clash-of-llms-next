@@ -87,10 +87,7 @@ class RedTeam(Team):
         
         if self._penalty_threshold <= self._potency:
             self._unpenalised_potency = self._potency
-            print("penalty applied")
-            print("old: ", self._potency)
             self._potency -= math.floor(self._potency * (self._penalty / 100))
-            print("new: ", self._potency)
         else:
             self._unpenalised_potency = self._potency
         

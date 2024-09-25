@@ -152,8 +152,6 @@ export default {
             return;
           }
 
-          console.log(response.data);
-
           this.red_team = response.data[0];
           this.blue_team = response.data[1];
           this.game_style = response.data[3]; 
@@ -185,8 +183,6 @@ export default {
             return;
           }
 
-          console.log("Receievd: ", response);
-
           this.red_team_turn = !this.red_team_turn;
           this.blue_team_turn = !this.blue_team_turn;
           this.message = response.data[0];
@@ -197,7 +193,6 @@ export default {
 
           if (!this.red_team_turn && (this.red_team._potency != this.red_team._unpenalised_potency)) {
             this.penalty_applied = true;
-            console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
           }
 
           // Increment the round number after each turn
@@ -261,9 +256,8 @@ export default {
                     break;
                 }
                 
-                console.log("waiting")
                 // Wait 25 seconds before next round - chatgpt query takes time
-                await new Promise(resolve => setTimeout(resolve, 25000));
+                await new Promise(resolve => setTimeout(resolve, 15000));
             }
             return;
         }
