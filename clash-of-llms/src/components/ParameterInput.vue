@@ -267,6 +267,15 @@ export default {
 
       } catch (error) {
         console.error("Error submitting form:", error.response ? error.response.data : error.message);
+        this.errors = `Error submitting form: ${
+            error.response?.data?.error || error.message || error
+          }`;
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
       }
     }
   },

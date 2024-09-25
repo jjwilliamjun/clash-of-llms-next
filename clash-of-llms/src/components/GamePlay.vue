@@ -348,7 +348,7 @@ export default {
           this.$router.push({
             name: "error",
             query: {
-              errorMessage: this.errors,
+            errorMessage: this.errors,
             },
           });
           return;
