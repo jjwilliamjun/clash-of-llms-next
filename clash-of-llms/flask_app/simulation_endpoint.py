@@ -474,13 +474,6 @@ def continuous_game():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-# TODO: DELETE LATER - FOR TESTING
-@app.route('/get_gamedata', methods=['GET'])
-@cross_origin()
-def get_gd():
-    global game_data
-    return jsonify(game_data.__dict__), 200
-
 
 if __name__ == '__main__':
     #game_data = generate_game_data()  # Testing purposes
