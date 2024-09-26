@@ -31,22 +31,29 @@ custom_llms = {}  # Placeholder to store custom LLMs
 game_style = None
 continuous_game = None
 
+
 @app.route('/upload_llm', methods=['POST'])
 @cross_origin()
 def upload_llm():
-    """Handles the upload of an LLM file and saves it to the llm_files directory"""
     try:
         if 'llm_file' not in request.files:
             return jsonify({"error": "No LLM file provided"}), 400
 
-        file = request.files['llm_file']
+        team = request.form.get('team', None)
+        if not team or team.lower() not in ['red', 'blue']:
+            return jsonify({"error": "Invalid or missing team (expected 'red' or 'blue')"}), 400
 
+        file = request.files['llm_file']
+        filename = file.filename
+
+        new_filename = f"{team.lower()}_{filename}"
         llm_files_directory = os.path.join('flask_app', 'llm_api', 'llm_files')
         os.makedirs(llm_files_directory, exist_ok=True)
-        file_path = os.path.join(llm_files_directory, file.filename)
+
+        file_path = os.path.join(llm_files_directory, new_filename)
         file.save(file_path)
 
-        return jsonify({"message": f"LLM file '{file.filename}' uploaded successfully."}), 200
+        return jsonify({"message": f"LLM file '{new_filename}' uploaded successfully at '{file_path}'."}), 200
 
     except Exception as e:
         print(f"Error occurred: {e}")
@@ -272,7 +279,6 @@ def export_excel():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Route to serve next round request from the frontend
 @app.route('/next_round', methods=['GET'])
 @cross_origin()
 def start_next_round():
@@ -281,73 +287,76 @@ def start_next_round():
     global red_team
     global blue_team
 
-    turn_data=GameTurnData()
+    turn_data = GameTurnData()
     turn_counter = turn_counter + 1
     msg_content = []
     victor = None
 
     team_colour = request.args.get('team')
-    
+
     if blue_team is None or red_team is None: 
         return jsonify({"error": "Team not found"}), 404
-    
-    # Assignment of current team
+
     if team_colour == 'red':
         current_team = red_team
     elif team_colour == 'blue':
         current_team = blue_team
     else:
         return jsonify({"error": "Incorrect team colour"}), 404
-    
-    # Update alignment for the two teams
+
     red_team._alignment = green_team.red_alignment()
     blue_team._alignment = green_team.blue_alignment()
 
-    # Generate message and update green network
-    current_team.generate_message()
+    original_model_id = current_team._model_ID
+
+    if current_team._model_ID == 'custom':
+        current_team._model_ID = 'gpt-3.5-turbo'
+    
+    current_team._message, current_team._potency = get_message(
+        current_team._team, current_team._model_ID, current_team._alignment,
+        current_team._temperature, current_team._message_count, current_team._energy
+    )
+
+    current_team._model_ID = original_model_id
+
     if (not isinstance(current_team._potency, str)):
         green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
         green_team.update_green_network()
 
-        # Add the new function to create and save a JSON file for the current round
         create_round_json(turn_counter, green_team._network_graph)
-    
-    # Update energy level if the current team is blue
+
     if current_team._team.lower() == 'blue':
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)
 
-    # TO DO --> currently rounding down - may need to change
     red_team.update_alignment(round(green_team.red_alignment(), 2))
     blue_team.update_alignment(round(green_team.blue_alignment(), 2))
-    
-    print(f'Current team has alignment {current_team._alignment}%')
-    
-    # Winning by majority support
+
     if red_team._alignment >= winning_pop_percent:
         victor = red_team._team
     elif blue_team._alignment >= winning_pop_percent:
         victor = blue_team._team
-    
-    # Winning by energy loss
+
     if current_team._team.lower() == 'blue' and current_team._energy == 0:
         victor = 'Red'
-    
-    #Reset turn counter if winner is determined
-    #TODO: move this to start of loop potentially
 
-    
+    if victor:
+        turn_counter = 0
+
     msg_content.append(current_team._message)
     msg_content.append(current_team._potency)
     msg_content.append(victor)
     msg_content.append(red_team.__dict__)
     msg_content.append(blue_team.__dict__)
-    turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, current_team._potency, current_team._energy, green_team.red_alignment(), green_team.blue_alignment())
+    
+    turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, 
+                                current_team._potency, current_team._energy, green_team.red_alignment(), 
+                                green_team.blue_alignment())
+    
     game_data.add_entry(turn_data)
-    if victor:
-        turn_counter = 0
-    print(f'Blue team has {blue_team._energy} energy left')
+
     return jsonify(msg_content), 200
+
 
 def create_round_json(round_number, network_graph):
     """Creates a JSON file for the network graph for the given round"""
@@ -405,6 +414,9 @@ def continuous_game():
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+
 
 
 if __name__ == '__main__':
