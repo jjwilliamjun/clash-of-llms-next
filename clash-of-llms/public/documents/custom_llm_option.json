@@ -1,66 +1,49 @@
 {
-    "custom_llm_guide": {
-      "title": "Custom LLM File",
-      "description": "To integrate a custom LLM into the simulation, you'll need to create a JSON file containing your LLM model's information. Follow these simple steps to create and upload your custom LLM file.",
-      "steps": [
-        {
-          "title": "Step 1: Create a JSON File",
-          "content": [
-            "Open a text editor (e.g., Notepad, VS Code, Sublime Text) on your computer.",
-            "Copy and paste the following template into the editor:",
-            {
-              "template": {
-                "Model_ID": "custom_model_id",
-                "Custom_Model": "Your Custom Model Name",
-                "Version": "v1.0",
-                "Description": "A brief description of your custom LLM model.",
-                "Capabilities": {
-                  "Language": "Language used by the model (e.g., English)",
-                  "Topic": "The primary topic or focus of the model (e.g., Political Influence)",
-                  "Potency": 0.75,
-                  "Energy_Efficiency": 80,
-                  "Message_Speed": "Speed of message generation (e.g., Fast)"
-                },
-                "Last_Updated": "YYYY-MM-DD",
-                "Owner": "Your Name or Team Name"
-              }
-            }
-          ]
-        },
-        {
-          "title": "Step 2: Customize the JSON File",
-          "content": [
-            "Replace 'custom_model_id' with a unique identifier for your model.",
-            "Provide a name for your custom LLM model under 'Custom_Model'.",
-            "Set the version of your model (e.g., 'v1.0').",
-            "Write a brief description of your custom model's purpose.",
-            "Customize the 'Capabilities' section to define the model's details:",
-            "- Language: Specify the language used by the model.",
-            "- Topic: Define the primary topic or focus of the model.",
-            "- Potency: Set the potency value (between 0 and 1) that indicates the model's strength.",
-            "- Energy_Efficiency: Set the energy efficiency as a percentage (0-100).",
-            "- Message_Speed: Describe the speed of message generation (e.g., 'Fast').",
-            "Enter the current date in the 'Last_Updated' field in the format 'YYYY-MM-DD'.",
-            "Provide your name or team name under 'Owner'."
-          ]
-        },
-        {
-          "title": "Step 3: Save the JSON File",
-          "content": [
-            "Save the file with a descriptive name and ensure it has a .json extension (e.g., 'blue_team_llm.json').",
-            "Remember the file location, as you will need to upload it later."
-          ]
-        },
-        {
-          "title": "Step 4: Upload the Custom LLM File",
-          "content": [
-            "Go to the upload section of the website.",
-            "Select the 'Custom' option for your team (Red or Blue).",
-            "Upload your JSON file (e.g., 'blue_team_llm.json' or 'red_team_llm.json').",
-            "The system will automatically fetch the 'Model_ID' from the JSON file and integrate it into the simulation."
-          ]
-        }
-      ]
-    }
+  "custom_llm_guide": {
+    "title": "Custom LLM Integration",
+    "description": "This guide explains how to integrate custom Large Language Models (LLMs) into the simulation using PyTorch (.pt) or TensorFlow (.h5) files. Follow these steps to upload and use your custom models in the system.",
+    "steps": [
+      {
+        "title": "Step 1: Prepare Your LLM Model",
+        "content": [
+          "Ensure your custom LLM is saved in the appropriate format:",
+          "- Use `.pt` for PyTorch models.",
+          "- Use `.h5` for TensorFlow models.",
+          "Your model should be ready for inference (evaluation mode for PyTorch)."
+        ]
+      },
+      {
+        "title": "Step 2: Upload Your LLM Model",
+        "content": [
+          "Go to the model upload section on the website.",
+          "Select the 'Custom' option under your team (Red or Blue) from the dropdown menu.",
+          "Upload your model file in the `.pt` or `.h5` format.",
+          "Ensure the file is correctly named:",
+          "- For the Blue team, use `blue_custom_model.pt` or `blue_custom_model.h5`.",
+          "- For the Red team, use `red_custom_model.pt` or `red_custom_model.h5`."
+        ]
+      },
+      {
+        "title": "Step 3: Integration with the Simulation",
+        "content": [
+          "Once uploaded, the system will automatically detect your model file and integrate it into the simulation.",
+          "The backend will recognize and use the custom model for generating messages and computing potency values during the simulation."
+        ]
+      },
+      {
+        "title": "Step 4: Verify Model Usage",
+        "content": [
+          "During the simulation, the system will show the model being used for message generation.",
+          "You can verify that your custom model is being used by checking the console logs or output messages, which will indicate if the 'Custom' model is applied."
+        ]
+      },
+      {
+        "title": "Step 5: Update or Replace Your Model",
+        "content": [
+          "To update or replace your custom LLM, upload a new `.pt` or `.h5` file following the same process outlined above.",
+          "Ensure the model file has the correct naming convention (e.g., `blue_custom_model.pt` or `red_custom_model.h5`)."
+        ]
+      }
+    ]
   }
-  
+}

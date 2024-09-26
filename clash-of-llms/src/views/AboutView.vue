@@ -114,6 +114,11 @@
             </li>
           </ul>
         </div>
+        <!-- Download Simulation Settings Example -->
+        <div class="download-section">
+          <h3>Download Example File</h3>
+          <a href="/documents/simple_pytorch_model.pt" download="simple_pytorch_model.pt">simple_pytorch_model.pt</a>
+        </div>
       </section>      
 
       <!-- Node Connections Section -->
