@@ -125,14 +125,12 @@
   </div>
 </template>
 
-
 <script>
 import axios from 'axios';
 
 export default {
   data() {
     return {
-    //When testing pls use gpt-4o and gpt-4o-turbo as few times as possible
       models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4o-turbo', 'gpt-3.5-turbo', 'custom'],
       blue_team: {
         Team: 'Blue',
@@ -144,7 +142,7 @@ export default {
         Influence_Factor: 0.5,
         Alignment: 50,
         Max_Cost: 20,
-        Custom_File: null, // New property to store the uploaded file for the blue team
+        Custom_File: null, // Store the uploaded file for the blue team
       },
       red_team: {
         Team: 'Red',
@@ -156,7 +154,7 @@ export default {
         Influence_Factor: 0.5,
         Alignment: 50,
         Max_Cost: 20,
-        Custom_File: null, // New property to store the uploaded file for the red team
+        Custom_File: null, // Store the uploaded file for the red team
       },
       green_node_count_option: 'userData',  // Default to user data
       green_nodes_count: 30, // Default to 30 green nodes
@@ -169,7 +167,7 @@ export default {
   },
   computed: {
     showFileUpload() {
-      // Show file upload if any team's model is 'custom'
+      // Show file upload if either team's model is 'custom'
       return this.red_team.Model_ID === 'custom' || this.blue_team.Model_ID === 'custom';
     }
   },
@@ -189,6 +187,7 @@ export default {
       // Uploads the LLM files for both teams if they exist
       const uploadPromises = [];
 
+      // Blue Team file upload
       if (this.blue_team.Model_ID === 'custom' && this.blue_team.Custom_File) {
         const formData = new FormData();
         formData.append('llm_file', this.blue_team.Custom_File);
@@ -200,6 +199,7 @@ export default {
         );
       }
 
+      // Red Team file upload
       if (this.red_team.Model_ID === 'custom' && this.red_team.Custom_File) {
         const formData = new FormData();
         formData.append('llm_file', this.red_team.Custom_File);
@@ -229,11 +229,19 @@ export default {
         }
 
         if (this.green_node_count_option === 'userInput') {
-          this.red_team.Alignment = this.red_alignments
-          this.blue_team.Alignment = this.blue_alignments
+          this.red_team.Alignment = this.red_alignments;
+          this.blue_team.Alignment = this.blue_alignments;
         }
 
+        // Validate if custom files are uploaded for the selected 'custom' LLM
         if (this.showFileUpload) {
+          if (!this.blue_team.Custom_File && this.blue_team.Model_ID === 'custom') {
+            throw new Error("Please upload a custom file for Blue Team.");
+          }
+          if (!this.red_team.Custom_File && this.red_team.Model_ID === 'custom') {
+            throw new Error("Please upload a custom file for Red Team.");
+          }
+
           // Upload LLM files before proceeding
           await this.uploadLLMFiles();
         }
@@ -260,7 +268,7 @@ export default {
         this.params = response.data;
         this.display_params = true;
 
-        console.log("parameter upload success");
+        console.log("Parameter upload success");
 
         // Optional: Redirect after successful submission
         this.$router.push('/preview'); // Uncomment if you want to redirect to parameters view
@@ -276,7 +284,6 @@ export default {
   }
 };
 </script>
-
 
 
 
