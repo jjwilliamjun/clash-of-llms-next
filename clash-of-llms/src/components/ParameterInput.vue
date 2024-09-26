@@ -13,6 +13,14 @@
                 <option v-for="(item, index) in models" :key="index" :value="item">{{ item }}</option>
               </select>
             </div>
+
+            <!-- File Upload for Custom Model -->
+            <div v-if="blue_team.Model_ID === 'custom'" class="select-parameter">
+              <label for="file_upload_blue">Upload Custom File: </label>
+              <input type="file" id="file_upload_blue" @change="handleFileUploadBlue" />
+            </div>
+
+            <!-- Existing Parameters -->
             <div class="select-parameter">
               <label for="blue_energy">Energy: {{ blue_team.Energy }}</label>
               <br>
@@ -34,14 +42,9 @@
               <input type="range" id="blue_factor" min="0" max="1" value="0.5" step="0.01" v-model="blue_team.Influence_Factor">
             </div>
             <div class="select-parameter">
-              <label for="blue_alignment">Alignment: {{ blue_team.Alignment }}</label>
-              <br>
-              <input type="range" id="blue_alignment" min="0" max="100" value="5" step="1" v-model="blue_team.Alignment">
-            </div>
-            <div class="select-parameter">
               <label for="blue_max_cost">Max Cost: {{ blue_team.Max_Cost }}</label>
               <br>
-              <input type="range" id="blue_max_cost" min="0" max="100" value="5" step="1" v-model="blue_team.Max_Cost">
+              <input type="range" id="blue_max_cost" min="20" max="100" value="5" step="5" v-model="blue_team.Max_Cost">
             </div>
           </div>
         </div>
@@ -52,11 +55,18 @@
           <div id="redParameters">
             <div class="select-parameter">
               <label for="red_model">Model: </label>
-              <select name="red_model" id="model" v-model="red_team.Model_ID"> 
+              <select name="red_model" id="model" v-model="red_team.Model_ID">
                 <option v-for="(item, index) in models" :key="index" :value="item">{{ item }}</option>
               </select>
             </div>
-            
+
+            <!-- File Upload for Custom Model -->
+            <div v-if="red_team.Model_ID === 'custom'" class="select-parameter">
+              <label for="file_upload_red">Upload Custom File: </label>
+              <input type="file" id="file_upload_red" @change="handleFileUploadRed" />
+            </div>
+
+            <!-- Existing Parameters -->
             <div class="select-parameter">
               <label for="red_msgs">Number of Messages Generated per Turn: {{ red_team.Msgs_Generated }}</label>
               <br>
@@ -71,16 +81,6 @@
               <label for="red_factor">Influence Factor: {{ red_team.Influence_Factor }}</label>
               <br>
               <input type="range" id="red_factor" class="accent" min="0" max="1" value="0.5" step="0.01" v-model="red_team.Influence_Factor">
-            </div>
-            <div class="select-parameter">
-              <label for="red_alignment">Alignment: {{ red_team.Alignment }}</label>
-              <br>
-              <input type="range" id="red_alignment" class="accent" min="0" max="100" value="5" step="1" v-model="red_team.Alignment">
-            </div>
-            <div class="select-parameter">
-              <label for="red_max_cost">Max Cost: {{ red_team.Max_Cost }}</label>
-              <br>
-              <input type="range" id="red_max_cost" class="accent" min="0" max="100" value="5" step="1" v-model="red_team.Max_Cost">
             </div>
           </div>
         </div>
@@ -120,14 +120,11 @@
         </div>
       </div>
 
-      <button type="submit" class="submit-button">{{ green_node_count_option === 'userData' ? 'Next' : 'Start Simulation' }}</button>
+      <button type="submit" class="submit-button">{{ green_node_count_option === 'userData' ? 'To Excel File Upload' : 'Next' }}</button>
     </form>
-
-    <div v-if="display_params">
-      <router-link to="/parameters">View Parameters</router-link>
-    </div>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -135,26 +132,31 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      models: ['gpt 3.5 turbo', 'custom'],
+    //When testing pls use gpt-4o and gpt-4o-turbo as few times as possible
+      models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4o-turbo', 'gpt-3.5-turbo', 'custom'],
       blue_team: {
         Team: 'Blue',
-        Model_ID: 'gpt 3.5 turbo',
+        Model_ID: 'gpt-4o-mini',
+        Custom_Model: '',
         Energy: 50,
         Msgs_Generated: 5,
         Temperature: 0.5,
         Influence_Factor: 0.5,
-        Alignment: 5,
-        Max_Cost: 1
+        Alignment: 50,
+        Max_Cost: 20,
+        Custom_File: null, // New property to store the uploaded file for the blue team
       },
       red_team: {
         Team: 'Red',
-        Model_ID: 'gpt 3.5 turbo',
+        Model_ID: 'gpt-4o-mini',
+        Custom_Model: '',
         Energy: 50,
         Msgs_Generated: 5,
         Temperature: 0.5,
         Influence_Factor: 0.5,
-        Alignment: 5,
-        Max_Cost: 1
+        Alignment: 50,
+        Max_Cost: 20,
+        Custom_File: null, // New property to store the uploaded file for the red team
       },
       green_node_count_option: 'userData',  // Default to user data
       green_nodes_count: 30, // Default to 30 green nodes
@@ -162,40 +164,119 @@ export default {
       blue_alignments: 50,   // Default to 50% blue alignments
       green_alignments: 0,   // Automatically calculated as 100 - red_alignments - blue_alignments
       display_params: false,
+      errors: null
     };
+  },
+  computed: {
+    showFileUpload() {
+      // Show file upload if any team's model is 'custom'
+      return this.red_team.Model_ID === 'custom' || this.blue_team.Model_ID === 'custom';
+    }
   },
   methods: {
     updateAlignments() {
       this.green_alignments = Math.max(0, 100 - this.red_alignments - this.blue_alignments);
     },
+    handleFileUploadBlue(event) {
+      const file = event.target.files[0];
+      this.blue_team.Custom_File = file; // Store the file for later use
+    },
+    handleFileUploadRed(event) {
+      const file = event.target.files[0];
+      this.red_team.Custom_File = file; // Store the file for later use
+    },
+    async uploadLLMFiles() {
+      // Uploads the LLM files for both teams if they exist
+      const uploadPromises = [];
+
+      if (this.blue_team.Model_ID === 'custom' && this.blue_team.Custom_File) {
+        const formData = new FormData();
+        formData.append('llm_file', this.blue_team.Custom_File);
+
+        uploadPromises.push(
+          axios.post('http://127.0.0.1:5000/upload_llm', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          })
+        );
+      }
+
+      if (this.red_team.Model_ID === 'custom' && this.red_team.Custom_File) {
+        const formData = new FormData();
+        formData.append('llm_file', this.red_team.Custom_File);
+
+        uploadPromises.push(
+          axios.post('http://127.0.0.1:5000/upload_llm', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          })
+        );
+      }
+
+      // Wait for all upload requests to complete
+      try {
+        await Promise.all(uploadPromises);
+        console.log("All custom LLM files uploaded successfully.");
+      } catch (error) {
+        console.error("Error uploading LLM files:", error.response ? error.response.data : error.message);
+        throw error; // Re-throw the error to handle it in handleFormSubmit
+      }
+    },
     async handleFormSubmit() {
-      if (this.green_node_count_option === 'userData') {
-        // Navigate to the FileUpload.vue page (assuming it's associated with the '/upload' route)
-        this.$router.push('/upload');
-      } else {
+      try {
+        // Redirect to FileUpload.vue if 'userData' is selected
+        if (this.green_node_count_option === 'userData') {
+          this.$router.push('/upload');
+          return; // Stop further execution
+        }
+
+        if (this.green_node_count_option === 'userInput') {
+          this.red_team.Alignment = this.red_alignments
+          this.blue_team.Alignment = this.blue_alignments
+        }
+
+        if (this.showFileUpload) {
+          // Upload LLM files before proceeding
+          await this.uploadLLMFiles();
+        }
+
+        // Prepare the data for submission
         const data = {
-          red_team: this.red_team,
-          blue_team: this.blue_team,
+          red_team: {
+            ...this.red_team,
+            Custom_Model: this.red_team.Model_ID === 'custom' ? this.red_team.Custom_Model : ''
+          },
+          blue_team: {
+            ...this.blue_team,
+            Custom_Model: this.blue_team.Model_ID === 'custom' ? this.blue_team.Custom_Model : ''
+          },
           green_node_count_option: this.green_node_count_option,
           green_nodes_count: this.green_nodes_count,
           red_alignments: this.red_alignments,
           blue_alignments: this.blue_alignments,
         };
 
-        const path = 'http://127.0.0.1:5000/excel_api/ui_parameters';
+        const path = 'http://127.0.0.1:5000/ui_parameters';
 
-        try {
-          const response = axios.post(path, data);
-          this.params = (await response).data;
-          this.display_params = true;
+        const response = await axios.post(path, data);
+        this.params = response.data;
+        this.display_params = true;
 
-          // Optional: Add a redirection after the successful simulation parameter set
-          // this.$router.push('/parameters'); // This assumes you have a route for viewing the parameters.
-        } catch (error) {
-          console.log("Error: ", error);
-        }
+        console.log("parameter upload success");
+
+        // Optional: Redirect after successful submission
+        this.$router.push('/preview'); // Uncomment if you want to redirect to parameters view
+
+      } catch (error) {
+        console.error("Error submitting form:", error.response ? error.response.data : error.message);
       }
-    },
+    }
+  },
+  watch: {
+    red_alignments: 'updateAlignments',
+    blue_alignments: 'updateAlignments',
   }
 };
 </script>
+
+
+
+

@@ -19,9 +19,6 @@
     <ParameterInputForm v-if="inputOption === 'manual'" />
     <FileUploadForm v-else />
   </div>
-  <div>
-    <button @click="downloadExcel" class="!py-20">Download Excel</button>
-  </div>
 </template>
 
 <script>
@@ -42,23 +39,20 @@ export default {
   methods: {
     downloadExcel() {
       axios({
-        url: 'http://localhost:5000/excel_api/export_excel', 
+        url: 'http://localhost:5000/excel_export', 
         method: 'GET',
         responseType: 'blob', 
       })
       .then((response) => {
         const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const link = document.createElement('a');
-
         link.href = window.URL.createObjectURL(blob);
+
         const now = new Date();
         const timestamp = now.getHours() + "_" + now.getMinutes() + "_" + now.getSeconds();
-    
         const excel_file_name = `clash_of_llms_${timestamp}.xlsx`;
         link.download = excel_file_name; 
-        
         link.click();
-        
         window.URL.revokeObjectURL(link.href);
       })
       .catch((error) => {

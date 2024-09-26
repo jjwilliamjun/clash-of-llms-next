@@ -1,0 +1,16 @@
+{
+    "Model_ID": "custom",
+    "Custom_Model": "Blue Team Custom LLM",
+    "Version": "v2.1",
+    "Description": "Custom LLM model used by the Blue team for defensive counter-messaging.",
+    "Capabilities": {
+      "Language": "English",
+      "Topic": "Defense and Stability",
+      "Potency": 0.85,
+      "Energy_Efficiency": 90,
+      "Message_Speed": "Moderate"
+    },
+    "Last_Updated": "2024-09-12",
+    "Owner": "Blue Team Communications"
+  }
+  

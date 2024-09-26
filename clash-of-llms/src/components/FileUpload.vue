@@ -20,7 +20,7 @@
   </form>
 
   <div v-if="display_params">
-    <router-link to="/parameters">View Parameters</router-link>
+    <router-link to="/gameplay">View Parameters</router-link>
   </div>
   
   <div v-if="errors" class="error-container">
@@ -46,11 +46,13 @@ export default {
   },
   methods: {
     async startSimulation() {
-      const path = 'http://127.0.0.1:5000/excel_api/excel_import';
+      const path = 'http://127.0.0.1:5000/excel_import';
       try {
         const response = await axios.post(path, this.file_data);
         this.params = response.data;
         this.display_params = true;
+        // Optional: Redirect after successful submission
+        this.$router.push('/preview'); // Uncomment if you want to redirect to parameters view
       } catch (error) {
         if (error.response) {
           this.errors = error.response.data.error;
