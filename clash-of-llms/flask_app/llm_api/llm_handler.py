@@ -5,6 +5,10 @@ import tensorflow as tf  # For TensorFlow (placeholder)
 from llm_api.llm_handler import *
 from class_api.gpt_endpoint import *
 
+
+LLM_FILES_DIRECTORY = os.path.join('flask_app', 'llm_api', 'llm_files')
+os.makedirs(LLM_FILES_DIRECTORY, exist_ok=True)
+
 def load_model(team):
     """Load a custom LLM model for the specified team."""
     model_file = None
@@ -92,21 +96,12 @@ def serve_tensorflow_model(model_file, input_data):
 
 def run_custom_model(team, input_data):
     """Placeholder function for custom model integration."""
-    # Placeholder for future custom model execution
-    # Right now, we use GPT-3.5 to generate messages
+    # Log that we're using GPT-3.5 as a placeholder
+    print(f"Using GPT-3.5 as placeholder for {team} team, while model is still 'custom'.")
 
-    # Log that we're using a placeholder
-    print(f"Using GPT-3.5 as placeholder for {team} team.")
-
-    # Set up default GPT-3.5 model usage for now
+    # Set up GPT-3.5 model usage for now, while keeping the 'custom' model_id
     model_id = "gpt-3.5-turbo"
-    alignment = input_data.get('alignment')
-    temperature = input_data.get('temperature')
-    msg_count = input_data.get('msg_count')
-    energy = input_data.get('energy')
-
-    # Call the existing get_message function
-    message, potency = get_message(team, model_id, alignment, temperature, msg_count, energy)
+    message, potency = get_message(team, model_id, input_data['alignment'], input_data['temperature'], input_data['msg_count'], input_data['energy'])
 
     return message, potency
 
