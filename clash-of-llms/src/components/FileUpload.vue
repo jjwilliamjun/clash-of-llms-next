@@ -23,7 +23,7 @@
     <router-link to="/gameplay">View Parameters</router-link>
   </div>
   
-  <div v-if="show_errors" class="error-container">
+  <div v-if="errors" class="error-container">
     
     <span v-if="invalid_value">
       <strong>Error in Excel input:</strong>
@@ -48,8 +48,7 @@ export default {
       display_params: false, 
       params: null,
       errors: null,
-      invalid_value: false,
-      show_errors: false
+      invalid_value: false
     };
   },
   methods: {
@@ -58,7 +57,6 @@ export default {
 
       this.errors = null;
       this.invalid_value = false;
-      this.show_errors = false;
 
       try {
         const response = await axios.post(path, this.file_data);
@@ -67,16 +65,10 @@ export default {
         // Optional: Redirect after successful submission
         this.$router.push('/preview'); // Uncomment if you want to redirect to parameters view
       } catch (error) {
-
-
-        console.log("FILEDATA BEFORE: ", this.file_data);
-
         this.show_errors = true;
         this.file_data.delete("settings_file");
         this.file_data.delete("attributes_fies");
         this.file_data.delete("connections_file");
-
-        console.log("FILEDATA AFTER: ", this.file_data);
         
         if (error.status == 500) {
           this.errors = error.response.data.error;
