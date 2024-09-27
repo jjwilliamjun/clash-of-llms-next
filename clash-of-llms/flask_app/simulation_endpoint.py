@@ -83,26 +83,40 @@ def import_excel():
                 file.save(file_path)
                 
                 if key == 'settings_file':
-                    teams = import_settings(file_path)
+                    try: 
+                        teams = import_settings(file_path)
 
-                    if len(teams) > 0:
-                        if teams[0] == "errors":
-                            errors = teams[1:]
-                            return jsonify({"error": errors}), 400
+                        if len(teams) > 0:
+                            if teams[0] == "errors":
+                                errors = teams[1:]
+                                return jsonify({"error": errors}), 400
 
-                    global red_team
-                    red_team = set_team(teams[0])
+                        global red_team
+                        red_team = set_team(teams[0])
+                        
+                        global blue_team
+                        blue_team = set_team(teams[1])
                     
-                    global blue_team
-                    blue_team = set_team(teams[1])
+                    except Exception as e:
+                        error_msg = f"Issue found in Simulation Settings file format: {e}"
+                        return jsonify({"error": error_msg}), 500
+                    
 
                 elif key == 'attributes_file':
-                    nodes = import_node_attributes(file_path)
-                    node_attributes = nodes  # Save for network creation
+                    try:
+                        nodes = import_node_attributes(file_path)
+                        node_attributes = nodes  # Save for network creation
+                    except Exception as e:
+                        error_msg = f"Issue found in Node Attributes file format: {e}"
+                        return jsonify({"error": error_msg}), 500
                     
                 elif key == 'connections_file':
-                    connections = import_node_connections(file_path)
-                    node_connections = connections  # Save for network creation
+                    try:
+                        connections = import_node_connections(file_path)
+                        node_connections = connections  # Save for network creation
+                    except Exception as e:
+                        error_msg = f"Issue found in Node Connections file format: {e}"
+                        return jsonify({"error": error_msg}), 500
 
                 elif key in ['red_team_llm', 'blue_team_llm']:
                     # Save the uploaded LLM file for the red or blue team
