@@ -44,7 +44,7 @@
             <div class="select-parameter">
               <label for="blue_max_cost">Maximum Energy Cost of Messages: {{ blue_team.Max_Cost }}</label>
               <br>
-              <input type="range" id="blue_max_cost" min="20" max="100" value="5" step="5" v-model="blue_team.Max_Cost">
+              <input type="range" id="blue_max_cost" min="5" max="100" value="5" step="1" v-model="blue_team.Max_Cost">
             </div>
           </div>
         </div>
@@ -88,7 +88,7 @@
               <input type="range" id="red_factor" class="accent" min="0" max="1" value="0.5" step="0.01" v-model="red_team.Influence_Factor">
             </div>
             <div class="select-parameter">
-              <label for="red_penalty">Penalise Messages with Potency of: {{ red_team.Penalty_Threshold }}</label>
+              <label for="red_penalty">Penalise Messages with Potencies over: {{ red_team.Penalty_Threshold }}</label>
               <br>
               <input type="range" id="red_penalty" class="accent" max="100" value="50" step="1" v-model="red_team.Penalty_Threshold">
             </div>

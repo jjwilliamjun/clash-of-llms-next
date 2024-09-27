@@ -40,6 +40,7 @@ class BlueTeam(Team):
         super().__init__(team=team, model_ID=model_ID, msg_count=msg_count, influence_factor=influence_factor, temperature=temperature, alignment=alignment, potency=0)
         self._energy = energy
         self._max_cost = max_cost
+        self._msg_cost = 0
 
     def update_energy_level(self, energy_cost):
         """
@@ -70,6 +71,7 @@ class BlueTeam(Team):
             raise ValueError("Potency must be between 0 and 100.")
         #TODO more research needed on the way to get energy cost from potency
         energy_cost = self._max_cost * (self._potency / 100)
+        self._msg_cost = energy_cost
         return energy_cost
 
     

@@ -65,10 +65,11 @@
                 <!-- <p><span style="font-weight: bold;">Message: </span> {{ message }}</p> -->
                 <div v-if="!red_team_turn && penalty_applied">
                   <p><span style="font-weight: bold;">Potency (Penalty Applied): </span> {{ red_team._potency }}</p>
-                  <p><span style="font-weight: bold;">Original Potency (before penalty): </span> {{ red_team._unpenalised_potency }}</p>
+                  <p><span style="font-weight: bold;">Original Potency (Before Penalty): </span> {{ red_team._unpenalised_potency }}</p>
                 </div>
                 <div v-else>
                   <p><span style="font-weight: bold;">Potency: </span> {{ potency }}</p>
+                  <p><span style="font-weight: bold;">Energy Cost: </span> {{ blue_team._msg_cost }}</p>
                 </div>
                 
             </div>
@@ -273,7 +274,7 @@ export default {
 
 .network-graph {
   width: 100%;
-  height: 600px;
+  height: 500px;
   border: 2px solid #ccc; /* Add border to the network graph */
   border-radius: 8px; /* Optional: Add rounded corners to the border */
   background-color: white; /* Optional: Add background color for better visibility */
