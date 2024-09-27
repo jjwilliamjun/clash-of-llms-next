@@ -2,7 +2,7 @@
 from openai import OpenAI
 
 def get_sys_content(_team: str):
-    """Return system configuration context based on team"""
+    """return system configuration context"""
     _team = str(_team)
     if _team.lower() == 'red':
         return "You are a foreign agent spreading misinformation on social media"

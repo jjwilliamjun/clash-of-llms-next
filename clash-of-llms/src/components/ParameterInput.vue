@@ -24,27 +24,27 @@
             <div class="select-parameter">
               <label for="blue_energy">Energy: {{ blue_team.Energy }}</label>
               <br>
-              <input type="range" id="blue_energy" max="100" step="1" v-model="blue_team.Energy">
+              <input type="range" id="blue_energy" max="100" value="50" step="1" v-model="blue_team.Energy">
             </div>
             <div class="select-parameter">
               <label for="blue_msgs">Number of Messages Generated per Turn: {{ blue_team.Msgs_Generated }}</label>
               <br>
-              <input type="range" id="blue_msgs" max="10" step="1" v-model="blue_team.Msgs_Generated">
+              <input type="range" id="blue_msgs" max="10" value="5" step="1" v-model="blue_team.Msgs_Generated">
             </div>
             <div class="select-parameter">
               <label for="blue_temp">Temperature: {{ blue_team.Temperature }}</label>
               <br>
-              <input type="range" id="blue_temp" min="0" max="1" step="0.01" v-model="blue_team.Temperature">
+              <input type="range" id="blue_temp" min="0" max="1" value="0.5" step="0.01" v-model="blue_team.Temperature">
             </div>
             <div class="select-parameter">
               <label for="blue_factor">Influence Factor: {{ blue_team.Influence_Factor }}</label>
               <br>
-              <input type="range" id="blue_factor" min="0" max="1" step="0.01" v-model="blue_team.Influence_Factor">
+              <input type="range" id="blue_factor" min="0" max="1" value="0.5" step="0.01" v-model="blue_team.Influence_Factor">
             </div>
             <div class="select-parameter">
               <label for="blue_max_cost">Max Cost: {{ blue_team.Max_Cost }}</label>
               <br>
-              <input type="range" id="blue_max_cost" min="20" max="100" step="5" v-model="blue_team.Max_Cost">
+              <input type="range" id="blue_max_cost" min="20" max="100" value="5" step="5" v-model="blue_team.Max_Cost">
             </div>
           </div>
         </div>
@@ -55,7 +55,7 @@
           <div id="redParameters">
             <div class="select-parameter">
               <label for="red_model">Model: </label>
-              <select name="red_model" v-model="red_team.Model_ID">
+              <select name="red_model" id="model" v-model="red_team.Model_ID">
                 <option v-for="(item, index) in models" :key="index" :value="item">{{ item }}</option>
               </select>
             </div>
@@ -70,17 +70,17 @@
             <div class="select-parameter">
               <label for="red_msgs">Number of Messages Generated per Turn: {{ red_team.Msgs_Generated }}</label>
               <br>
-              <input type="range" id="red_msgs" min="1" max="10" step="1" v-model="red_team.Msgs_Generated">
+              <input type="range" id="red_msgs" class="accent" min="1" max="10" value="5" step="1" v-model="red_team.Msgs_Generated">
             </div>
             <div class="select-parameter">
               <label for="red_temp">Temperature: {{ red_team.Temperature }}</label>
               <br>
-              <input type="range" id="red_temp" min="0" max="1" step="0.01" v-model="red_team.Temperature">
+              <input type="range" id="red_temp" class="accent" min="0" max="1" value="0.5" step="0.01" v-model="red_team.Temperature">
             </div>
             <div class="select-parameter">
               <label for="red_factor">Influence Factor: {{ red_team.Influence_Factor }}</label>
               <br>
-              <input type="range" id="red_factor" min="0" max="1" step="0.01" v-model="red_team.Influence_Factor">
+              <input type="range" id="red_factor" class="accent" min="0" max="1" value="0.5" step="0.01" v-model="red_team.Influence_Factor">
             </div>
           </div>
         </div>
