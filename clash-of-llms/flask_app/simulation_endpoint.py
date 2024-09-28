@@ -279,6 +279,7 @@ def export_excel():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Route to serve next round request from the frontend
 @app.route('/next_round', methods=['GET'])
 @cross_origin()
 def start_next_round():
@@ -297,6 +298,7 @@ def start_next_round():
     if blue_team is None or red_team is None: 
         return jsonify({"error": "Team not found"}), 404
 
+    # Assignment of current team
     if team_colour == 'red':
         current_team = red_team
     elif team_colour == 'blue':
@@ -304,59 +306,75 @@ def start_next_round():
     else:
         return jsonify({"error": "Incorrect team colour"}), 404
 
+    # Update alignment for the two teams
     red_team._alignment = green_team.red_alignment()
     blue_team._alignment = green_team.blue_alignment()
 
+    # Temporarily replace the model ID if it is custom
     original_model_id = current_team._model_ID
-
     if current_team._model_ID == 'custom':
         current_team._model_ID = 'gpt-3.5-turbo'
-    
+
+    # Generate message and update green network
     current_team._message, current_team._potency = get_message(
         current_team._team, current_team._model_ID, current_team._alignment,
         current_team._temperature, current_team._message_count, current_team._energy
     )
 
+    # Revert the model ID if it was custom
     current_team._model_ID = original_model_id
 
+    # Generate message and update green network if potency is valid
     if (not isinstance(current_team._potency, str)):
         green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
         green_team.update_green_network()
 
+        # Add the new function to create and save a JSON file for the current round
         create_round_json(turn_counter, green_team._network_graph)
 
+    # Generate message and update green network 
+    current_team.generate_message()
+    if (not isinstance(current_team._potency, str)):
+        green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
+        green_team.update_green_network()
+
+        # Add the new function to create and save a JSON file for the current round
+        create_round_json(turn_counter, green_team._network_graph)
+
+    # Update energy level if the current team is blue
     if current_team._team.lower() == 'blue':
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)
 
+    # TO DO --> currently rounding down - may need to change
     red_team.update_alignment(round(green_team.red_alignment(), 2))
     blue_team.update_alignment(round(green_team.blue_alignment(), 2))
 
+    # Winning by majority support
     if red_team._alignment >= winning_pop_percent:
         victor = red_team._team
     elif blue_team._alignment >= winning_pop_percent:
         victor = blue_team._team
 
+    # Winning by energy loss
     if current_team._team.lower() == 'blue' and current_team._energy == 0:
         victor = 'Red'
-
-    if victor:
-        turn_counter = 0
 
     msg_content.append(current_team._message)
     msg_content.append(current_team._potency)
     msg_content.append(victor)
     msg_content.append(red_team.__dict__)
     msg_content.append(blue_team.__dict__)
-    
+
     turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, 
                                 current_team._potency, current_team._energy, green_team.red_alignment(), 
                                 green_team.blue_alignment())
     
     game_data.add_entry(turn_data)
-
+    if victor: 
+        turn_counter = 0
+    print(f'Blue team has {blue_team._energy} energy left')
     return jsonify(msg_content), 200
-
 
 def create_round_json(round_number, network_graph):
     """Creates a JSON file for the network graph for the given round"""

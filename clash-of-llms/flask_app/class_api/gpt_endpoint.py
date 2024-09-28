@@ -23,6 +23,8 @@ def get_message(_team: str, model_ID: str, alignment: str, temperature: str, msg
 
     sys_content = get_sys_content(_team)
     optional_msg = None
+    _team = str(_team)
+    
     if _team.lower() == "blue":
         optional_msg = (f"You are working with an energy constraint. {energy} energy remaining. "
                         "You lose if your energy runs out.")
