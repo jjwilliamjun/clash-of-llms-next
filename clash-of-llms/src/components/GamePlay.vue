@@ -129,9 +129,9 @@
             <div>
               <h1
                 :id="
-                  winner === 'red'
+                  winner.toLowerCase() === 'red'
                     ? 'redTeam'
-                    : winner === 'blue'
+                    : winner.toLowerCase() === 'blue'
                     ? 'blueTeam'
                     : ''
                 "
@@ -143,14 +143,14 @@
             <div class="button-group">
               <router-link to="/">
                 <button
-                  class="home-button p-10 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                  class="home-button bg-green-500 text-white rounded hover:bg-green-600 transition"
                 >
                   <span>🏠</span> Home Page
                 </button>
               </router-link>
               <button
                 @click="downloadExcel"
-                class="bg-blue-500 text-white rounded hover:bg-blue-600 transition py-10 px-10"
+                class="bg-blue-500 text-white rounded hover:bg-blue-600 transition"
               >
                 Download Excel results
               </button>
