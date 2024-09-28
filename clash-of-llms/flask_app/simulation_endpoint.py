@@ -315,23 +315,6 @@ def start_next_round():
     if current_team._model_ID == 'custom':
         current_team._model_ID = 'gpt-3.5-turbo'
 
-    # Generate message and update green network
-    current_team._message, current_team._potency = get_message(
-        current_team._team, current_team._model_ID, current_team._alignment,
-        current_team._temperature, current_team._message_count, current_team._energy
-    )
-
-    # Revert the model ID if it was custom
-    current_team._model_ID = original_model_id
-
-    # Generate message and update green network if potency is valid
-    if (not isinstance(current_team._potency, str)):
-        green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
-        green_team.update_green_network()
-
-        # Add the new function to create and save a JSON file for the current round
-        create_round_json(turn_counter, green_team._network_graph)
-
     # Generate message and update green network 
     current_team.generate_message()
     if (not isinstance(current_team._potency, str)):
@@ -349,7 +332,7 @@ def start_next_round():
     # TO DO --> currently rounding down - may need to change
     red_team.update_alignment(round(green_team.red_alignment(), 2))
     blue_team.update_alignment(round(green_team.blue_alignment(), 2))
-
+    print(f'Current team has alignment {current_team._alignment}%')
     # Winning by majority support
     if red_team._alignment >= winning_pop_percent:
         victor = red_team._team
