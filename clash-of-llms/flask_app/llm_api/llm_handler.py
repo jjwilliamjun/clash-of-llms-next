@@ -5,7 +5,6 @@ import tensorflow as tf  # For TensorFlow (placeholder)
 from llm_api.llm_handler import *
 from class_api.gpt_endpoint import *
 
-
 LLM_FILES_DIRECTORY = os.path.join('flask_app', 'llm_api', 'llm_files')
 os.makedirs(LLM_FILES_DIRECTORY, exist_ok=True)
 
@@ -39,7 +38,11 @@ def serve_llm(team, input_data):
             # This is a TensorFlow model (for future use)
             return serve_tensorflow_model(model_file, input_data)
         else:
-            raise ValueError("Unknown model format. Expected PyTorch (.pt/.pth) or TensorFlow (.h5/.pb)")
+            # Call user-defined model
+            result = serve_user_llm(team, input_data)
+            if result is None:
+                raise ValueError("Unknown model format or user-defined LLM function is not implemented.")
+            return result
 
     except FileNotFoundError as fnf_error:
         # Log and use GPT-3.5 as fallback
@@ -53,21 +56,20 @@ def serve_llm(team, input_data):
 
 def serve_pytorch_model(model_file, input_data):
     """Placeholder for serving a PyTorch model."""
-    # Check if torch is installed, else return placeholder
     try:
         print(f"Serving PyTorch model from {model_file} with input data: {input_data}")
 
         # Load the PyTorch model
         model = torch.load(model_file)
         model.eval()  # Set the model to evaluation mode
-        
+
         # Convert input_data to a tensor (future logic will determine the structure of input_data)
         input_tensor = torch.tensor(input_data)
-        
+
         # Run inference (this will be tailored based on the actual model structure)
         with torch.no_grad():
             output = model(input_tensor)
-        
+
         return output
     except ImportError:
         print("PyTorch is not installed. Please install it to use PyTorch models.")
@@ -78,16 +80,16 @@ def serve_tensorflow_model(model_file, input_data):
     """Placeholder for serving a TensorFlow model."""
     try:
         print(f"Serving TensorFlow model from {model_file} with input data: {input_data}")
-        
+
         # Load the TensorFlow model
         model = tf.keras.models.load_model(model_file)
-        
+
         # Convert input_data to a format TensorFlow can handle (future logic will adapt this)
         input_tensor = tf.convert_to_tensor(input_data)
-        
+
         # Run inference
         output = model(input_tensor)
-        
+
         return output
     except ImportError:
         print("TensorFlow is not installed. Please install it to use TensorFlow models.")
@@ -105,3 +107,10 @@ def run_custom_model(team, input_data):
 
     return message, potency
 
+
+def serve_user_llm(team, input_data):
+    """Placeholder for serving a user-defined LLM model."""
+    # This function is intended for the user to modify to integrate their custom LLM
+    # By default, this function returns None to indicate it has not been implemented yet.
+    print(f"Attempting to serve a user-defined LLM for team: {team}")
+    return None
