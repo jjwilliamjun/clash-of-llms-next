@@ -132,7 +132,6 @@ import axios from 'axios';
 export default {
   data() {
     return {
-    //When testing pls use gpt-4o and gpt-4o-turbo as few times as possible
       models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4o-turbo', 'gpt-3.5-turbo', 'custom'],
       blue_team: {
         Team: 'Blue',
@@ -144,7 +143,7 @@ export default {
         Influence_Factor: 0.5,
         Alignment: 50,
         Max_Cost: 20,
-        Custom_File: null, // New property to store the uploaded file for the blue team
+        Custom_File: null,
       },
       red_team: {
         Team: 'Red',
@@ -156,20 +155,19 @@ export default {
         Influence_Factor: 0.5,
         Alignment: 50,
         Max_Cost: 20,
-        Custom_File: null, // New property to store the uploaded file for the red team
+        Custom_File: null,
       },
-      green_node_count_option: 'userData',  // Default to user data
-      green_nodes_count: 30, // Default to 30 green nodes
-      red_alignments: 50,    // Default to 50% red alignments
-      blue_alignments: 50,   // Default to 50% blue alignments
-      green_alignments: 0,   // Automatically calculated as 100 - red_alignments - blue_alignments
+      green_node_count_option: 'userData',
+      green_nodes_count: 30,
+      red_alignments: 50,
+      blue_alignments: 50,
+      green_alignments: 0,
       display_params: false,
-      errors: null
+      errors: null,
     };
   },
   computed: {
     showFileUpload() {
-      // Show file upload if any team's model is 'custom'
       return this.red_team.Model_ID === 'custom' || this.blue_team.Model_ID === 'custom';
     }
   },
@@ -179,20 +177,19 @@ export default {
     },
     handleFileUploadBlue(event) {
       const file = event.target.files[0];
-      this.blue_team.Custom_File = file; // Store the file for later use
+      this.blue_team.Custom_File = file;
     },
     handleFileUploadRed(event) {
       const file = event.target.files[0];
-      this.red_team.Custom_File = file; // Store the file for later use
+      this.red_team.Custom_File = file;
     },
     async uploadLLMFiles() {
-      // Uploads the LLM files for both teams if they exist
       const uploadPromises = [];
 
       if (this.blue_team.Model_ID === 'custom' && this.blue_team.Custom_File) {
         const formData = new FormData();
         formData.append('llm_file', this.blue_team.Custom_File);
-
+        formData.append('team', 'blue');
         uploadPromises.push(
           axios.post('http://127.0.0.1:5000/upload_llm', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
@@ -203,7 +200,7 @@ export default {
       if (this.red_team.Model_ID === 'custom' && this.red_team.Custom_File) {
         const formData = new FormData();
         formData.append('llm_file', this.red_team.Custom_File);
-
+        formData.append('team', 'red');
         uploadPromises.push(
           axios.post('http://127.0.0.1:5000/upload_llm', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
@@ -211,34 +208,36 @@ export default {
         );
       }
 
-      // Wait for all upload requests to complete
       try {
         await Promise.all(uploadPromises);
-        console.log("All custom LLM files uploaded successfully.");
       } catch (error) {
         console.error("Error uploading LLM files:", error.response ? error.response.data : error.message);
-        throw error; // Re-throw the error to handle it in handleFormSubmit
+        throw error;
       }
     },
     async handleFormSubmit() {
       try {
-        // Redirect to FileUpload.vue if 'userData' is selected
         if (this.green_node_count_option === 'userData') {
           this.$router.push('/upload');
-          return; // Stop further execution
+          return;
         }
 
         if (this.green_node_count_option === 'userInput') {
-          this.red_team.Alignment = this.red_alignments
-          this.blue_team.Alignment = this.blue_alignments
+          this.red_team.Alignment = this.red_alignments;
+          this.blue_team.Alignment = this.blue_alignments;
         }
 
         if (this.showFileUpload) {
-          // Upload LLM files before proceeding
+          if (!this.blue_team.Custom_File && this.blue_team.Model_ID === 'custom') {
+            throw new Error("Please upload a custom file for Blue Team.");
+          }
+          if (!this.red_team.Custom_File && this.red_team.Model_ID === 'custom') {
+            throw new Error("Please upload a custom file for Red Team.");
+          }
+
           await this.uploadLLMFiles();
         }
 
-        // Prepare the data for submission
         const data = {
           red_team: {
             ...this.red_team,
@@ -254,16 +253,18 @@ export default {
           blue_alignments: this.blue_alignments,
         };
 
-        const path = 'http://127.0.0.1:5000/ui_parameters';
-
-        const response = await axios.post(path, data);
+        const response = await axios.post('http://127.0.0.1:5000/ui_parameters', data);
         this.params = response.data;
         this.display_params = true;
 
-        console.log("parameter upload success");
+        if (this.blue_team.Model_ID === 'custom') {
+          this.blue_team.Model_ID = 'custom';
+        }
+        if (this.red_team.Model_ID === 'custom') {
+          this.red_team.Model_ID = 'custom';
+        }
 
-        // Optional: Redirect after successful submission
-        this.$router.push('/preview'); // Uncomment if you want to redirect to parameters view
+        this.$router.push('/preview');
 
       } catch (error) {
         console.error("Error submitting form:", error.response ? error.response.data : error.message);
@@ -276,7 +277,5 @@ export default {
   }
 };
 </script>
-
-
 
 

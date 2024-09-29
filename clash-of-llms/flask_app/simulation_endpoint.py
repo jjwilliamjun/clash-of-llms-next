@@ -13,15 +13,12 @@ from create_node_network.create_network import *
 from create_node_network.green_team import *
 from class_api.team import *
 from class_api.simulation import *
+from llm_api.llm_handler import *
 
 app = Flask(__name__)
 
 # Allow requests from http://localhost: 8080
 CORS(app, resources={r"/*": {"origins":"http://127.0.0.1:5000:8080"}})
-
-# Directory to store uploaded LLM files under excel_api/llm_files
-LLM_DIRECTORY = os.path.join(os.path.dirname(__file__), 'llm_files')
-os.makedirs(LLM_DIRECTORY, exist_ok=True)
 
 # Global variables to store game data and team settings
 game_data = GameData()  
@@ -35,36 +32,31 @@ game_style = None
 continuous_game = None
 
 
-def save_llm_file(team_key, file):
-    """Saves the uploaded LLM file for the specified team in the llm_files directory"""
-    try:
-        # Construct the path to save the file in the llm_files directory
-        file_path = os.path.join(LLM_DIRECTORY, f"{team_key}_{file.filename}")
-        file.save(file_path)
-    except Exception as e:
-        print(f"Error saving LLM file: {e}")
-
-
 @app.route('/upload_llm', methods=['POST'])
 @cross_origin()
 def upload_llm():
-    """Handles the upload of an LLM JSON file and saves it to the llm_files directory"""
     try:
-        # Check if a file is part of the request
         if 'llm_file' not in request.files:
             return jsonify({"error": "No LLM file provided"}), 400
 
+        team = request.form.get('team', None)
+        if not team or team.lower() not in ['red', 'blue']:
+            return jsonify({"error": "Invalid or missing team (expected 'red' or 'blue')"}), 400
+
         file = request.files['llm_file']
-        # Ensure the file is a JSON file
-        if not file.filename.endswith('.json'):
-            return jsonify({"error": "Invalid file type. Only JSON files are allowed."}), 400
+        filename = file.filename
 
-        # Save the file using the save_llm_file function
-        save_llm_file('custom', file)  # 'custom' is used as a prefix for the uploaded file
+        new_filename = f"{team.lower()}_{filename}"
+        llm_files_directory = os.path.join('flask_app', 'llm_api', 'llm_files')
+        os.makedirs(llm_files_directory, exist_ok=True)
 
-        return jsonify({"message": f"LLM file '{file.filename}' uploaded successfully."}), 200
+        file_path = os.path.join(llm_files_directory, new_filename)
+        file.save(file_path)
+
+        return jsonify({"message": f"LLM file '{new_filename}' uploaded successfully at '{file_path}'."}), 200
 
     except Exception as e:
+        print(f"Error occurred: {e}")
         return jsonify({"error": str(e)}), 500
 
 
@@ -171,41 +163,6 @@ def serve_round_data(round_number):
     else:
         return jsonify({"error": f"Round JSON file not found: {json_filename}"}), 404
 
-# Route to serve LLM file for a specific team
-@app.route('/llm_file/<team_colour>', methods=['GET'])
-def serve_llm_file(team_colour):
-    """Serves the uploaded LLM file for the specified team"""
-    if team_colour not in ['red', 'blue']:
-        return jsonify({"error": "Invalid team colour"}), 400
-    
-    file_name = f"{team_colour}_team_llm"
-    file_path = os.path.join(LLM_DIRECTORY, file_name)
-
-    if os.path.exists(file_path):
-        return send_file(file_path, as_attachment=False, mimetype='application/octet-stream')
-    else:
-        return jsonify({"error": "LLM file not found"}), 404
-
-# Route to fetch Model_IDs from JSON files in the llm_files directory
-@app.route('/get_llm_models', methods=['GET'])
-def get_llm_models():
-    """Fetches the list of Model_IDs from the JSON files in the llm_files directory"""
-    model_ids = []
-
-    try:
-        for filename in os.listdir(LLM_DIRECTORY):
-            if filename.endswith('.json'):
-                file_path = os.path.join(LLM_DIRECTORY, filename)
-                with open(file_path, 'r') as file:
-                    llm_data = json.load(file)
-                    if 'Model_ID' in llm_data:
-                        model_ids.append(llm_data['Model_ID'])
-
-        return jsonify(model_ids), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# Route to fetch team parameters
 @app.route('/get_parameters', methods=['GET'])
 @cross_origin()
 def get_parameters():
@@ -331,16 +288,16 @@ def start_next_round():
     global red_team
     global blue_team
 
-    turn_data=GameTurnData()
+    turn_data = GameTurnData()
     turn_counter = turn_counter + 1
     msg_content = []
     victor = None
 
     team_colour = request.args.get('team')
-    
+
     if blue_team is None or red_team is None: 
         return jsonify({"error": "Team not found"}), 404
-    
+
     # Assignment of current team
     if team_colour == 'red':
         current_team = red_team
@@ -348,12 +305,17 @@ def start_next_round():
         current_team = blue_team
     else:
         return jsonify({"error": "Incorrect team colour"}), 404
-    
+
     # Update alignment for the two teams
     red_team._alignment = green_team.red_alignment()
     blue_team._alignment = green_team.blue_alignment()
 
-    # Generate message and update green network
+    # Temporarily replace the model ID if it is custom
+    original_model_id = current_team._model_ID
+    if current_team._model_ID == 'custom':
+        current_team._model_ID = 'gpt-3.5-turbo'
+
+    # Generate message and update green network 
     current_team.generate_message()
     if (not isinstance(current_team._potency, str)):
         green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
@@ -361,7 +323,7 @@ def start_next_round():
 
         # Add the new function to create and save a JSON file for the current round
         create_round_json(turn_counter, green_team._network_graph)
-    
+
     # Update energy level if the current team is blue
     if current_team._team.lower() == 'blue':
         energy_cost = current_team.energy_cost()
@@ -370,31 +332,29 @@ def start_next_round():
     # TO DO --> currently rounding down - may need to change
     red_team.update_alignment(round(green_team.red_alignment(), 2))
     blue_team.update_alignment(round(green_team.blue_alignment(), 2))
-    
     print(f'Current team has alignment {current_team._alignment}%')
-    
     # Winning by majority support
     if red_team._alignment >= winning_pop_percent:
         victor = red_team._team
     elif blue_team._alignment >= winning_pop_percent:
         victor = blue_team._team
-    
+
     # Winning by energy loss
     if current_team._team.lower() == 'blue' and current_team._energy == 0:
         victor = 'Red'
-    
-    #Reset turn counter if winner is determined
-    #TODO: move this to start of loop potentially
 
-    
     msg_content.append(current_team._message)
     msg_content.append(current_team._potency)
     msg_content.append(victor)
     msg_content.append(red_team.__dict__)
     msg_content.append(blue_team.__dict__)
-    turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, current_team._potency, current_team._energy, green_team.red_alignment(), green_team.blue_alignment())
+
+    turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, 
+                                current_team._potency, current_team._energy, green_team.red_alignment(), 
+                                green_team.blue_alignment())
+    
     game_data.add_entry(turn_data)
-    if victor:
+    if victor: 
         turn_counter = 0
     print(f'Blue team has {blue_team._energy} energy left')
     return jsonify(msg_content), 200
@@ -455,6 +415,9 @@ def continuous_game():
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+
 
 
 if __name__ == '__main__':

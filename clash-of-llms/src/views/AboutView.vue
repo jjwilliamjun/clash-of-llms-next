@@ -114,6 +114,11 @@
             </li>
           </ul>
         </div>
+        <!-- Download custom llm insruction md file -->
+        <div class="download-section">
+          <h3>Download Instructions for Custom LLM Integration</h3>
+          <a href="/documents/Custom_LLM.md" download="Custom_LLM.md">Custom_LLM.md</a>
+        </div>
       </section>      
 
       <!-- Node Connections Section -->
