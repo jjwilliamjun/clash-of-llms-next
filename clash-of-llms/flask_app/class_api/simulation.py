@@ -114,10 +114,6 @@ class Simulation:
         # Update alignments for red and blue teams
         self._red_team.update_alignment(round(self._green_team.red_alignment(), 2))
         self._blue_team.update_alignment(round(self._green_team.blue_alignment(), 2))
-
-        # Move to the next round
-        self._red_team.next_round()
-        self._blue_team.next_round()
         
         # End Simulation
         return self._victor
