@@ -6,6 +6,7 @@ import pandas as pd
 
 
 def validate_settings(team: dict) -> list:
+    '''Checks if imported values for simulation settings are valid'''
 
     errors = []
 
@@ -39,9 +40,8 @@ def validate_settings(team: dict) -> list:
     
     return errors
 
-
-# Returns settings for red and blue teams as dictionaries
 def import_settings(xls_path) -> tuple:
+    '''Returns settings for red and blue teams as dictionaries'''
     settings = pd.read_excel(xls_path)
 
     red_team = settings.loc[0]
@@ -59,8 +59,8 @@ def import_settings(xls_path) -> tuple:
 
     return red_team, blue_team
 
-# Returns blue and red team alignments after node attributes are imported from excel files
 def validate_attributes(nodes: dict):
+    '''Checks imported attribute values are valid and returns alignments if so.'''
 
     errors = []
     blue_aligned = 0
@@ -81,9 +81,8 @@ def validate_attributes(nodes: dict):
     
     return blue_aligned, red_aligned, neutral, errors
 
-
-# Returns node attributes in a dictionary of dictionaries
 def import_node_attributes(xls_path) -> dict:
+    '''Returns node attributes in a dictionary of dictionaries'''
     attributes = pd.read_excel(xls_path)
     nodes = {}
     
@@ -94,9 +93,26 @@ def import_node_attributes(xls_path) -> dict:
 
     return nodes
 
+def validate_connections(connections: dict, nodes: dict):
+    '''Checks if imported values for node connections are valid'''
+    errors = []
 
-# Returns node connections in a dictionary of dictionaries
+    for node in connections:
+        connected = connections[node]["Connected_Nodes"].split(", ")
+        factors = list(map(float, connections[node]["Influence_Factor"].split(", ")))
+        # Check connected nodes are valid nodes
+        for c in connected:
+            if c not in nodes:
+                errors.append("invalid node connection from " + node + " to " + c)
+        # Check influence factors are valid
+        for f in factors:
+            if f > 1 or f < -1:
+                errors.append("invalid node connection influence factor: " + str(f) + " for node " + node)
+    
+    return errors
+
 def import_node_connections(xls_path) -> dict:
+    '''Returns node connections in a dictionary of dictionaries'''
     connections = pd.read_excel(xls_path)
     conns = {}
 

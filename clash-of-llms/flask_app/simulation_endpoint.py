@@ -113,6 +113,11 @@ def import_excel():
                 elif key == 'connections_file':
                     try:
                         connections = import_node_connections(file_path)
+                        errors = validate_connections(connections, nodes)
+
+                        if len(errors) > 0:
+                            return jsonify({"error": errors}), 400
+                        
                         node_connections = connections  # Save for network creation
                     except Exception as e:
                         error_msg = f"Issue found in Node Connections file format: {e}"
