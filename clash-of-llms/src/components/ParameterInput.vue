@@ -5,7 +5,7 @@
       <div class="flex-container">
         <!-- Blue Team Settings -->
         <div class="flex-child">
-          <h2 id="blueTeam">Blue Team</h2>
+          <h2 id="blueTeam">Blue Agent</h2>
           <div id="blueParameters">
             <div class="select-parameter">
               <label for="blue_model">Model: </label>
@@ -51,7 +51,7 @@
 
         <!-- Red Team Settings -->
         <div class="flex-child">
-          <h2 id="redTeam">Red Team</h2>
+          <h2 id="redTeam">Red Agent</h2>
           <div id="redParameters">
             <div class="select-parameter">
               <label for="red_model">Model: </label>
@@ -87,7 +87,7 @@
 
         <!-- Green Node Settings -->
         <div class="flex-child green-team">
-          <h2 id="greenTeam">Green Node Settings</h2>
+          <h2 id="greenTeam">Green Network</h2>
           <div id="greenParameters">
             <div class="select-parameter">
               <label for="green_node_count_option">Green Node Configuration: </label>

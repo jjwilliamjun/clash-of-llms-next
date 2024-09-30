@@ -24,10 +24,16 @@
   </div>
   
   <div v-if="errors" class="error-container">
-    <strong>Error in Excel input:</strong>
-    <div v-for="(value, key) in errors" :key="key" class="error-message">
-      {{ value }}
-    </div>
+    
+    <span v-if="invalid_value">
+      <strong>Error in Excel input:</strong>
+      <div v-for="(value, key) in errors" :key="key" class="error-message">
+        {{ value }}
+      </div>
+    </span>
+    <span v-else>
+      <strong>Error in Excel input: {{ errors }}</strong>
+    </span>
   </div>
 </template>
 
@@ -41,12 +47,17 @@ export default {
       file_data: new FormData(),
       display_params: false, 
       params: null,
-      errors: null
+      errors: null,
+      invalid_value: false
     };
   },
   methods: {
     async startSimulation() {
       const path = 'http://127.0.0.1:5000/excel_import';
+
+      this.errors = null;
+      this.invalid_value = false;
+
       try {
         const response = await axios.post(path, this.file_data);
         this.params = response.data;
@@ -54,9 +65,20 @@ export default {
         // Optional: Redirect after successful submission
         this.$router.push('/preview'); // Uncomment if you want to redirect to parameters view
       } catch (error) {
+        this.show_errors = true;
+        this.file_data.delete("settings_file");
+        this.file_data.delete("attributes_fies");
+        this.file_data.delete("connections_file");
+        
+        if (error.status == 500) {
+          this.errors = error.response.data.error;
+          return;
+        }
+
         if (error.response) {
           this.errors = error.response.data.error;
           console.log("Unable to upload/read files. Error: ", error);
+          this.invalid_value = true;
         } else {
           console.log("Unable to upload/read files. Error: ", error);
           alert("Unable to upload/read files.");

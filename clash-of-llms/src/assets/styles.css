@@ -111,6 +111,10 @@ input[type="range"] {
   accent-color: red;
 }
 
+#red_alignments {
+  accent-color: red;
+}
+
 #game-view {
   max-width: 32%;
 }
