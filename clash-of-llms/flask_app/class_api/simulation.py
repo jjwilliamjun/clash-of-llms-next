@@ -75,27 +75,26 @@ class Simulation:
         return self._victor
     
     
-    def next_round(self):
+    def next_round(self, terminating_conditions):
         """Run Simulation"""
 
         # Energy depletion
         if self._blue_team._energy == 0:
             self._victor = 'red'
-            print("Blue Team has run out of energy")
+            termination_reason = "Blue team energy depletion"
             return self._victor
 
         # Population majority
-        # TODO Potentially returned from the frontend
-        if self._red_team._alignment >= 80 or self._blue_team._alignment < 1:
+        if self._red_team._alignment >= terminating_conditions._alignment or self._blue_team._alignment < 1:
             self._victor = 'red'
-            print("Red Team has gained majority support")
-            return self._victor
+            termination_reason = "Majority support for red team"
+            return self._victor, termination_reason
         
-        elif self._blue_team._alignment >= 80 or self._blue_team._alignment < 1:
+        elif self._blue_team._alignment >= terminating_conditions._alignment or self._blue_team._alignment < 1:
             self._victor = "blue"
-            print("Blue Team has gained majority support")
-            return self._victor
-        
+            termination_reason = "Majority support for blue team"
+            return self._victor, termination_reason
+
         if self._current_team == 'red':
             self._red_team.generate_message()
             if(not isinstance(self._red_team._potency,str)):
