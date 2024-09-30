@@ -70,7 +70,7 @@ class BlueTeam(Team):
         if not (0 <= self._potency <= 100):
             raise ValueError("Potency must be between 0 and 100.")
         #TODO more research needed on the way to get energy cost from potency
-        energy_cost = self._max_cost * (self._potency / 100)
+        energy_cost = round(self._max_cost * (self._potency / 100), 2)
         self._msg_cost = energy_cost
         return energy_cost
 
