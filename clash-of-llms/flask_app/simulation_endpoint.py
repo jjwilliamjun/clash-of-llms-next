@@ -67,6 +67,8 @@ def import_excel():
     node_attributes = None
     node_connections = None
     global green_team
+    global red_team
+    global blue_team
     try:
         if request.files:
             for key, file_storage in request.files.items():
@@ -83,10 +85,7 @@ def import_excel():
                                 errors = teams[1:]
                                 return jsonify({"error": errors}), 400
 
-                        global red_team
                         red_team = set_team(teams[0])
-                        
-                        global blue_team
                         blue_team = set_team(teams[1])
                     
                     except Exception as e:
@@ -98,16 +97,31 @@ def import_excel():
                     try:
                         nodes = import_node_attributes(file_path)
                         node_attributes = nodes  # Save for network creation
+                        blue_aligned, red_aligned, neutral, errors = validate_attributes(nodes)
+
+                        if len(errors) > 0:
+                            return jsonify({"error": errors}), 400
+                        
+                        red_team._alignment = (red_aligned/len(nodes)) * 100
+                        blue_team._alignment = (blue_aligned/len(nodes)) * 100
+
                     except Exception as e:
                         error_msg = f"Issue found in Node Attributes file format: {e}"
+                        print(error_msg)
                         return jsonify({"error": error_msg}), 500
                     
                 elif key == 'connections_file':
                     try:
                         connections = import_node_connections(file_path)
+                        errors = validate_connections(connections, nodes)
+
+                        if len(errors) > 0:
+                            return jsonify({"error": errors}), 400
+                        
                         node_connections = connections  # Save for network creation
                     except Exception as e:
                         error_msg = f"Issue found in Node Connections file format: {e}"
+                        print(error_msg)
                         return jsonify({"error": error_msg}), 500
 
                 elif key in ['red_team_llm', 'blue_team_llm']:
@@ -146,10 +160,11 @@ def import_excel():
             return jsonify({"message": "Network generated successfully!"}), 200
         
         else:
+            print(f"Error (400) during file upload: {e}")
             return jsonify({"error": "No files or valid JSON provided"}), 400
 
     except Exception as e:
-        print(f"Error during file upload: {e}")
+        print(f"Error (500) during file upload: {e}")
         return jsonify({"error": str(e)}), 500
 
 def convert_alignment_to_node_count(graph, red, blue):
@@ -157,7 +172,6 @@ def convert_alignment_to_node_count(graph, red, blue):
     blue_alignment= math.floor((blue / 100) * size)
     red_alignment=math.floor((red / 100) * size)
     if blue_alignment + red_alignment > size:
-        print('ERROR')
         return jsonify({"error": "Alignment percentages must sum up to 100. Please enter valid percentages."}), 400
     print('as node count with size',graph.number_of_nodes(),blue_alignment, red_alignment)
     return blue_alignment, red_alignment
@@ -324,13 +338,19 @@ def start_next_round():
     red_team._alignment = green_team.red_alignment()
     blue_team._alignment = green_team.blue_alignment()
 
+
     # Temporarily replace the model ID if it is custom
     original_model_id = current_team._model_ID
     if current_team._model_ID == 'custom':
         current_team._model_ID = 'gpt-3.5-turbo'
 
-    # Generate message and update green network 
     current_team.generate_message()
+
+    # Apply penalty to potency of red team message
+    if current_team._team.lower() == 'red':
+        current_team.apply_penalty()
+
+    # Update green network
     if (not isinstance(current_team._potency, str)):
         green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
         green_team.update_green_network()
@@ -343,7 +363,7 @@ def start_next_round():
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)
 
-    # TO DO --> currently rounding down - may need to change
+    #TODO: currently rounding down - may need to change
     red_team.update_alignment(round(green_team.red_alignment(), 2))
     blue_team.update_alignment(round(green_team.blue_alignment(), 2))
     print(f'Current team has alignment {current_team._alignment}%')
@@ -363,11 +383,18 @@ def start_next_round():
     msg_content.append(red_team.__dict__)
     msg_content.append(blue_team.__dict__)
 
-    turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, 
-                                current_team._potency, current_team._energy, green_team.red_alignment(), 
-                                green_team.blue_alignment())
+    if current_team._team.lower() == 'blue':
+        turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, 
+                                    current_team._potency, current_team._energy, green_team.red_alignment(), 
+                                    green_team.blue_alignment())
+    else: 
+        turn_data.set_all_turn_data(turn=turn_counter, 
+                                    team=current_team._team, message_chosen=current_team._message, 
+                                    potency=current_team._potency, energy_level="NA", 
+                                    red_alignment=green_team.red_alignment(), blue_alignment=green_team.blue_alignment())
     
     game_data.add_entry(turn_data)
+    
     if victor: 
         turn_counter = 0
     print(f'Blue team has {blue_team._energy} energy left')
@@ -401,12 +428,15 @@ def continuous_game():
     '''Runs a single round of the simulation when playing continuously'''
     try: 
         global continuous_game
+        global game_data
+        global turn_counter
         
         if continuous_game._victor is None:
+            turn_counter = turn_counter + 1
             victor = continuous_game.next_round()
 
             # Add the new function to create and save a JSON file for the current round
-            create_round_json(continuous_game._round_num, continuous_game._green_team._network_graph)
+            create_round_json(turn_counter, continuous_game._green_team._network_graph)
 
             current_team = None
             if continuous_game._current_team == "red":
@@ -421,7 +451,7 @@ def continuous_game():
                 "red_team": continuous_game._red_team.__dict__,
                 "blue_team": continuous_game._blue_team.__dict__
             }
-            game_data.add_entry(continuous_game._turn_data)
+            game_data.add_entry(continuous_game.get_turn_data(turn_counter))
 
             continuous_game.switch_teams()
             
@@ -429,7 +459,7 @@ def continuous_game():
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
+    
 
 
 

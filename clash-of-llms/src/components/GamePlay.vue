@@ -45,6 +45,7 @@
                         <div v-if="red_team">
                             <p><span style="font-weight: bold;">Model: </span> {{ red_team._model_ID }}</p>
                             <p><span style="font-weight: bold;">Alignment: </span> {{ red_team._alignment }} %</p>
+                            <p><span style="font-weight: bold;">Penalty: </span> {{ red_team._penalty }} %</p>
                             <p><span style="font-weight: bold;">Influence Factor: </span> {{ red_team._influence_factor }}</p>
                             <p><span style="font-weight: bold;">Number of Messages Generated Per Turn: </span> {{ red_team._message_count }}</p>
                             <p><span style="font-weight: bold;">Temperature</span> {{ red_team._temperature }}</p>
@@ -62,7 +63,14 @@
                 <div v-if="red_team_turn"><p><span style="font-weight: bold;">Blue Team Message: </span> {{ message }}</p></div>
                 <div v-else><p><span style="font-weight: bold;">Red Team Message: </span> {{ message }}</p></div>
                 <!-- <p><span style="font-weight: bold;">Message: </span> {{ message }}</p> -->
-                <p><span style="font-weight: bold;">Potency: </span> {{ potency }}</p>
+                <div v-if="!red_team_turn && penalty_applied">
+                  <p><span style="font-weight: bold;">Potency (Penalty Applied): </span> {{ red_team._potency }}</p>
+                  <p><span style="font-weight: bold;">Original Potency (Before Penalty): </span> {{ red_team._unpenalised_potency }}</p>
+                </div>
+                <div v-else>
+                  <p><span style="font-weight: bold;">Potency: </span> {{ potency }}</p>
+                  <p><span style="font-weight: bold;">Energy Cost: </span> {{ blue_team._msg_cost }}</p>
+                </div>
                 
             </div>
             
@@ -99,7 +107,8 @@ export default {
       winner: null,
       currentRound: 0, // Track the current round number
       game_style: null,
-      cors_errors: false
+      cors_errors: false,
+      penalty_applied: false
     };
   },
   mounted() {
@@ -144,8 +153,6 @@ export default {
             return;
           }
 
-          console.log(response.data);
-
           this.red_team = response.data[0];
           this.blue_team = response.data[1];
           this.game_style = response.data[3]; 
@@ -184,6 +191,10 @@ export default {
           this.winner = response.data[2];
           this.red_team = response.data[3];
           this.blue_team = response.data[4];
+
+          if (!this.red_team_turn && (this.red_team._potency != this.red_team._unpenalised_potency)) {
+            this.penalty_applied = true;
+          }
 
           // Increment the round number after each turn
           this.currentRound++;
@@ -224,6 +235,11 @@ export default {
                     this.red_team = response.data.red_team;
                     this.blue_team = response.data.blue_team;
 
+                    if (!this.red_team_turn && (this.red_team._potency !== this.red_team._unpenalised_potency)) {
+                      this.penalty_applied = true;
+                      console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
+                    }
+
                     // Increment the round number after each turn
                     this.currentRound++;
 
@@ -241,9 +257,8 @@ export default {
                     break;
                 }
                 
-                console.log("waiting")
                 // Wait 25 seconds before next round - chatgpt query takes time
-                await new Promise(resolve => setTimeout(resolve, 25000));
+                await new Promise(resolve => setTimeout(resolve, 15000));
             }
             return;
         }
@@ -259,7 +274,7 @@ export default {
 
 .network-graph {
   width: 100%;
-  height: 600px;
+  height: 500px;
   border: 2px solid #ccc; /* Add border to the network graph */
   border-radius: 8px; /* Optional: Add rounded corners to the border */
   background-color: white; /* Optional: Add background color for better visibility */
