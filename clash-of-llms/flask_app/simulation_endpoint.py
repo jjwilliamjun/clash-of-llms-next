@@ -1,6 +1,5 @@
 import math
 import os
-import datetime
 from flask import Flask, send_file, jsonify, request
 from flask_cors import CORS, cross_origin
 import json
@@ -13,6 +12,7 @@ from create_node_network.create_network import *
 from create_node_network.green_team import *
 from class_api.team import *
 from class_api.simulation import *
+from class_api.termination import Termination
 
 app = Flask(__name__)
 
@@ -29,11 +29,10 @@ turn_counter = 0
 red_team = None
 blue_team = None
 green_team = None
-winning_pop_percent = 80
 custom_llms = {}  # Placeholder to store custom LLMs
 game_style = None
 continuous_game = None
-
+terminating_conditions = None
 
 def save_llm_file(team_key, file):
     """Saves the uploaded LLM file for the specified team in the llm_files directory"""
@@ -213,6 +212,7 @@ def get_parameters():
     global blue_team
     global red_team
     global green_team
+    global terminating_conditions
 
     green_attributes = {
         "size": green_team._size,
@@ -220,7 +220,12 @@ def get_parameters():
         "red_alignment": green_team._red_alignment,
         "neutral": green_team._size - green_team._blue_alignment - green_team._red_alignment
     }
-
+    
+    terminating_conditions = {
+        "population_alignment": terminating_conditions._alignment,
+        "round_number": terminating_conditions._round
+    }
+    
     # TO DO --> currently rounding down - may need to change
     red_team.update_alignment(round(green_team.red_alignment(), 2))
     blue_team.update_alignment(round(green_team.blue_alignment(), 2))
@@ -228,7 +233,7 @@ def get_parameters():
     if blue_team is None or red_team is None: 
         return jsonify({"error": "Parameters not found"}), 404
 
-    output = [red_team.__dict__, blue_team.__dict__, green_attributes, game_style]
+    output = [red_team.__dict__, blue_team.__dict__, green_attributes, game_style, terminating_conditions]
     
     return jsonify(output), 200
 
@@ -247,6 +252,9 @@ def ui_parameters():
         global blue_team
         blue_team = set_team(parameters['blue_team'])
 
+        global terminating_conditions
+        terminating_conditions = Termination(parameters['round_number'], parameters['population_alignment'])
+        
         if parameters.get('green_node_count_option') == 'random':
             node_count = random.randint(30, 50)  # Adjust the range as needed
             node_attributes, node_connections = generate_random_network(node_count)
@@ -271,8 +279,6 @@ def ui_parameters():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-    return '', 200
 
 # Route to set game play style (continuously or in turns)
 @app.route('/set_gameplay', methods=['POST'])
@@ -334,6 +340,7 @@ def start_next_round():
     turn_data=GameTurnData()
     turn_counter = turn_counter + 1
     msg_content = []
+    termination_reason = None
     victor = None
 
     team_colour = request.args.get('team')
@@ -374,29 +381,35 @@ def start_next_round():
     print(f'Current team has alignment {current_team._alignment}%')
     
     # Winning by majority support
-    if red_team._alignment >= winning_pop_percent:
+    if red_team._alignment >= terminating_conditions._alignment:
         victor = red_team._team
-    elif blue_team._alignment >= winning_pop_percent:
+        termination_reason = "Majority support"
+    elif blue_team._alignment >= terminating_conditions._alignment:
         victor = blue_team._team
+        termination_reason = "Majority support"
     
     # Winning by energy loss
     if current_team._team.lower() == 'blue' and current_team._energy == 0:
         victor = 'Red'
-    
-    #Reset turn counter if winner is determined
-    #TODO: move this to start of loop potentially
+        termination_reason = "Energy depletion"
 
-    
-    msg_content.append(current_team._message)
-    msg_content.append(current_team._potency)
-    msg_content.append(victor)
-    msg_content.append(red_team.__dict__)
-    msg_content.append(blue_team.__dict__)
+    # Termination from set round
+    if turn_counter == terminating_conditions._round:
+        termination_reason = "Round reached"
+        
+    msg_content = {
+        "message": current_team._message,
+        "potency": current_team._potency,
+        "victor": victor,
+        "red_team": continuous_game._red_team.__dict__,
+        "blue_team": continuous_game._blue_team.__dict__,
+        "terminating_reason": termination_reason
+    }
     turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, current_team._potency, current_team._energy, green_team.red_alignment(), green_team.blue_alignment())
     game_data.add_entry(turn_data)
-    if victor:
+    if termination_reason:
         turn_counter = 0
-    print(f'Blue team has {blue_team._energy} energy left')
+
     return jsonify(msg_content), 200
 
 def create_round_json(round_number, network_graph):
