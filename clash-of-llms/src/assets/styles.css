@@ -180,3 +180,26 @@ input[type="range"] {
   font-size: 0.8em;
   color: red;
 }
+
+/* custom ending conditions styles */
+.custom-conditions {
+  padding: 20px;
+  border: 1px solid #949494;
+  border-radius: 10px;
+  box-shadow: 2px 2px 5px #cecece;
+  margin-bottom: 20px;
+  border-left: 4px solid #585858;
+}
+
+#conditionHeading {
+    color: #585858;
+    text-align: left;
+}
+
+#conditionBox {
+    margin-left: 10px;
+}
+
+.conditionAccent {
+    accent-color: #585858;
+}
