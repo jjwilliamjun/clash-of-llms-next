@@ -13,7 +13,7 @@ def set_team(team_parameters: dict) -> Team:
     team_parameters["Msgs_Generated"] = int(team_parameters["Msgs_Generated"])
     team_parameters["Temperature"] = float(team_parameters["Temperature"])
     team_parameters["Influence_Factor"] = float(team_parameters["Influence_Factor"])
-    team_parameters["Alignment"] = float(team_parameters["Alignment"])
+    team_parameters["Alignment"] = float(50) # will update with network alignments after Teams are created
     team_parameters["Max_Cost"] = float(team_parameters["Max_Cost"])
     team_parameters["Penalty"] = float(team_parameters["Penalty"])
     team_parameters["Penalty_Threshold"] = float(team_parameters["Penalty_Threshold"])

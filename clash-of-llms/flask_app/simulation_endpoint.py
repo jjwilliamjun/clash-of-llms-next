@@ -67,6 +67,8 @@ def import_excel():
     node_attributes = None
     node_connections = None
     global green_team
+    global red_team
+    global blue_team
     try:
         if request.files:
             for key, file_storage in request.files.items():
@@ -83,10 +85,7 @@ def import_excel():
                                 errors = teams[1:]
                                 return jsonify({"error": errors}), 400
 
-                        global red_team
                         red_team = set_team(teams[0])
-                        
-                        global blue_team
                         blue_team = set_team(teams[1])
                     
                     except Exception as e:
@@ -98,8 +97,17 @@ def import_excel():
                     try:
                         nodes = import_node_attributes(file_path)
                         node_attributes = nodes  # Save for network creation
+                        blue_aligned, red_aligned, neutral, errors = validate_attributes(nodes)
+
+                        if len(errors) > 0:
+                            return jsonify({"error": errors}), 400
+                        
+                        red_team._alignment = (red_aligned/len(nodes)) * 100
+                        blue_team._alignment = (blue_aligned/len(nodes)) * 100
+
                     except Exception as e:
                         error_msg = f"Issue found in Node Attributes file format: {e}"
+                        print(error_msg)
                         return jsonify({"error": error_msg}), 500
                     
                 elif key == 'connections_file':
@@ -108,6 +116,7 @@ def import_excel():
                         node_connections = connections  # Save for network creation
                     except Exception as e:
                         error_msg = f"Issue found in Node Connections file format: {e}"
+                        print(error_msg)
                         return jsonify({"error": error_msg}), 500
 
                 elif key in ['red_team_llm', 'blue_team_llm']:
@@ -146,10 +155,11 @@ def import_excel():
             return jsonify({"message": "Network generated successfully!"}), 200
         
         else:
+            print(f"Error (400) during file upload: {e}")
             return jsonify({"error": "No files or valid JSON provided"}), 400
 
     except Exception as e:
-        print(f"Error during file upload: {e}")
+        print(f"Error (500) during file upload: {e}")
         return jsonify({"error": str(e)}), 500
 
 def convert_alignment_to_node_count(graph, red, blue):

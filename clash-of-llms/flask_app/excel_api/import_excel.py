@@ -16,7 +16,6 @@ def validate_settings(team: dict) -> list:
     _msgs = int(team["Msgs_Generated"])
     _temp = float(team["Temperature"])
     _influence = float(team["Influence_Factor"])
-    _alignment = float(team["Alignment"])
     _max_cost = int(team["Max_Cost"])
     _penalty = int(team["Penalty"])
     _penalty_threshold = int(team["Penalty_Threshold"])
@@ -31,10 +30,8 @@ def validate_settings(team: dict) -> list:
         errors.append("invalid temp value: for " + team["Team"] + " agent")
     if _influence > 1 or _influence < 0:
         errors.append("invalid influence factor value: for " + team["Team"] + " agent")
-    if _alignment > 100 or _alignment < 0:
-        errors.append("invalid alignment value: for " + team["Team"] + " agent")
     if _max_cost < 0 or _max_cost > 100:
-        errors.append("invalid max cost value: for " + team["Team"] + " agent")
+        errors.append("invalid max cost value for " + team["Team"] + " agent")
     if _penalty < 0 or _penalty > 100:
         errors.append("invalid penalty value: for " + team["Team"] + " agent")
     if _penalty_threshold < 0 or _penalty_threshold > 100:
@@ -61,6 +58,28 @@ def import_settings(xls_path) -> tuple:
         return tuple(input_errors)
 
     return red_team, blue_team
+
+# Returns blue and red team alignments after node attributes are imported from excel files
+def validate_attributes(nodes: dict):
+
+    errors = []
+    blue_aligned = 0
+    red_aligned = 0
+    neutral = 0
+
+    for node in nodes:
+        alignment = nodes[node]["Alignment"]
+        if alignment > 1 or alignment < -1:
+            errors.append("invalid alignment value for " + nodes["Node_ID"])
+            return errors
+        elif alignment < 1 and alignment > 0.4:
+            red_aligned += 1
+        elif alignment > -1 and alignment < -0.4:
+            blue_aligned += 1
+        elif alignment <= 0.4 and alignment <= -0.4:
+            neutral += 1
+    
+    return blue_aligned, red_aligned, neutral, errors
 
 
 # Returns node attributes in a dictionary of dictionaries
