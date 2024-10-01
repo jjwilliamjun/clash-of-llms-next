@@ -76,12 +76,26 @@ export default {
         }
 
         if (error.response) {
-          this.errors = error.response.data.error;
+          this.errors = `Error occurred when importing files: ${error.response?.data?.error || error.message || error}`;
           console.log("Unable to upload/read files. Error: ", error);
           this.invalid_value = true;
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
         } else {
           console.log("Unable to upload/read files. Error: ", error);
+          this.errors = `Error occurred when importing files: ${error}`;
+          console.log(this.errors);
           alert("Unable to upload/read files.");
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
         }
       }
     },

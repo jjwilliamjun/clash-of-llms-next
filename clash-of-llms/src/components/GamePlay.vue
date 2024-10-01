@@ -140,9 +140,9 @@
             <div>
               <h1
                 :id="
-                  winner === 'red'
+                  winner.toLowerCase() === 'red'
                     ? 'redTeam'
-                    : winner === 'blue'
+                    : winner.toLowerCase() === 'blue'
                     ? 'blueTeam'
                     : ''
                 "
@@ -154,14 +154,14 @@
             <div class="button-group">
               <router-link to="/">
                 <button
-                  class="home-button p-10 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                  class="home-button bg-green-500 text-white rounded hover:bg-green-600 transition"
                 >
                   <span>🏠</span> Home Page
                 </button>
               </router-link>
               <button
                 @click="downloadExcel"
-                class="bg-blue-500 text-white rounded hover:bg-blue-600 transition py-10 px-10"
+                class="bg-blue-500 text-white rounded hover:bg-blue-600 transition"
               >
                 Download Excel results
               </button>
@@ -169,10 +169,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div v-if="cors_errors">
-      <br />
-      <p id="errors">{{ errors }}</p>
     </div>
   </div>
 </template>
@@ -199,7 +195,6 @@ export default {
       winner: null,
       currentRound: 0, // Track the current round number
       game_style: null,
-      cors_errors: false,
       penalty_applied: false
     };
   },
@@ -208,7 +203,6 @@ export default {
     this.fetchAndDrawNetwork(this.currentRound); // Fetch and draw the initial network
   },
   methods: {
-    openPopup() {},
     downloadExcel() {
       axios({
         url: "http://127.0.0.1:5000/excel_export",
@@ -235,8 +229,13 @@ export default {
         })
         .catch((error) => {
           console.error("Error downloading the Excel file:", error);
-          this.errors = "Experiencing CORS issues (browser security issues).";
-          this.cors_errors = true;
+          this.errors = `Error downloading the Excel file: ${error.response?.data?.error || error.message || error}`;
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors || "An unexpected error occurred.",
+            },
+          });
         });
     },
     getParameters() {
@@ -303,8 +302,15 @@ export default {
         })
         .catch((error) => {
           console.error(error);
-          this.display_error = true;
-          this.errors = error;
+          //this.display_error = true;
+          this.errors = `Error occurred when running simulation: ${error.response?.data?.error || error.message || error}`;
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors || "An unexpected error occurred.",
+            },
+          });
+
         });
     },
     async fetchAndDrawNetwork(roundNumber) {
@@ -316,10 +322,17 @@ export default {
           console.error("Graph container not found.");
         }
       } catch (error) {
+        this.errors=`Error occurred when displaying network: ${error.response?.data?.error || error.message || error}`;
         console.error(
           `Error fetching or drawing network for round ${roundNumber}:`,
           error
         );
+        this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
       }
     },
     async startContinuousGame() {
@@ -349,8 +362,14 @@ export default {
           this.fetchAndDrawNetwork(this.currentRound);
         } catch (error) {
           console.error(error);
-          this.errors = error.response.data.error;
-          this.display_error = true;
+          this.errors = `Error occurred when running continuous simulation: ${error.response?.data?.error || error.message || error}`;
+          //this.display_error = true;
+          this.$router.push({
+            name: "error",
+            query: {
+            errorMessage: this.errors,
+            },
+          });
           return;
         }
 
@@ -419,7 +438,7 @@ export default {
   .button-group {
     display: flex;
     gap: 8px;
-    padding: 20px
+    padding: 20px;
   }
 }
 </style>

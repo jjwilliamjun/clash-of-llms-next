@@ -277,7 +277,8 @@ export default {
       projectDescription: null,   // For storing data from project_description.json
       exportSimulationData: null, // For storing data from export_simulation.json
       customLLMGuide: null,       // For storing data from custom_llm_option.json
-      loading: true               // Loading state
+      loading: true,  
+      errors: null,             // Loading state
     };
   },
   mounted() {
@@ -296,6 +297,15 @@ export default {
         ]);
       } catch (error) {
         console.error('Error fetching data:', error);
+        this.errors = `Error occurred when fetching data: ${
+            error.response?.data?.error || error.message || error
+          }`;
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
       } finally {
         this.loading = false;
       }
@@ -307,6 +317,15 @@ export default {
         this.projectDescription = response.data;
       } catch (error) {
         console.error('Error fetching project description:', error);
+        this.errors = `Error fetching project description: ${
+            error.response?.data?.error || error.message || error
+          }`;
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
       }
     },
 
@@ -316,6 +335,15 @@ export default {
         this.guideData = response.data;
       } catch (error) {
         console.error('Error fetching guide data:', error);
+        this.errors = `Error fetching guide data: ${
+            error.response?.data?.error || error.message || error
+          }`;
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
       }
     },
 
@@ -325,6 +353,15 @@ export default {
         this.exportSimulationData = response.data;
       } catch (error) {
         console.error('Error fetching export simulation data:', error);
+        this.errors = `Error fetching export simulation data: ${
+            error.response?.data?.error || error.message || error
+          }`;
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
       }
     },
 
@@ -334,6 +371,15 @@ export default {
         this.customLLMGuide = response.data.custom_llm_guide;
       } catch (error) {
         console.error('Error fetching custom LLM guide:', error);
+        this.errors = `Error fetching custom LLM guide: ${
+            error.response?.data?.error || error.message || error
+          }`;
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
       }
     },
 
