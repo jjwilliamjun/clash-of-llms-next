@@ -55,11 +55,25 @@ export default {
         this.$router.push('/preview'); // Uncomment if you want to redirect to parameters view
       } catch (error) {
         if (error.response) {
-          this.errors = error.response.data.error;
+          this.errors = `Error occurred when importing files: ${error.response?.data?.error || error.message || error}`;
           console.log("Unable to upload/read files. Error: ", error);
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
         } else {
           console.log("Unable to upload/read files. Error: ", error);
+          this.errors = `Error occurred when importing files: ${error}`;
+          console.log(this.errors);
           alert("Unable to upload/read files.");
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
         }
       }
     },

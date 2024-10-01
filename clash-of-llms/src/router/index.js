@@ -4,8 +4,15 @@ import NetworkGraph from '../components/NetworkGraph.vue';
 import GamePlay from '@/components/GamePlay.vue';
 import FileUpload from '@/components/FileUpload.vue';
 import PreviewSettings from '@/components/PreviewSettings.vue';
+import ErrorMessage from '@/components/ErrorPage.vue';
 
 const routes = [
+  {
+    path: '/error',
+    name: 'error',
+    component: ErrorMessage,
+    props: true
+  },
   {
     path: '/',
     name: 'home',
