@@ -1,81 +1,77 @@
 # Clash of LLMs
 
+## Overview
 
-## Backend
+Clash of LLMs is a simulation-based project that allows various language models (LLMs) to interact with one another in a Red/Blue team scenario. The project uses a Python backend for managing simulations and a Vue.js frontend for displaying results.
 
-### Installations
+## Prerequisites
 
-#### Using Virtual Environments - For windows/wsl users
+Make sure you have the following installed:
 
+- **Python 3.x**
+- **Node.js** (v14.x or later)
+- **npm** (Node.js package manager)
+- **Git** (Version Control)
+- **Bash** shell (for WSL/Linux/macOS environments)
 
-- `python -m venv venv`: Creates a virtual environment called venv in the current directory
-- `source venv/bin/activate`: Activate the environment
-- More help: <https://docs.python.org/3/library/venv.html>
+## Installations
+
+### Project Setup
+
+#### Backend - Using Virtual Environments (For Windows/WSL/Linux/macOS users)
+
+1. **Create a virtual environment**:
+
+   ```bash
+   python -m venv venv
+   ```
+
+2. **Activate the virtual environment**:
+
+   - For Linux/WSL/macOS:
+
+     ```bash
+     source venv/bin/activate
+     ```
+
+   - For Windows:
+
+     ```bash
+     .\venv\Scripts\activate
+     ```
+
+3. **Install all required packages**:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 #### APIs
 
+**ChatGPT (Use ChatGPT-4 and above models)**
 
-ChatGPT(**Use ChatGPT-3.5 or lower models**)
+1. Set your OpenAI API key as an environment variable:
 
-- `export OPENAI_API_KEY="your_api_key_here"`: Set the key as an environmental variable
-- `pip install openai`: Install openai library
-- More help: <https://platform.openai.com/docs/quickstartOPEN>
+   ```bash
+   export OPENAI_API_KEY="your_api_key_here"
+   ```
 
-Ilama - not tested
+   More help: [OpenAI Quickstart Guide](https://platform.openai.com/docs/quickstartOPEN)
 
-- `!pip install llamaapi -q`
+#### Frontend - Vue.js Setup
 
+1. Install the necessary dependencies:
 
-#### CI/CD tool installations
+   ```bash
+   npm install
+   ```
 
-##### **Pylint**
+---
 
-- `pip install pylint`: linter for Python
-- `apt install pylint`: terminal linter tool
-  - `pylint [file.py]`: manually checking python files
-- Also install the extension for Pylint in vscode
+## Frontend and Backend Start
 
-
-### Git Commands
-
-
-- `git pull`: Get most recent changes (most likely on main)
-- `git checkout -b [branchName]`: Branch out
-- `git checkout [branch]`: Switch branches
-- `git add [filename]`: Add file for commit
-- `git commit -m "[message]"`: Commit with msg
-- `git push`: Push changes to remote repository
-- `git status`: Check what files have been changed
-
-Other Option: use built in vscode git extensions
-
-## Frontend Vue
-
-### Project setup
+To start both the frontend and backend, simply run the following script:
 
 ```bash
-npm install
+./init.sh
 ```
-
-### Compiles and hot-reloads for development
-
-```bash
-npm run serve
-```
-
-### Compiles and minifies for production
-
-```bash
-npm run build
-```
-
-### Lints and fixes files
-
-```bash
-npm run lint
-```
-
-### Customize configuration
-
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
