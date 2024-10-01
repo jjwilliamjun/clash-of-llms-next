@@ -140,6 +140,7 @@
     <div v-if="errors" id="errors">
       <p>Unable to start simulation: {{ errors }}</p>
     </div>
+    </div>
   </div>
 </template>
 
