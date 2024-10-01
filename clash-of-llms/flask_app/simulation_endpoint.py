@@ -15,7 +15,9 @@ from class_api.team import *
 from class_api.simulation import *
 from llm_api.llm_handler import *
 
-app = Flask(__name__, static_folder='dist', static_url_path='')
+dist_folder = os.path.abspath('dist')
+print("DIST FOLDER PATH: ", dist_folder)
+app = Flask(__name__, static_folder=dist_folder, static_url_path='')
 
 # Allow requests from http://localhost: 8080
 CORS(app, resources={r"/*": {"origins":"http://127.0.0.1:5000:8080"}})
@@ -35,7 +37,7 @@ continuous_game = None
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_vue(path):
-    if path != "" and os.path.exists(f"dist/{path}"):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
     return send_from_directory(app.static_folder, 'index.html')
 
