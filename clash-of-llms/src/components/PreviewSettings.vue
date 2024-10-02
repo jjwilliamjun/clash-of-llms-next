@@ -114,13 +114,13 @@
           </div>
         </div>
         <div>
-                <div class="custom-box">
-                    <h2 class="condition-heading">Terminating conditions</h2>
-                    <div class="custom-conditions">
-                        <div v-if="termination_conditions">
-                            <p style="text-align: left"><span style="font-weight: bold;">Population alignment: </span> {{ termination_conditions.population_alignment }}%</p>
-                            <p style="text-align: left"><span style="font-weight: bold;">Round number: </span> {{ termination_conditions.round_number }} </p>
-                        </div>
+            <div class="custom-box">
+                <h2 class="condition-heading">Terminating conditions</h2>
+                <div class="custom-conditions">
+                    <div v-if="termination_conditions">
+                        <p style="text-align: left"><span style="font-weight: bold;">Population alignment: </span> {{ termination_conditions.population_alignment }}%</p>
+                        <p style="text-align: left"><span style="font-weight: bold;">Round number: </span> {{ termination_conditions.round_number }} </p>
+                    </div>
                     </div>
                 </div>
             </div>
