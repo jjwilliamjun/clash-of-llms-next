@@ -2,8 +2,6 @@
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
-  height: 100vh; 
-  overflow: hidden;
 }
 
 h1 {
@@ -113,10 +111,6 @@ input[type="range"] {
   accent-color: red;
 }
 
-#red_alignments {
-  accent-color: red;
-}
-
 #game-view {
   max-width: 32%;
 }
@@ -176,13 +170,9 @@ input[type="range"] {
 #Message {
     text-align: center;
     border: 1px solid #949494;
-    margin-top: 20px;
-    margin-left: 80px;
-    margin-right: 80px;
-    padding: 5px;
+    margin: 40px, 200px;
     border-radius: 10px;
     box-shadow: 2px 2px 5px #cecece;
-    
 }
 
 #errors {

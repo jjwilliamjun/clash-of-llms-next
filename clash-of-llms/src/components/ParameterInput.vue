@@ -129,7 +129,6 @@
           </div>
         </div>
       </div>
-      <!--custom terminating conditions-->
       <div class="condition-box">
         <h2 class="condition-heading">Terminating Conditions</h2>
         <div class="custom-conditions">
