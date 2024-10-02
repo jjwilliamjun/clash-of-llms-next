@@ -16,7 +16,6 @@ from class_api.simulation import *
 from llm_api.llm_handler import *
 
 dist_folder = os.path.abspath('dist')
-print("DIST FOLDER PATH: ", dist_folder)
 app = Flask(__name__, static_folder=dist_folder, static_url_path='')
 
 # Allow requests from http://localhost: 8080
