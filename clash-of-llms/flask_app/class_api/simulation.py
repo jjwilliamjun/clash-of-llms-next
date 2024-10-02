@@ -19,6 +19,7 @@ class Simulation:
         self._turn_data = GameTurnData()
         self._msg_content = []
         self._current_team = 'red'
+        self._termination_reason = None
 
     def start(self):
         """Run Simulation"""
@@ -78,23 +79,7 @@ class Simulation:
     def next_round(self, terminating_conditions):
         """Run Simulation"""
 
-        # Energy depletion
-        if self._blue_team._energy == 0:
-            self._victor = 'red'
-            termination_reason = "Blue team energy depletion"
-            return self._victor
-
-        # Population majority
-        if self._red_team._alignment >= terminating_conditions._alignment or self._blue_team._alignment < 1:
-            self._victor = 'red'
-            termination_reason = "Majority support for red team"
-            return self._victor, termination_reason
-        
-        elif self._blue_team._alignment >= terminating_conditions._alignment or self._blue_team._alignment < 1:
-            self._victor = "blue"
-            termination_reason = "Majority support for blue team"
-            return self._victor, termination_reason
-
+        # Allow teams to generate message first
         if self._current_team == 'red':
             self._red_team.generate_message()
             if(not isinstance(self._red_team._potency,str)):
@@ -108,7 +93,24 @@ class Simulation:
                 self._green_team.update_green_network()
             energy_cost=self._blue_team.energy_cost()
             self._blue_team.update_energy_level(energy_cost)
-            
+        
+        
+        # Energy depletion
+        if self._blue_team._energy == 0:
+            self._victor = 'red'
+            self._termination_reason = "Blue team energy depletion"
+            return self._victor, self._termination_reason
+
+        # Population majority
+        if self._red_team._alignment >= terminating_conditions._alignment or self._blue_team._alignment < 1:
+            self._victor = 'red'
+            self._termination_reason = "Majority support for red team"
+            return self._victor, self._termination_reason
+        
+        elif self._blue_team._alignment >= terminating_conditions._alignment or self._blue_team._alignment < 1:
+            self._victor = "blue"
+            self._termination_reason = "Majority support for blue team"
+            return self._victor, self._termination_reason
 
         # Update alignments for red and blue teams
         self._red_team.update_alignment(round(self._green_team.red_alignment(), 2))
@@ -144,7 +146,7 @@ class Simulation:
         self._round_num += 1
         
         # End Simulation
-        return self._victor
+        return self._victor, self._termination_reason
     
     def switch_teams(self):
         """Switch current team for next round"""

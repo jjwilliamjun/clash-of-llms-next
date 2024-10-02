@@ -221,7 +221,7 @@ def get_parameters():
         "neutral": green_team._size - green_team._blue_alignment - green_team._red_alignment
     }
     
-    terminating_conditions = {
+    conditions = {
         "population_alignment": terminating_conditions._alignment,
         "round_number": terminating_conditions._round
     }
@@ -233,7 +233,7 @@ def get_parameters():
     if blue_team is None or red_team is None: 
         return jsonify({"error": "Parameters not found"}), 404
 
-    output = [red_team.__dict__, blue_team.__dict__, green_attributes, game_style, terminating_conditions]
+    output = [red_team.__dict__, blue_team.__dict__, green_attributes, game_style, conditions]
     
     return jsonify(output), 200
 
@@ -401,8 +401,8 @@ def start_next_round():
         "message": current_team._message,
         "potency": current_team._potency,
         "victor": victor,
-        "red_team": continuous_game._red_team.__dict__,
-        "blue_team": continuous_game._blue_team.__dict__,
+        "red_team": red_team.__dict__,
+        "blue_team": blue_team.__dict__,
         "termination_reason": termination_reason
     }
     turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, current_team._potency, current_team._energy, green_team.red_alignment(), green_team.blue_alignment())
