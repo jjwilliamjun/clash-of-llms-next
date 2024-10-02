@@ -324,7 +324,6 @@ def start_next_round():
 
     turn_data = GameTurnData()
     turn_counter = turn_counter + 1
-    msg_content = []
     termination_reason = None
     victor = None
 
@@ -399,7 +398,10 @@ def start_next_round():
         "blue_team": blue_team.__dict__,
         "termination_reason": termination_reason
     }
-    turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, current_team._potency, current_team._energy, green_team.red_alignment(), green_team.blue_alignment())
+    turn_data.set_all_turn_data(turn=turn_counter, 
+                                team=current_team._team, message_chosen=current_team._message, 
+                                potency=current_team._potency, energy_level="NA", 
+                                red_alignment=green_team.red_alignment(), blue_alignment=green_team.blue_alignment())
     game_data.add_entry(turn_data)
     if termination_reason:
         turn_counter = 0
@@ -434,35 +436,42 @@ def continuous_game():
     '''Runs a single round of the simulation when playing continuously'''
     try: 
         global continuous_game
+        global game_data
         global turn_counter
         global terminating_conditions
+        turn_data = GameTurnData()
         
-        if continuous_game._victor is None:
+        if continuous_game._termination_reason is None:
+            turn_counter += 1
+
             victor, termination_reason = continuous_game.next_round(terminating_conditions)
 
             # Add the new function to create and save a JSON file for the current round
-            create_round_json(continuous_game._round_num, continuous_game._green_team._network_graph)
+            create_round_json(turn_counter, continuous_game._green_team._network_graph)
             
             # Custom round limit
-            if turn_counter > terminating_conditions._round and termination_reason is None:
+            if  turn_counter == terminating_conditions._round and termination_reason is None:
                 termination_reason = "Round limit reached"
-                
+            
             current_team = None
             if continuous_game._current_team == "red":
                 current_team = continuous_game._red_team
             else:
                 current_team = continuous_game._blue_team
             
-            # Change front end check for termination reason
             msg_content = {
                 "message": current_team._message,
                 "potency": current_team._potency,
-                "victor": victor,
                 "red_team": continuous_game._red_team.__dict__,
                 "blue_team": continuous_game._blue_team.__dict__,
                 "termination_reason": termination_reason,
+                "victor": victor,
             }
-            game_data.add_entry(continuous_game.get_turn_data(turn_counter))
+            turn_data.set_all_turn_data(turn=turn_counter, 
+                                team=current_team._team, message_chosen=current_team._message, 
+                                potency=current_team._potency, energy_level="NA", 
+                                red_alignment=green_team.red_alignment(), blue_alignment=green_team.blue_alignment())
+            game_data.add_entry(turn_data)
 
             continuous_game.switch_teams()
             
