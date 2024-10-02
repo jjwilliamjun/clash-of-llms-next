@@ -87,7 +87,7 @@
 
         <!-- Green Node Settings -->
         <div class="flex-child green-team">
-          <h2 id="greenTeam">Population Settings</h2>
+          <h2 id="greenTeam">Population</h2>
           <div id="greenParameters">
             <div class="select-parameter">
               <label for="green_node_count_option">Population Configuration: </label>
@@ -120,16 +120,16 @@
         </div>
       </div>
       <!--custom terminating conditions-->
-      <div id="conditionBox">
-        <h2 id="conditionHeading">Terminating Conditions</h2>
+      <div class="condition-box">
+        <h2 class="condition-heading">Terminating Conditions</h2>
         <div class="custom-conditions">
             <div class="select-parameter">
                 <label for="population_alignments">Population Alignment: {{ population_alignment }}%</label>
-                <input type="range" class="conditionAccent" v-model="population_alignment" min="0" max="100" step="5">
+                <input type="range" class="condition-accent" v-model="population_alignment" min="0" max="100" step="5">
             </div>
             <div class="select-parameter">
                 <label for="round_number">Round number: {{ round_number }}</label>
-                <input type="range" class="conditionAccent" v-model="round_number" min="0" max="50" step="1">
+                <input type="range" class="condition-accent" v-model="round_number" min="0" max="50" step="1">
             </div>
         </div>
       </div>

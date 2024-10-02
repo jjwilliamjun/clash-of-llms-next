@@ -191,15 +191,15 @@ input[type="range"] {
   border-left: 4px solid #585858;
 }
 
-#conditionHeading {
+.condition-heading {
     color: #585858;
     text-align: left;
 }
 
-#conditionBox {
+.condition-box {
     margin-left: 10px;
 }
 
-.conditionAccent {
+.condition-accent {
     accent-color: #585858;
 }

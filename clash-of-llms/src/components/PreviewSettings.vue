@@ -11,7 +11,7 @@
             <div class="flex-container">
 
                 <div class="flex-child">
-                    <h2 id="blueTeam">Blue Team</h2>
+                    <h2 id="blueTeam">Blue Agent</h2>
                     <div id="blueParameters">
                         <div class="select-parameter">
                             <div v-if="blue_team && !winner">
@@ -27,12 +27,12 @@
                 </div>
 
                 <div class="flex-child">
-                    <h2 id="redTeam">Red Team</h2>
+                    <h2 id="redTeam">Red Agent</h2>
                     <div id="redParameters">
                         <div class="select-parameter">
                             <div v-if="red_team">
                             <p><span style="font-weight: bold;">Model: </span> {{ red_team._model_ID }}</p>
-                            <p><span style="font-weight: bold;">Alignment: </span> {{ red_team._alignment }} %</p>
+                            <p><span style="font-weight: bold;">Alignment: </span> {{ red_team._alignment }}%</p>
                             <p><span style="font-weight: bold;">Influence Factor: </span> {{ red_team._influence_factor }}</p>
                             <p><span style="font-weight: bold;">Number of Messages Generated Per Turn: </span> {{ red_team._message_count }}</p>
                             <p><span style="font-weight: bold;">Temperature</span> {{ red_team._temperature }}</p>
@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="flex-child">
-                    <h2 id="greenTeam">Green Team</h2>
+                    <h2 id="greenTeam">Population</h2>
                     <div id="greenParameters">
                         <div class="select-parameter">
                             <div v-if="green_team">
@@ -51,6 +51,17 @@
                                 <p><span style="font-weight: bold;">Red Aligned Nodest: </span> {{ green_team.red_alignment }}</p>
                                 <p><span style="font-weight: bold;">Neutral Nodes: </span> {{ green_team.neutral }}</p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="custom-box">
+                    <h2 class="condition-heading">Terminating conditions</h2>
+                    <div class="custom-conditions">
+                        <div v-if="termination_conditions">
+                            <p style="text-align: left"><span style="font-weight: bold;">Population alignment: </span> {{ termination_conditions.population_alignment }}%</p>
+                            <p style="text-align: left"><span style="font-weight: bold;">Round number: </span> {{ termination_conditions.round_number }} </p>
                         </div>
                     </div>
                 </div>
@@ -93,7 +104,8 @@ export default {
         potency: null,
         winner: null,
         currentTeam:  null,
-        play_option: null
+        play_option: null,
+        termination_conditions: null
       };
     },
     mounted() {
@@ -138,6 +150,7 @@ export default {
                     this.red_team = response.data[0];
                     this.blue_team = response.data[1];
                     this.green_team = response.data[2];
+                    this.termination_conditions = response.data[4];
                 })
                 .catch((error) => {
                     console.error(error);

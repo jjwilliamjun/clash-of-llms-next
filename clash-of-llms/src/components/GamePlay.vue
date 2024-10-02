@@ -16,7 +16,7 @@
                 <!-- Blue Team Display -->
                 <div class="flex-child" id="game-view">
                     <div id="agents">
-                        <h2 id="blueTeam">Blue Team</h2>
+                        <h2 id="blueTeam">Blue Agent</h2>
                         <div v-if="blue_team">
                             <p><span style="font-weight: bold;">Model: </span> {{ blue_team._model_ID }}</p>
                             <p><span style="font-weight: bold;">Alignment: </span> {{ blue_team._alignment }} %</p>
@@ -26,7 +26,7 @@
                             <p><span style="font-weight: bold;">Temperature</span> {{ blue_team._temperature }}</p>
                         </div>
                         <!--only display if winner has not been decided-->
-                        <div v-if="blue_team_turn && !winner">
+                        <div v-if="blue_team_turn && !termination_reason && !continuous">
                             <button style="background-color: #0b7ffc; border: none" @click="nextTurn">Next round</button>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                 <!-- Red Team Display -->
                 <div class="flex-child" id="game-view">
                     <div id="agents">
-                        <h2 id="redTeam">Red Team</h2>
+                        <h2 id="redTeam">Red Agent</h2>
                         <div v-if="red_team">
                             <p><span style="font-weight: bold;">Model: </span> {{ red_team._model_ID }}</p>
                             <p><span style="font-weight: bold;">Alignment: </span> {{ red_team._alignment }} %</p>
@@ -50,25 +50,25 @@
                             <p><span style="font-weight: bold;">Temperature</span> {{ red_team._temperature }}</p>
                         </div>
                         <!--only display if winner has not been decided-->
-                        <div v-if="red_team_turn && !winner">
+                        <div v-if="red_team_turn && !termination_reason && !continuous">
                             <button style="background-color: red; border: none" @click="nextTurn">Next round</button>
                         </div>
                     </div>
                 </div>
             </div>
-            
+            <br />
             <!-- Message and Potency Display -->
-            <div v-if="message && potency && !winner" id="Message">
-                <div v-if="red_team_turn"><p><span style="font-weight: bold;">Blue Team Message: </span> {{ message }}</p></div>
-                <div v-else><p><span style="font-weight: bold;">Red Team Message: </span> {{ message }}</p></div>
-                <!-- <p><span style="font-weight: bold;">Message: </span> {{ message }}</p> -->
+            <div v-if="message && potency" id="Message">
+                <div v-if="red_team_turn"><p><span style="font-weight: bold;">Blue Agent Message: </span> {{ message }}</p></div>
+                <div v-else><p><span style="font-weight: bold;">Red Agent Message: </span> {{ message }}</p></div>
                 <p><span style="font-weight: bold;">Potency: </span> {{ potency }}</p>
                 
             </div>
             
             <!-- Winner Announcement -->
-            <div v-if="winner">
-                <h1>Winner: {{ winner }}</h1>
+            <div v-if="termination_reason || victor">
+                <h1 v-if="termination_reason">Termination reason: {{ termination_reason }}</h1>
+                <h1 v-if="victor">Victor: {{ victor }}</h1>
                 <button @click="downloadExcel" class="!py-20">Download Excel upon simulation end</button>
             </div>
         </div>
@@ -96,9 +96,11 @@ export default {
       blue_team_turn: false,
       message: null,
       potency: null,
-      winner: null,
       currentRound: 0, // Track the current round number
       game_style: null,
+      termination_conditions: null,
+      termination_reason: null,
+      victor: null,
       cors_errors: false
     };
   },
@@ -109,9 +111,9 @@ export default {
   methods: {
     downloadExcel() {
             axios({
-                url: 'http://127.0.0.1:5000/excel_export', 
+                url: 'http://127.0.0.1:5000/excel_export',
                 method: 'GET',
-                responseType: 'blob', 
+                responseType: 'blob',
             })
             .then((response) => {
                 const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -143,14 +145,14 @@ export default {
             this.errors = "No parameters uploaded";
             return;
           }
-
-          console.log(response.data);
-
+          
           this.red_team = response.data[0];
           this.blue_team = response.data[1];
-          this.game_style = response.data[3]; 
+          this.game_style = response.data[3];
+          this.termination_conditions = response.data[4];
+          this.continuous = this.game_style == "continuous";
 
-          if (this.game_style == "continuous") {
+          if (this.continuous) {
             this.startContinuousGame();
             return
           }
@@ -179,11 +181,12 @@ export default {
 
           this.red_team_turn = !this.red_team_turn;
           this.blue_team_turn = !this.blue_team_turn;
-          this.message = response.data[0];
-          this.potency = response.data[1];
-          this.winner = response.data[2];
-          this.red_team = response.data[3];
-          this.blue_team = response.data[4];
+          this.message = response.data.message;
+          this.potency = response.data.potency;
+          this.red_team = response.data.red_team;
+          this.blue_team = response.data.blue_team;
+          this.termination_reason = response.data.termination_reason;
+          this.victor = response.data.victor;
 
           // Increment the round number after each turn
           this.currentRound++;
@@ -220,9 +223,10 @@ export default {
                     this.blue_team_turn = !this.blue_team_turn;
                     this.message = response.data.message;
                     this.potency = response.data.potency;
-                    this.winner = response.data.victor;
                     this.red_team = response.data.red_team;
                     this.blue_team = response.data.blue_team;
+                    this.termination_reason = response.data.termination_reason;
+                    this.victor = response.data.victor;
 
                     // Increment the round number after each turn
                     this.currentRound++;
