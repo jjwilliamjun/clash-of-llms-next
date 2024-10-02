@@ -1,31 +1,51 @@
 <template>
-    <div v-if="display_error">
-        <p>No parameters uploaded</p>
-        <p>{{ errors }}</p>
-        <router-link to="/">Upload parameters here</router-link>
-    </div>
+<div v-if="display_error">
+    <p>No parameters uploaded</p>
+    <p>{{ errors }}</p>
+    <router-link to="/">Upload parameters here</router-link>
+  </div>
 
-    <div v-else>
-       <div id="app" class="home">
-           <h1>Confirm Parameter Selections:</h1>
-            <div class="flex-container">
-
-                <div class="flex-child">
-                    <h2 id="blueTeam">Blue Agent</h2>
-                    <div id="blueParameters">
-                        <div class="select-parameter">
-                            <div v-if="blue_team && !winner">
-                                <p><span style="font-weight: bold;">Model: </span> {{ blue_team._model_ID }}</p>
-                                <p><span style="font-weight: bold;">Alignment: </span> {{ blue_team._alignment }}%</p>
-                                <p><span style="font-weight: bold;">Energy Level: </span> {{ blue_team._energy }}</p>
-                                <p><span style="font-weight: bold;">Influence Factor: </span> {{ blue_team._influence_factor }}</p>
-                                <p><span style="font-weight: bold;">Number of Messages Generated Per Turn: </span> {{ blue_team._message_count }}</p>
-                                <p><span style="font-weight: bold;">Temperature</span> {{ blue_team._temperature }}</p>  
-                            </div>
-                        </div>
-                    </div>
-                </div>
-             
+  <div v-else>
+    <div id="app" class="home">
+      <h1>Confirm Parameter Selections:</h1>
+      <div class="flex-container">
+        <div class="flex-child">
+          <h2 id="blueTeam">Blue Agent</h2>
+          <div id="blueParameters">
+            <div class="select-parameter">
+              <div v-if="blue_team">
+                <p>
+                  <span style="font-weight: bold">Model: </span>
+                  {{ blue_team._model_ID }}
+                </p>
+                <p>
+                  <span style="font-weight: bold">Alignment: </span>
+                  {{ blue_team._alignment }}%
+                </p>
+                <p>
+                  <span style="font-weight: bold">Energy Level: </span>
+                  {{ blue_team._energy }}
+                </p>
+                <p>
+                  <span style="font-weight: bold">Influence Factor: </span>
+                  {{ blue_team._influence_factor }}
+                </p>
+                <p>
+                  <span style="font-weight: bold"
+                    >Number of Messages Generated Per Turn:
+                  </span>
+                  {{ blue_team._message_count }}
+                </p>
+                <p>
+                  <span style="font-weight: bold">Temperature: </span>
+                  {{ blue_team._temperature }}
+                </p>
+                <p><span style="font-weight: bold;">Maximum Cost: </span> 
+                  {{ blue_team._max_cost }}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="flex-child">
@@ -162,41 +182,41 @@ export default {
     },
     methods: {
         downloadExcel() {
-        axios({
-            url: 'http://localhost:5000/excel_export', 
-            method: 'GET',
-            responseType: 'blob', 
-        })
-        .then((response) => {
-          const blob = new Blob([response.data], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          });
-          const link = document.createElement("a");
+            axios({
+                url: 'http://localhost:5000/excel_export', 
+                method: 'GET',
+                responseType: 'blob', 
+            })
+            .then((response) => {
+            const blob = new Blob([response.data], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            });
+            const link = document.createElement("a");
 
-          link.href = window.URL.createObjectURL(blob);
-          const now = new Date();
-          const timestamp =
-            now.getHours() + "_" + now.getMinutes() + "_" + now.getSeconds();
+            link.href = window.URL.createObjectURL(blob);
+            const now = new Date();
+            const timestamp =
+                now.getHours() + "_" + now.getMinutes() + "_" + now.getSeconds();
 
-          const excel_file_name = `clash_of_llms_${timestamp}.xlsx`;
-          link.download = excel_file_name;
+            const excel_file_name = `clash_of_llms_${timestamp}.xlsx`;
+            link.download = excel_file_name;
 
-          link.click();
+            link.click();
 
-          window.URL.revokeObjectURL(link.href);
-        })
-        .catch((error) => {
-          this.errors = `Error occurred when downloading excel file: ${
-            error.response?.data?.error || error.message || error
-          }`;
-          this.$router.push({
-            name: "error",
-            query: {
-              errorMessage: this.errors,
-            },
-          });
-        });
-    },
+            window.URL.revokeObjectURL(link.href);
+            })
+            .catch((error) => {
+            this.errors = `Error occurred when downloading excel file: ${
+                error.response?.data?.error || error.message || error
+            }`;
+            this.$router.push({
+                name: "error",
+                query: {
+                errorMessage: this.errors,
+                },
+            });
+            });
+        },
     getParameters() {
       const path = "http://127.0.0.1:5000/get_parameters";
       axios
@@ -217,29 +237,26 @@ export default {
                     this.display_error = true;
                     this.errors = error;
                 });
-        },
-        async submitGameStyle() {
-            const path = 'http://127.0.0.1:5000/set_gameplay';
-            try {
-                // Send selected option to backend
-                const response = await axios.post(path, { play_option: this.play_option });
-                if (response.status == 200) {
-                    this.$router.push('/gameplay');
-                }
-
+    },
+    async submitGameStyle() {
+        const path = 'http://127.0.0.1:5000/set_gameplay';
+        try {
+            // Send selected option to backend
+            const response = await axios.post(path, { play_option: this.play_option });
+            if (response.status == 200) {
+                this.$router.push('/gameplay');
+            }
+        } catch (error) {
+            this.errors = `Error occurred when getting parameters: ${
+                error.response?.data?.error || error.message || error
+            }`;
+            this.$router.push({
+                name: "error",
+                query: {
+                    errorMessage: this.errors,
+                },
+            });
         }
-      } catch (error) {
-        this.errors = `Error occurred when getting parameters: ${
-          error.response?.data?.error || error.message || error
-        }`;
-
-        this.$router.push({
-          name: "error",
-          query: {
-            errorMessage: this.errors,
-          },
-        });
-      }
     },
   },
 };

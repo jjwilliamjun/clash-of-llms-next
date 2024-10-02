@@ -11,6 +11,7 @@
       <div class="current-round">
         <h3>Current Round: {{ currentRound }}</h3>
       </div>
+
       <div class="flex-container">
         <!-- Blue Team Display -->
         <div class="flex-child" id="game-view">
@@ -55,7 +56,6 @@
             </div>
           </div>
         </div>
-
 
         <!-- Network Graph Display -->
         <div class="flex-child" id="graph-view">
@@ -198,7 +198,7 @@ export default {
       termination_conditions: null,
       termination_reason: null,
       victor: null,
-      cors_errors: false
+      cors_errors: false,
       penalty_applied: false
     };
   },
