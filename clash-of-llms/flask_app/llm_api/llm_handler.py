@@ -11,32 +11,87 @@ os.makedirs(LLM_FILES_DIRECTORY, exist_ok=True)
 def load_model(team):
     """Load a custom LLM model for the specified team."""
     model_file = None
-    model_dir = os.path.join('flask_app', 'llm_api', 'llm_files')
+    model_dir = LLM_FILES_DIRECTORY
 
-    # Look for the team-specific model in the directory
-    for filename in os.listdir(model_dir):
-        if filename.startswith(f"{team.lower()}_"):
-            model_file = os.path.join(model_dir, filename)
-            break
+    try:
+        # Look for the team-specific model in the directory
+        for filename in os.listdir(model_dir):
+            if filename.startswith(f"{team.lower()}_"):
+                model_file = os.path.join(model_dir, filename)
+                break
 
-    if not model_file:
-        raise FileNotFoundError(f"No model found for {team} team")
+        if not model_file:
+            raise FileNotFoundError(f"No model found for {team} team")
 
-    return model_file
+        # Load model and extract metadata
+        model_metadata = get_metadata(model_file)
+
+    except FileNotFoundError as e:
+        print(f"File not found: {e}")
+        raise
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        raise
+
+    return model_file, model_metadata
+
+def extract_metadata(model_file):
+    """Extract metadata from the LLM file."""
+    metadata = {}
+    try:
+        if model_file.endswith(('.pt', '.pth')):
+            # PyTorch model case with weights_only=True for security
+            checkpoint = torch.load(model_file, map_location='cpu', weights_only=True)
+            metadata = checkpoint.get('metadata', {})
+        elif model_file.endswith(('.h5', '.pb')):
+            # TensorFlow model case (assuming metadata is saved in a specific way)
+            model = tf.keras.models.load_model(model_file)
+            metadata = getattr(model, 'metadata', {})
+        else:
+            # Handle other user-defined models or formats (like Python files)
+            print(f"Unknown format for extracting metadata: {model_file}")
+
+    except Exception as e:
+        print(f"Error extracting metadata from {model_file}: {e}")
+
+    return metadata
+
+
+
+def get_metadata(model_file):
+    """Extract metadata from the model file."""
+    metadata = {}
+    try:
+        if model_file.endswith(('.pt', '.pth')):
+            # PyTorch model case
+            checkpoint = torch.load(model_file, map_location='cpu')
+            metadata = checkpoint.get('metadata', {})
+            if not metadata:
+                print(f"No metadata found in {model_file}, using default metadata.")
+        elif model_file.endswith(('.h5', '.pb')):
+            # TensorFlow model case (assuming metadata is saved in a specific way)
+            model = tf.keras.models.load_model(model_file)
+            metadata = getattr(model, 'metadata', {})
+            if not metadata:
+                print(f"No metadata found in {model_file}, using default metadata.")
+    except Exception as e:
+        print(f"Error extracting metadata from {model_file}: {e}")
+    
+    return metadata
+
+
 
 
 def serve_llm(team, input_data):
     """Serve the LLM model for the specified team."""
     try:
-        model_file = load_model(team)
+        model_file, model_metadata = load_model(team)
 
         # Check if it's a PyTorch or TensorFlow model based on file extension
         if model_file.endswith('.pt') or model_file.endswith('.pth'):
-            # This is a PyTorch model (for future use)
-            return serve_pytorch_model(model_file, input_data)
+            return serve_pytorch_model(model_file, input_data, model_metadata)
         elif model_file.endswith('.h5') or model_file.endswith('.pb'):
-            # This is a TensorFlow model (for future use)
-            return serve_tensorflow_model(model_file, input_data)
+            return serve_tensorflow_model(model_file, input_data, model_metadata)
         else:
             # Call user-defined model
             result = serve_user_llm(team, input_data)
@@ -54,13 +109,15 @@ def serve_llm(team, input_data):
         return None
 
 
-def serve_pytorch_model(model_file, input_data):
-    """Placeholder for serving a PyTorch model."""
+
+def serve_pytorch_model(model_file, input_data, metadata):
+    """Serve a PyTorch model with metadata."""
     try:
         print(f"Serving PyTorch model from {model_file} with input data: {input_data}")
 
         # Load the PyTorch model
-        model = torch.load(model_file)
+        checkpoint = torch.load(model_file, map_location='cpu')
+        model = checkpoint.get('model')
         model.eval()  # Set the model to evaluation mode
 
         # Convert input_data to a tensor (future logic will determine the structure of input_data)
@@ -70,14 +127,13 @@ def serve_pytorch_model(model_file, input_data):
         with torch.no_grad():
             output = model(input_tensor)
 
-        return output
+        return {"output": output.tolist(), "metadata": metadata}
     except ImportError:
         print("PyTorch is not installed. Please install it to use PyTorch models.")
         return None
 
-
-def serve_tensorflow_model(model_file, input_data):
-    """Placeholder for serving a TensorFlow model."""
+def serve_tensorflow_model(model_file, input_data, metadata):
+    """Serve a TensorFlow model with metadata."""
     try:
         print(f"Serving TensorFlow model from {model_file} with input data: {input_data}")
 
@@ -90,7 +146,7 @@ def serve_tensorflow_model(model_file, input_data):
         # Run inference
         output = model(input_tensor)
 
-        return output
+        return {"output": output.numpy().tolist(), "metadata": metadata}
     except ImportError:
         print("TensorFlow is not installed. Please install it to use TensorFlow models.")
         return None
@@ -110,7 +166,11 @@ def run_custom_model(team, input_data):
 
 def serve_user_llm(team, input_data):
     """Placeholder for serving a user-defined LLM model."""
-    # This function is intended for the user to modify to integrate their custom LLM
-    # By default, this function returns None to indicate it has not been implemented yet.
+    # Log that we're attempting to use a user-defined LLM
     print(f"Attempting to serve a user-defined LLM for team: {team}")
-    return None
+
+    # This function can be extended to include user-defined models
+    # Metadata should also be managed appropriately here.
+    metadata = {"info": f"Metadata not available for custom LLM for {team} team."}
+    return {"output": "User-defined LLM output", "metadata": metadata}
+
