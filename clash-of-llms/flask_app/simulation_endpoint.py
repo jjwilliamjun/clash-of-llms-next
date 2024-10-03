@@ -1,5 +1,5 @@
 import math
-import os
+import os, subprocess
 from flask import Flask, send_file, jsonify, request
 from flask_cors import CORS, cross_origin
 import json
@@ -403,8 +403,6 @@ def start_next_round():
                                 potency=current_team._potency, energy_level="NA", 
                                 red_alignment=green_team.red_alignment(), blue_alignment=green_team.blue_alignment())
     game_data.add_entry(turn_data)
-    if termination_reason:
-        turn_counter = 0
 
     return jsonify(msg_content), 200
 
@@ -480,9 +478,39 @@ def continuous_game():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-
-
-
+# Route for cleanup script
+@app.route('/cleanup', methods=['GET'])
+def cleanup():
+    global turn_counter
+    global game_data 
+    global red_team
+    global blue_team
+    global green_team
+    global custom_llms
+    global game_style
+    global continuous_game
+    global terminating_conditions
+    
+    try:
+        game_data = GameData()  
+        turn_counter = 0
+        red_team = None
+        blue_team = None
+        green_team = None
+        custom_llms = {}  # Placeholder to store custom LLMs
+        game_style = None
+        continuous_game = None
+        terminating_conditions = None
+    
+        #Run cleanup script
+        subprocess.run('./cleanup.sh')
+        return '', 200
+        
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return jsonify({"error": str(e)}), 500
+        
+    
 
 if __name__ == '__main__':
     #game_data = generate_game_data()  # Testing purposes

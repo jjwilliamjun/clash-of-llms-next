@@ -156,7 +156,7 @@
               <router-link to="/">
                 <button
                   class="home-button bg-green-500 text-white rounded hover:bg-green-600 transition"
-                >
+                @click="cleanup">
                   <span>🏠</span> Home Page
                 </button>
               </router-link>
@@ -318,6 +318,34 @@ export default {
             },
           });
 
+        });
+    },
+    cleanup(){
+        const path = "http://127.0.0.1:5000/cleanup";
+        axios
+        .get(path)
+        .then((response) => {
+          if (response.data.length < 2) {
+            this.display_error = true;
+            this.errors = "No parameters uploaded";
+            return;
+          }
+
+          this.red_team = response.data[0];
+          this.blue_team = response.data[1];
+          this.game_style = response.data[3];
+          this.termination_conditions = response.data[4];
+          this.continuous = this.game_style == "continuous";
+
+          if (this.continuous) {
+            this.startContinuousGame();
+            return;
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          this.display_error = true;
+          this.errors = error;
         });
     },
     async fetchAndDrawNetwork(roundNumber) {
