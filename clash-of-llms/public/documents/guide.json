@@ -115,12 +115,13 @@
       "tableHeaders": ["Column", "Description", "Default"],
       "tableContent": [
         ["Model_ID", "The unique identifier for each LLM connected to the simulation.", "gpt-3.5 turbo"],
-        ["Energy", "A whole number/integer/value between 1 and 100 (inclusive) representing the initial energy levels of the blue team only (any input for the red team is discarded as the red team has infinite energy). This value depletes after every turn the blue team takes, depending on the message’s energy cost.", "100"],
-        ["Msgs_Generated", "A whole number/integer/value between 1 and 10 (inclusive) which dictates the number of messages at different potency levels the model generates per turn.", "5"],
+        ["Energy", "A whole number between 1 and 100 (inclusive) representing the initial energy levels of the blue team only (any input for the red team is discarded as the red team has infinite energy). This value depletes after every turn the blue team takes, depending on the message’s energy cost.", "100"],
+        ["Msgs_Generated", "A whole number between 1 and 10 (inclusive) which dictates the number of messages at different potency levels the model generates per turn.", "5"],
         ["Temperature", "A value between 0 and 1 that determines how random or predictable the model’s output should be. A lower temperature will result in more deterministic output whereas higher values like 0.8 will result in more random output.", "0.5"],
         ["Influence_Factor", "A value between 0 and 1 that represents the influence the team has over other nodes in the simulation.", "0.5"],
-        ["Alignment", "A percentage representing the number of green nodes aligned to each team.", "50"],
-        ["Max_Cost", "An integer value that represents the maximum cost a message can have.", "5"]
+        ["Max_Cost", "An integer value that represents the maximum cost a message can have.", "5"],
+        ["Penalty", "A percentage value (between 0 to 100 inclusive) applied to the potency of the message when it exceeds a certain threshold.", "50"],
+        ["Penalty_Threshold", "A value between 0 to 100 (inclusive) which determines when the penalty is applied to the potency of a red team message. If the potency of a message exceeds this threshold, a penalty (set as a percentage) is applied to reduce the potency.", "50"]
       ]
     },
     "energyExplanation": {
@@ -135,17 +136,16 @@
       "title": "'Temperature' Explanation",
       "content": "The Temperature value determines how random or predictable the model’s output should be: Low temperature (0.0 to 0.25): more deterministic and predictable output. Neutral temperature (0.5): balanced output. High temperature (0.75 to 1.0): more random and non-deterministic output."
     },
+    "penaltyExplaination": {
+      "title": "'Penalty' Explanation",
+      "content": "The penalty value represents a reduction in the potency of the red team’s messages when they exceed a certain potency threshold. This threshold acts as a limit, beyond which the potency of a message is penalised. The penalty is applied as a percentage reduction of the message's potency. For each turn, if a red team message surpasses the potency threshold, the penalty is calculated as a percentage of the potency, and is then subtracted from the original potency, hence reducing its effectiveness in the simulation. The blue team does not have a penalty."
+    },
     "example": {
       "title": "Example",
-      "tableHeaders": ["Column", "Red Team", "Blue Team"],
+      "tableHeaders": ["Team", "Model ID", "Energy", "Msgs Generated", "Temperature", "Influence Factor", "Max Cost", "Penalty", "Penalty Threshold"],
       "tableContent": [
-        ["Model_ID", "gemini-1.5-flash", "gpt-3.5"],
-        ["Initial_Energy_Level", "100", "100"],
-        ["Msgs_Generated", "4", "6"],
-        ["Temperature", "0.75", "0.4"],
-        ["Influence_Factor", "0.7", "0.8"],
-        ["Alignment", "50", "50"],
-        ["Max_Cost", "1", "1"]
+        ["Red", "gpt-3.5-turbo", "100", "4", "0.9", "0.3", "1", "75", "20"],
+        ["Blue", "custom", "100", "6",	"0.4", "0.8",	"20",	"50",	"50"]
       ]
     },
     "instructions": {

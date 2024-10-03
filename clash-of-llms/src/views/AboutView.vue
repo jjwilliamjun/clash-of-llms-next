@@ -68,20 +68,26 @@
         <h3>{{ guideData.simulationSettings.temperatureExplanation.title }}</h3>
         <p>{{ guideData.simulationSettings.temperatureExplanation.content }}</p>
 
+        <!-- Penalty Explanation -->
+        <h3>{{ guideData.simulationSettings.penaltyExplaination.title }}</h3>
+        <p>{{ guideData.simulationSettings.penaltyExplaination.content }}</p>
+
         <!-- Simulation Settings Example Table -->
         <h3>{{ guideData.simulationSettings.example.title }}</h3>
-        <table>
-          <thead>
-            <tr>
-              <th v-for="header in guideData.simulationSettings.example.tableHeaders" :key="header">{{ header }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in guideData.simulationSettings.example.tableContent" :key="row[0]">
-              <td v-for="cell in row" :key="cell">{{ cell }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <span id="example-settings">
+          <table>
+            <thead>
+              <tr>
+                <th v-for="header in guideData.simulationSettings.example.tableHeaders" :key="header">{{ header }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in guideData.simulationSettings.example.tableContent" :key="row[0]">
+                <td v-for="cell in row" :key="cell">{{ cell }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </span>
 
         <!-- Instructions -->
         <h3>{{ guideData.simulationSettings.instructions.title }}</h3>
@@ -621,6 +627,42 @@ html {
   display: block; /* Makes sure each element starts on a new line */
   margin: 0; /* Remove any default margin */
   text-align: left; /* Aligns text to the left */
+}
+
+#example-settings table th:first-child, #example-settings table td:first-child {
+  width: 8%; /* Team */
+}
+
+#example-settings table th:nth-child(2), #example-settings table td:nth-child(2) {
+  width: 12%;  /* Model ID */
+}
+
+#example-settings table th:nth-child(3), #example-settings table td:nth-child(3) {
+  width: 8%;   /* Energy */
+}
+
+#example-settings table th:nth-child(4), #example-settings table td:nth-child(4) {
+  width: 12%;  /* Msgs Generated */
+}
+
+#example-settings table th:nth-child(5), #example-settings table td:nth-child(5) {
+  width: 12%;  /* Temp */
+}
+
+#example-settings table th:nth-child(6), #example-settings table td:nth-child(6) {
+  width: 10%;  /* Influence factor */
+}
+
+#example-settings table th:nth-child(7), #example-settings table td:nth-child(7) {
+  width: 8%;  /* Max Cost */
+}
+
+#example-settings table th:nth-child(8), #example-settings table td:nth-child(8) {
+  width: 10%;  /* Penalty */
+}
+
+#example-settings table th:nth-child(9), #example-settings table td:nth-child(9) {
+  width: 10%;  /* Penalty Threshold */
 }
 
 
