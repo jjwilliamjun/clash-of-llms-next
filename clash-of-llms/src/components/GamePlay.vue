@@ -20,7 +20,7 @@
             <div v-if="blue_team">
               <p>
                 <span style="font-weight: bold">Model: </span>
-                {{ blue_team._model_ID }}
+                {{ blue_metadata ? blue_metadata.model_ID : blue_team._model_ID }}
               </p>
               <p>
                 <span style="font-weight: bold">Alignment: </span>
@@ -70,7 +70,7 @@
             <div v-if="red_team">
               <p>
                 <span style="font-weight: bold">Model: </span>
-                {{ red_team._model_ID }}
+                {{ red_metadata ? red_metadata.model_ID : red_team._model_ID }}
               </p>
               <p>
                 <span style="font-weight: bold">Alignment: </span>
@@ -195,7 +195,9 @@ export default {
       winner: null,
       currentRound: 0, // Track the current round number
       game_style: null,
-      penalty_applied: false
+      penalty_applied: false,
+      blue_metadata: null,
+      red_metadata: null, // Add variables to hold team metadata
     };
   },
   mounted() {
@@ -253,6 +255,14 @@ export default {
           this.blue_team = response.data[1];
           this.game_style = response.data[3];
 
+          // Only fetch metadata if custom models are used
+          if (this.red_team._model_ID === "custom") {
+            this.getTeamMetadata("red");
+          }
+          if (this.blue_team._model_ID === "custom") {
+            this.getTeamMetadata("blue");
+          }
+
           if (this.game_style == "continuous") {
             this.startContinuousGame();
             return;
@@ -262,6 +272,25 @@ export default {
           console.error(error);
           this.display_error = true;
           this.errors = error;
+        });
+    },
+    getTeamMetadata(team) {
+      const path = `http://127.0.0.1:5000/get_team_metadata/${team}`;
+      axios
+        .get(path)
+        .then((response) => {
+          if (team === "red") {
+            this.red_metadata = response.data;
+            this.red_team.metadata = response.data;
+            this.red_team._model_ID = response.data.model_ID;  // Update the model ID
+          } else if (team === "blue") {
+            this.blue_metadata = response.data;
+            this.blue_team.metadata = response.data;
+            this.blue_team._model_ID = response.data.model_ID;  // Update the model ID
+          }
+        })
+        .catch((error) => {
+          console.error(`Error fetching ${team} team metadata:`, error);
         });
     },
     nextTurn() {
@@ -282,6 +311,7 @@ export default {
             return;
           }
 
+          // Update teams and turns
           this.red_team_turn = !this.red_team_turn;
           this.blue_team_turn = !this.blue_team_turn;
           this.message = response.data[0];
@@ -290,7 +320,15 @@ export default {
           this.red_team = response.data[3];
           this.blue_team = response.data[4];
 
-          if (!this.red_team_turn && (this.red_team._potency != this.red_team._unpenalised_potency)) {
+          // Preserve custom model metadata and ensure the model ID remains from the metadata if it's custom
+          if (this.red_team._model_ID === "custom" && this.red_metadata) {
+            this.red_team._model_ID = this.red_metadata.model_ID;
+          }
+          if (this.blue_team._model_ID === "custom" && this.blue_metadata) {
+            this.blue_team._model_ID = this.blue_metadata.model_ID;
+          }
+
+          if (!this.red_team_turn && this.red_team._potency !== this.red_team._unpenalised_potency) {
             this.penalty_applied = true;
           }
 
@@ -302,7 +340,6 @@ export default {
         })
         .catch((error) => {
           console.error(error);
-          //this.display_error = true;
           this.errors = `Error occurred when running simulation: ${error.response?.data?.error || error.message || error}`;
           this.$router.push({
             name: "error",
@@ -310,7 +347,6 @@ export default {
               errorMessage: this.errors || "An unexpected error occurred.",
             },
           });
-
         });
     },
     async fetchAndDrawNetwork(roundNumber) {
@@ -322,17 +358,17 @@ export default {
           console.error("Graph container not found.");
         }
       } catch (error) {
-        this.errors=`Error occurred when displaying network: ${error.response?.data?.error || error.message || error}`;
+        this.errors = `Error occurred when displaying network: ${error.response?.data?.error || error.message || error}`;
         console.error(
           `Error fetching or drawing network for round ${roundNumber}:`,
           error
         );
         this.$router.push({
-            name: "error",
-            query: {
-              errorMessage: this.errors,
-            },
-          });
+          name: "error",
+          query: {
+            errorMessage: this.errors,
+          },
+        });
       }
     },
     async startContinuousGame() {
@@ -342,18 +378,26 @@ export default {
         try {
           const response = await axios.get(path);
 
-                    this.red_team_turn = !this.red_team_turn;
-                    this.blue_team_turn = !this.blue_team_turn;
-                    this.message = response.data.message;
-                    this.potency = response.data.potency;
-                    this.winner = response.data.victor;
-                    this.red_team = response.data.red_team;
-                    this.blue_team = response.data.blue_team;
+          this.red_team_turn = !this.red_team_turn;
+          this.blue_team_turn = !this.blue_team_turn;
+          this.message = response.data.message;
+          this.potency = response.data.potency;
+          this.winner = response.data.victor;
+          this.red_team = response.data.red_team;
+          this.blue_team = response.data.blue_team;
 
-                    if (!this.red_team_turn && (this.red_team._potency !== this.red_team._unpenalised_potency)) {
-                      this.penalty_applied = true;
-                      console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
-                    }
+          // Preserve custom model metadata
+          if (this.red_team._model_ID === "custom" && this.red_metadata) {
+            this.red_team._model_ID = this.red_metadata.model_ID;
+          }
+          if (this.blue_team._model_ID === "custom" && this.blue_metadata) {
+            this.blue_team._model_ID = this.blue_metadata.model_ID;
+          }
+
+          if (!this.red_team_turn && this.red_team._potency !== this.red_team._unpenalised_potency) {
+            this.penalty_applied = true;
+            console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
+          }
 
           // Increment the round number after each turn
           this.currentRound++;
@@ -363,28 +407,28 @@ export default {
         } catch (error) {
           console.error(error);
           this.errors = `Error occurred when running continuous simulation: ${error.response?.data?.error || error.message || error}`;
-          //this.display_error = true;
           this.$router.push({
             name: "error",
             query: {
-            errorMessage: this.errors,
+              errorMessage: this.errors,
             },
           });
           return;
         }
 
-                if (this.winner == 'red' || this.winner == 'blue') {
-                    break;
-                }
-                
-                // Wait 25 seconds before next round - chatgpt query takes time
-                await new Promise(resolve => setTimeout(resolve, 15000));
-            }
-            return;
+        if (this.winner == 'red' || this.winner == 'blue') {
+          break;
+        }
+
+        // Wait 25 seconds before next round - chatgpt query takes time
+        await new Promise(resolve => setTimeout(resolve, 15000));
+      }
+      return;
         }
     }
-  };
+};
 </script>
+
 
 <style scoped>
 .current-round {
