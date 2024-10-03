@@ -1,17 +1,19 @@
 <template>
   <div id="app">
     <div>
-      <p>{{ errorMessage }}</p>
+      <p class="error-container">{{ errorMessage }}</p>
+      <p>Please try again. If issue persists, see "Help Section" on the About Page.</p>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      errorMessage: this.$route.query.errorMessage || "An unexpected error occurred. Please try again later.",
-    };
-  },
+  props: {
+    errorMessage: {
+      type: String,
+      default:  "An unexpected error occurred. Please try again later."
+    }
+  }
 };
 </script>

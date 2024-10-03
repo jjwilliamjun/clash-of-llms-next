@@ -10,6 +10,7 @@
         <li><a href="javascript:void(0)" @click="scrollToSection('node-connections')">Node Connections</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('node-attributes')">Node Attributes</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('export-simulation-data')">Export Simulation Data</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('help-section')">Help Section</a></li>
       </ul>
     </nav>
 
@@ -91,9 +92,9 @@
 
         <!-- Instructions -->
         <h3>{{ guideData.simulationSettings.instructions.title }}</h3>
-        <ul>
+        <ol>
           <li v-for="instruction in guideData.simulationSettings.instructions.content" :key="instruction">{{ instruction }}</li>
-        </ul>
+        </ol>
         <!-- Download Simulation Settings Example -->
         <div class="download-section">
           <h3>Download Example File</h3>
@@ -165,9 +166,9 @@
 
         <!-- Instructions -->
         <h3>{{ guideData.nodeConnections.instructions.title }}</h3>
-        <ul>
+        <ol>
           <li v-for="instruction in guideData.nodeConnections.instructions.content" :key="instruction">{{ instruction }}</li>
-        </ul>
+        </ol>
 
         <!-- Tips -->
         <h3>{{ guideData.nodeConnections.tips.title }}</h3>
@@ -218,9 +219,9 @@
 
         <!-- Tips -->
         <h3>{{ guideData.nodeAttributes.tips.title }}</h3>
-        <ul>
+        <ol>
           <li v-for="tip in guideData.nodeAttributes.tips.content" :key="tip">{{ tip }}</li>
-        </ul>
+        </ol>
 
         <!-- Download Node Attributes Example -->
         <div class="download-section">
@@ -267,6 +268,18 @@
             </tbody>
           </table>
         </div>
+      </section>
+
+      <!-- Help Section -->
+      <section id="help-section" v-if="!loading && guideData.helpSection">
+        <h1>{{ guideData.helpSection.title }}</h1>
+        <p v-for="solution, errors in guideData.helpSection.errors" :key="errors">
+          <span>{{ errors }}</span>
+          <br>
+          <ul>
+            <li> {{ solution }}</li>
+          </ul>
+        </p>
       </section>
     </div>
   </div>

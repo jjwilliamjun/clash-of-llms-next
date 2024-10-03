@@ -31,10 +31,9 @@
     "instructions": {
       "title": "Instructions",
       "content": [
-        "Open Excel and create a new workbook.",
-        "Rename the first sheet to 'NodeConnections'.",
+        "Open Excel and create a new workbook. This workbook must have the exact same layout and titles as provided in the example excel files.",
         "Enter the data as shown in the example, ensuring that each node's connections and influence factors are correctly listed.",
-        "Save the file with an appropriate name (e.g., 'NodeConnections.xlsx')."
+        "Save the file and upload it by following the standard importing process."
       ]
     },
     "tips": {
@@ -76,7 +75,6 @@
         }
       ]
     },
-
     "example": {
       "title": "Example",
       "tableHeaders": ["Node_ID", "Alignment"],
@@ -90,10 +88,9 @@
     "instructions": {
       "title": "Instructions",
       "content": [
-        "Open Excel and create a new workbook.",
-        "Rename the first sheet to 'NodeAttributes'.",
+        "Open Excel and create a new workbook. This workbook must have the exact same layout and titles as provided in the example excel files.",
         "Enter the data as shown in the example, ensuring that each node's attributes are correctly listed.",
-        "Save the file with an appropriate name (e.g., 'NodeAttributes.xlsx')."
+        "Save the file and upload it by following the standard importing process."
       ]
     },
     "tips": {
@@ -114,7 +111,7 @@
       "title": "File Structure",
       "tableHeaders": ["Column", "Description", "Default"],
       "tableContent": [
-        ["Model_ID", "The unique identifier for each LLM connected to the simulation.", "gpt-3.5 turbo"],
+        ["Model_ID", "The unique identifier for each LLM connected to the simulation. If using a custom LLM, enter 'custom'.", "gpt-3.5 turbo"],
         ["Energy", "A whole number between 1 and 100 (inclusive) representing the initial energy levels of the blue team only (any input for the red team is discarded as the red team has infinite energy). This value depletes after every turn the blue team takes, depending on the message’s energy cost.", "100"],
         ["Msgs_Generated", "A whole number between 1 and 10 (inclusive) which dictates the number of messages at different potency levels the model generates per turn.", "5"],
         ["Temperature", "A value between 0 and 1 that determines how random or predictable the model’s output should be. A lower temperature will result in more deterministic output whereas higher values like 0.8 will result in more random output.", "0.5"],
@@ -151,22 +148,28 @@
     "instructions": {
       "title": "Instructions",
       "content": [
-        "Open Excel and create a new workbook.",
-        "Rename the first sheet to 'SimulationSettings'.",
+        "Open Excel and create a new workbook. This workbook must have the exact same layout and titles as provided in the example excel files.",
         "Enter the data as shown in the example, ensuring that each parameter is correctly entered and is within the correct range.",
-        "Save the file with an appropriate name (e.g., 'SimulationSettings.xlsx').",
-        "Upload the file into the simulation system following the standard importing process."
+        "Save the file and upload it by following the standard importing process."
       ]
     }
   },
   "importingFiles": {
-    "title": "Importing the Files into the Simulation",
+    "title": "Importing Parameters from Excel Files",
     "steps": [
-      "Upload the Excel files (NodeConnections, NodeAttributes, and SimulationSettings) to the simulation system.",
-      "Verify the connections and attributes by running a test simulation.",
-      "If necessary, adjust the files based on test results and re-upload them.",
+      "Navigate to the Home page and select 'Upload Excel Files'.", 
+      "Upload all three required Excel files (NodeConnections, NodeAttributes, and SimulationSettings) one at a time by clicking 'Choose file' for each file. When prompted, select the file you wish to upload and click 'open'.",
+      "Once you have selected all three files, proceed to upload them by clicking 'Upload Files'. If successful, you will be redirected to confirm the imported values are correct. If an error occurs, please check the file formatting and entered values are correct.",
+      "If necessary, adjust the files and re-upload them by going back to the 'Home' page.",
       "Run the simulation after confirming all data is correctly imported."
     ]
+  }, 
+  "helpSection": {
+    "title": "Help Section",
+    "errors": {
+      "Error occurred when importing files: Issue found in (file name) file format ...'" : "This occurs when the file uploaded for simulation settings has incorrect formatting. The error message may be followed by something along the lines of 'Model_ID' or 'Alignment', which indicates there may be a missing column for that parameter. Please ensure that the excel files have the exact same formatting and titles as the provided example files.",
+      "Error occurred when importing files: invalid (parameter) for Red/Blue agent," : "This occurs when the file uploaded contains invalid values for the specified parameter. Please ensure that all required parameters are provided and all entered values are of the correct type and within the specified ranges (see above)."
+    }
   }
 }
 
