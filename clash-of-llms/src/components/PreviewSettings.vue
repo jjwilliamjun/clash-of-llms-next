@@ -18,7 +18,7 @@
               <div v-if="blue_team">
                 <p>
                   <span style="font-weight: bold">Model: </span>
-                  {{ blue_team._model_ID }}
+                  {{ blue_metadata ? blue_metadata.model_ID : blue_team._model_ID }}
                 </p>
                 <p>
                   <span style="font-weight: bold">Alignment: </span>
@@ -67,7 +67,7 @@
               <div v-if="red_team">
                 <p>
                   <span style="font-weight: bold">Model: </span>
-                  {{ red_team._model_ID }}
+                  {{ red_metadata ? red_metadata.model_ID : red_team._model_ID }}
                 </p>
                 <p>
                   <span style="font-weight: bold">Alignment: </span>
@@ -261,9 +261,11 @@ export default {
           if (team === "red") {
             this.red_metadata = response.data;
             this.red_team.metadata = response.data;
+            this.red_team._model_ID = response.data.model_ID;
           } else if (team === "blue") {
             this.blue_metadata = response.data;
             this.blue_team.metadata = response.data;
+            this.blue_team._model_ID = response.data.model_ID; 
           }
         })
         .catch((error) => {
