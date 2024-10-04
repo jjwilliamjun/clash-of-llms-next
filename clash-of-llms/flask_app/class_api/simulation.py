@@ -155,11 +155,5 @@ class Simulation:
             )
         
         # End Simulation
-        return self._victor, self._termination_reason
+        return turn_data
     
-    def switch_teams(self):
-        """Switch current team for next round"""
-        if self._current_team == 'red':
-            self._current_team = 'blue'
-        else:
-            self._current_team = 'red'
