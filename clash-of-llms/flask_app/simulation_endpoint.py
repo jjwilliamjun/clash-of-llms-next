@@ -326,7 +326,7 @@ def start_next_round():
     turn_counter = turn_counter + 1
     termination_reason = None
     victor = None
-    energy_level = 'NA'
+
 
     team_colour = request.args.get('team')
 
@@ -369,7 +369,6 @@ def start_next_round():
     if current_team._team.lower() == 'blue':
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)
-        energy_level = current_team._energy
 
     #TODO: currently rounding down - may need to change
     red_team.update_alignment(round(green_team.red_alignment(), 2))
@@ -403,7 +402,7 @@ def start_next_round():
 
     turn_data.set_all_turn_data(turn=turn_counter, 
                                 team=current_team._team, message_chosen=current_team._message, 
-                                potency=current_team._potency, energy_level=energy_level, 
+                                potency=current_team._potency, energy_level="NA", 
                                 red_alignment=green_team.red_alignment(), blue_alignment=green_team.blue_alignment())
     game_data.add_entry(turn_data)
 
@@ -444,7 +443,6 @@ def continuous_game():
         
         if continuous_game._termination_reason is None:
             turn_counter += 1
-
             victor, termination_reason = continuous_game.next_round(terminating_conditions)
 
             # Add the new function to create and save a JSON file for the current round
@@ -457,8 +455,10 @@ def continuous_game():
             current_team = None
             if continuous_game._current_team == "red":
                 current_team = continuous_game._red_team
+                energy_level = "NA"
             else:
                 current_team = continuous_game._blue_team
+                energy_level = current_team._energy
             
             msg_content = {
                 "message": current_team._message,
@@ -470,7 +470,7 @@ def continuous_game():
             }
             turn_data.set_all_turn_data(turn=turn_counter, 
                                 team=current_team._team, message_chosen=current_team._message, 
-                                potency=current_team._potency, energy_level="NA", 
+                                potency=current_team._potency, energy_level=energy_level, 
                                 red_alignment=green_team.red_alignment(), blue_alignment=green_team.blue_alignment())
             game_data.add_entry(turn_data)
 
