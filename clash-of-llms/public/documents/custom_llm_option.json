@@ -1,47 +1,43 @@
 {
   "custom_llm_guide": {
     "title": "Custom LLM Integration",
-    "description": "This guide explains how to integrate custom Large Language Models (LLMs) into the simulation using PyTorch (.pt) or TensorFlow (.h5) files. Follow these steps to upload and use your custom models in the system.",
+    "description": "This guide explains how to easily integrate custom models into the simulation, allowing researchers to upload and use their own LLMs in any supported format.",
     "steps": [
       {
-        "title": "Step 1: Prepare Your LLM Model",
+        "title": "Step 1: Prepare Your Model",
         "content": [
-          "Ensure your custom LLM is saved in the appropriate format:",
-          "- Use `.pt` for PyTorch models.",
-          "- Use `.h5` for TensorFlow models.",
-          "Your model should be ready for inference (evaluation mode for PyTorch)."
+          "Prepare your custom LLM in any format, such as `.pt` for PyTorch or `.h5` for TensorFlow.",
+          "Ensure your model is set for inference mode (e.g., evaluation mode for PyTorch).",
+          "Add metadata to help identify the model during simulation (e.g., model ID, author)."
         ]
       },
       {
-        "title": "Step 2: Upload Your LLM Model",
+        "title": "Step 2: Upload Your Model",
         "content": [
-          "Go to the model upload section on the website.",
-          "Select the 'Custom' option under your team (Red or Blue) from the dropdown menu.",
-          "Upload your model file in the `.pt` or `.h5` format.",
-          "Ensure the file is correctly named:",
-          "- For the Blue team, use `blue_custom_model.pt` or `blue_custom_model.h5`.",
-          "- For the Red team, use `red_custom_model.pt` or `red_custom_model.h5`."
+          "Select the 'Custom' option under Red or Blue team setup on the website.",
+          "Upload your model file directly in the upload section.",
+          "The system will automatically save the model with the appropriate team prefix (e.g., `red_` or `blue_`)."
         ]
       },
       {
-        "title": "Step 3: Integration with the Simulation",
+        "title": "Step 3: Integration into Simulation",
         "content": [
-          "Once uploaded, the system will automatically detect your model file and integrate it into the simulation.",
-          "The backend will recognize and use the custom model for generating messages and computing potency values during the simulation."
+          "The backend will automatically detect and load the uploaded model.",
+          "The model will be used for generating messages and influencing node alignments during the simulation."
         ]
       },
       {
         "title": "Step 4: Verify Model Usage",
         "content": [
-          "During the simulation, the system will show the model being used for message generation.",
-          "You can verify that your custom model is being used by checking the console logs or output messages, which will indicate if the 'Custom' model is applied."
+          "During the simulation, the frontend will display the model ID to confirm your custom model is in use.",
+          "Check the simulation dashboard for model information and outputs."
         ]
       },
       {
-        "title": "Step 5: Update or Replace Your Model",
+        "title": "Step 5: Update Your Model",
         "content": [
-          "To update or replace your custom LLM, upload a new `.pt` or `.h5` file following the same process outlined above.",
-          "Ensure the model file has the correct naming convention (e.g., `blue_custom_model.pt` or `red_custom_model.h5`)."
+          "To replace the current model, simply upload a new one.",
+          "The system will replace the old model and use the new one for future simulations."
         ]
       }
     ]
