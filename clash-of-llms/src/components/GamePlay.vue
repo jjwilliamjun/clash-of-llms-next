@@ -408,8 +408,8 @@ export default {
           });
           return;
         }
-            if (this.winner == 'red' || this.winner == 'blue') {
-                break;
+            if (this.victor == 'red' || this.victor == 'blue') {
+                return;
             }
                 
             // Wait 25 seconds before next round - chatgpt query takes time
