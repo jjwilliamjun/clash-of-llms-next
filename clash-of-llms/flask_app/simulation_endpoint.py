@@ -326,6 +326,7 @@ def start_next_round():
     turn_counter = turn_counter + 1
     termination_reason = None
     victor = None
+    energy_level = 'NA'
 
 
     team_colour = request.args.get('team')
@@ -369,6 +370,7 @@ def start_next_round():
     if current_team._team.lower() == 'blue':
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)
+        energy_level = current_team._energy
 
     #TODO: currently rounding down - may need to change
     red_team.update_alignment(round(green_team.red_alignment(), 2))
@@ -402,7 +404,7 @@ def start_next_round():
 
     turn_data.set_all_turn_data(turn=turn_counter, 
                                 team=current_team._team, message_chosen=current_team._message, 
-                                potency=current_team._potency, energy_level="NA", 
+                                potency=current_team._potency, energy_level=energy_level, 
                                 red_alignment=green_team.red_alignment(), blue_alignment=green_team.blue_alignment())
     game_data.add_entry(turn_data)
 
