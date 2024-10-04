@@ -86,6 +86,9 @@ def import_excel():
 
                         red_team = set_team(teams[0])
                         blue_team = set_team(teams[1])
+
+                        global terminating_conditions
+                        terminating_conditions = Termination(teams[2]['round_number'], teams[2]['population_alignment'])
                     
                     except Exception as e:
                         error_msg = f"Issue found in Simulation Settings file format: {e}"
