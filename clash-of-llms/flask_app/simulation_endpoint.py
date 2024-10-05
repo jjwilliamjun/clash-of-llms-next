@@ -1,6 +1,5 @@
 import math
-import os
-import datetime
+import os, subprocess
 from flask import Flask, send_file, jsonify, request
 from flask_cors import CORS, cross_origin
 import json
@@ -13,6 +12,7 @@ from create_node_network.create_network import *
 from create_node_network.green_team import *
 from class_api.team import *
 from class_api.simulation import *
+from class_api.termination import Termination
 from llm_api.llm_handler import *
 
 app = Flask(__name__)
@@ -26,11 +26,10 @@ turn_counter = 0
 red_team = None
 blue_team = None
 green_team = None
-winning_pop_percent = 80
 custom_llms = {}  # Placeholder to store custom LLMs
 game_style = None
 continuous_game = None
-
+terminating_conditions = None
 
 @app.route('/upload_llm', methods=['POST'])
 @cross_origin()
@@ -87,6 +86,9 @@ def import_excel():
 
                         red_team = set_team(teams[0])
                         blue_team = set_team(teams[1])
+
+                        global terminating_conditions
+                        terminating_conditions = Termination(teams[2]['round_number'], teams[2]['population_alignment'])
                     
                     except Exception as e:
                         error_msg = f"Issue found in Simulation Settings file format: {e}"
@@ -198,6 +200,7 @@ def get_parameters():
     global blue_team
     global red_team
     global green_team
+    global terminating_conditions
 
     green_attributes = {
         "size": green_team._size,
@@ -205,7 +208,12 @@ def get_parameters():
         "red_alignment": green_team._red_alignment,
         "neutral": green_team._size - green_team._blue_alignment - green_team._red_alignment
     }
-
+    
+    conditions = {
+        "population_alignment": terminating_conditions._alignment,
+        "round_number": terminating_conditions._round
+    }
+    
     # TO DO --> currently rounding down - may need to change
     red_team.update_alignment(round(green_team.red_alignment(), 2))
     blue_team.update_alignment(round(green_team.blue_alignment(), 2))
@@ -213,7 +221,7 @@ def get_parameters():
     if blue_team is None or red_team is None: 
         return jsonify({"error": "Parameters not found"}), 404
 
-    output = [red_team.__dict__, blue_team.__dict__, green_attributes, game_style]
+    output = [red_team.__dict__, blue_team.__dict__, green_attributes, game_style, conditions]
     
     return jsonify(output), 200
 
@@ -232,6 +240,9 @@ def ui_parameters():
         global blue_team
         blue_team = set_team(parameters['blue_team'])
 
+        global terminating_conditions
+        terminating_conditions = Termination(parameters['round_number'], parameters['population_alignment'])
+        
         if parameters.get('green_node_count_option') == 'random':
             node_count = random.randint(30, 50)  # Adjust the range as needed
             node_attributes, node_connections = generate_random_network(node_count)
@@ -256,8 +267,6 @@ def ui_parameters():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-    return '', 200
 
 # Route to set game play style (continuously or in turns)
 @app.route('/set_gameplay', methods=['POST'])
@@ -318,8 +327,10 @@ def start_next_round():
 
     turn_data = GameTurnData()
     turn_counter = turn_counter + 1
-    msg_content = []
+    termination_reason = None
     victor = None
+    energy_level = 'NA'
+
 
     team_colour = request.args.get('team')
 
@@ -362,42 +373,44 @@ def start_next_round():
     if current_team._team.lower() == 'blue':
         energy_cost = current_team.energy_cost()
         current_team.update_energy_level(energy_cost)
+        energy_level = current_team._energy
 
     #TODO: currently rounding down - may need to change
     red_team.update_alignment(round(green_team.red_alignment(), 2))
     blue_team.update_alignment(round(green_team.blue_alignment(), 2))
     print(f'Current team has alignment {current_team._alignment}%')
     # Winning by majority support
-    if red_team._alignment >= winning_pop_percent:
+    if red_team._alignment >= terminating_conditions._alignment:
         victor = red_team._team
-    elif blue_team._alignment >= winning_pop_percent:
+        termination_reason = "Majority support for red team"
+    elif blue_team._alignment >= terminating_conditions._alignment:
         victor = blue_team._team
-
+        termination_reason = "Majority support for blue team"
+    
     # Winning by energy loss
     if current_team._team.lower() == 'blue' and current_team._energy == 0:
         victor = 'Red'
+        termination_reason = "Blue team energy depletion"
 
-    msg_content.append(current_team._message)
-    msg_content.append(current_team._potency)
-    msg_content.append(victor)
-    msg_content.append(red_team.__dict__)
-    msg_content.append(blue_team.__dict__)
+    # Termination from set round
+    if turn_counter == terminating_conditions._round:
+        termination_reason = "Round limit reached"
+        
+    msg_content = {
+        "message": current_team._message,
+        "potency": current_team._potency,
+        "victor": victor,
+        "red_team": red_team.__dict__,
+        "blue_team": blue_team.__dict__,
+        "termination_reason": termination_reason
+    }
 
-    if current_team._team.lower() == 'blue':
-        turn_data.set_all_turn_data(turn_counter, current_team._team, current_team._message, 
-                                    current_team._potency, current_team._energy, green_team.red_alignment(), 
-                                    green_team.blue_alignment())
-    else: 
-        turn_data.set_all_turn_data(turn=turn_counter, 
-                                    team=current_team._team, message_chosen=current_team._message, 
-                                    potency=current_team._potency, energy_level="NA", 
-                                    red_alignment=green_team.red_alignment(), blue_alignment=green_team.blue_alignment())
-    
+    turn_data.set_all_turn_data(turn=turn_counter, 
+                                team=current_team._team, message_chosen=current_team._message, 
+                                potency=current_team._potency, energy_level=energy_level, 
+                                red_alignment=green_team.red_alignment(), blue_alignment=green_team.blue_alignment())
     game_data.add_entry(turn_data)
-    
-    if victor: 
-        turn_counter = 0
-    print(f'Blue team has {blue_team._energy} energy left')
+
     return jsonify(msg_content), 200
 
 def create_round_json(round_number, network_graph):
@@ -430,28 +443,41 @@ def continuous_game():
         global continuous_game
         global game_data
         global turn_counter
+        global terminating_conditions
+        turn_data = GameTurnData()
         
-        if continuous_game._victor is None:
-            turn_counter = turn_counter + 1
-            victor = continuous_game.next_round()
+        if continuous_game._termination_reason is None:
+            turn_counter += 1
+            victor, termination_reason = continuous_game.next_round(terminating_conditions)
 
             # Add the new function to create and save a JSON file for the current round
             create_round_json(turn_counter, continuous_game._green_team._network_graph)
-
+            
+            # Custom round limit
+            if  turn_counter == terminating_conditions._round and termination_reason is None:
+                termination_reason = "Round limit reached"
+            
             current_team = None
             if continuous_game._current_team == "red":
                 current_team = continuous_game._red_team
+                energy_level = "NA"
             else:
                 current_team = continuous_game._blue_team
+                energy_level = current_team._energy
             
             msg_content = {
                 "message": current_team._message,
                 "potency": current_team._potency,
-                "victor": victor,
                 "red_team": continuous_game._red_team.__dict__,
-                "blue_team": continuous_game._blue_team.__dict__
+                "blue_team": continuous_game._blue_team.__dict__,
+                "termination_reason": termination_reason,
+                "victor": victor,
             }
-            game_data.add_entry(continuous_game.get_turn_data(turn_counter))
+            turn_data.set_all_turn_data(turn=turn_counter, 
+                                team=current_team._team, message_chosen=current_team._message, 
+                                potency=current_team._potency, energy_level=energy_level, 
+                                red_alignment=green_team.red_alignment(), blue_alignment=green_team.blue_alignment())
+            game_data.add_entry(turn_data)
 
             continuous_game.switch_teams()
             
@@ -460,9 +486,39 @@ def continuous_game():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-
-
-
+# Route for cleanup script
+@app.route('/cleanup', methods=['GET'])
+def cleanup():
+    global turn_counter
+    global game_data 
+    global red_team
+    global blue_team
+    global green_team
+    global custom_llms
+    global game_style
+    global continuous_game
+    global terminating_conditions
+    
+    try:
+        game_data = GameData()  
+        turn_counter = 0
+        red_team = None
+        blue_team = None
+        green_team = None
+        custom_llms = {}  # Placeholder to store custom LLMs
+        game_style = None
+        continuous_game = None
+        terminating_conditions = None
+    
+        #Run cleanup script
+        subprocess.run('./cleanup.sh')
+        return '', 200
+        
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return jsonify({"error": str(e)}), 500
+        
+    
 
 if __name__ == '__main__':
     #game_data = generate_game_data()  # Testing purposes

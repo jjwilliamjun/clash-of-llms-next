@@ -1,5 +1,5 @@
 <template>
-  <div v-if="display_error">
+<div v-if="display_error">
     <p>No parameters uploaded</p>
     <p>{{ errors }}</p>
     <router-link to="/">Upload parameters here</router-link>
@@ -113,6 +113,15 @@
             </div>
           </div>
         </div>
+        <div class="flex-child">
+            <h2 class="condition-heading">End conditions</h2>
+                <div class="custom-conditions">
+                    <div v-if="termination_conditions">
+                        <p style="text-align: left"><span style="font-weight: bold;">Population alignment: </span> {{ termination_conditions.population_alignment }}%</p>
+                        <p style="text-align: left"><span style="font-weight: bold;">Round number: </span> {{ termination_conditions.round_number }} </p>
+                    </div>
+                </div>
+            </div>
       </div>
     <!-- </div> -->
 
@@ -148,63 +157,64 @@
 import axios from "axios";
 
 export default {
-  data() {
-    return {
-      params: null,
-      blue_team: null,
-      red_team: null,
-      green_team: null,
-      display_error: false,
-      errors: null,
-      red_team_turn: true,
-      blue_team_turn: false,
-      message: null,
-      potency: null,
-      winner: null,
-      currentTeam: null,
-      play_option: null,
-    };
-  },
-  mounted() {
-    this.getParameters();
-  },
-  methods: {
-    downloadExcel() {
-      axios({
-        url: "http://localhost:5000/excel_export",
-        method: "GET",
-        responseType: "blob",
-      })
-        .then((response) => {
-          const blob = new Blob([response.data], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          });
-          const link = document.createElement("a");
-
-          link.href = window.URL.createObjectURL(blob);
-          const now = new Date();
-          const timestamp =
-            now.getHours() + "_" + now.getMinutes() + "_" + now.getSeconds();
-
-          const excel_file_name = `clash_of_llms_${timestamp}.xlsx`;
-          link.download = excel_file_name;
-
-          link.click();
-
-          window.URL.revokeObjectURL(link.href);
-        })
-        .catch((error) => {
-          this.errors = `Error occurred when downloading excel file: ${
-            error.response?.data?.error || error.message || error
-          }`;
-          this.$router.push({
-            name: "error",
-            query: {
-              errorMessage: this.errors,
-            },
-          });
-        });
+    data() {
+      return {
+        params: null,
+        blue_team: null,
+        red_team: null,
+        green_team: null,
+        display_error: false,
+        errors: null,
+        red_team_turn: true,
+        blue_team_turn: false,
+        message: null,
+        potency: null,
+        winner: null,
+        currentTeam:  null,
+        play_option: null,
+        termination_conditions: null
+      };
     },
+    mounted() {
+        this.getParameters();
+    },
+    methods: {
+        downloadExcel() {
+            axios({
+                url: 'http://localhost:5000/excel_export', 
+                method: 'GET',
+                responseType: 'blob', 
+            })
+            .then((response) => {
+            const blob = new Blob([response.data], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            });
+            const link = document.createElement("a");
+
+            link.href = window.URL.createObjectURL(blob);
+            const now = new Date();
+            const timestamp =
+                now.getHours() + "_" + now.getMinutes() + "_" + now.getSeconds();
+
+            const excel_file_name = `clash_of_llms_${timestamp}.xlsx`;
+            link.download = excel_file_name;
+
+            link.click();
+
+            window.URL.revokeObjectURL(link.href);
+            })
+            .catch((error) => {
+            this.errors = `Error occurred when downloading excel file: ${
+                error.response?.data?.error || error.message || error
+            }`;
+            this.$router.push({
+                name: "error",
+                query: {
+                errorMessage: this.errors,
+                },
+            });
+            });
+        },
     getParameters() {
       const path = "http://127.0.0.1:5000/get_parameters";
       axios
@@ -215,39 +225,36 @@ export default {
             this.errors = "No parameters uploaded";
             return;
           }
-
-          this.red_team = response.data[0];
-          this.blue_team = response.data[1];
-          this.green_team = response.data[2];
-        })
-        .catch((error) => {
-          console.error(error);
-          this.display_error = true;
-          this.errors = error;
-        });
+                    this.red_team = response.data[0];
+                    this.blue_team = response.data[1];
+                    this.green_team = response.data[2];
+                    this.termination_conditions = response.data[4];
+                })
+                .catch((error) => {
+                    console.error(error);
+                    this.display_error = true;
+                    this.errors = error;
+                });
     },
     async submitGameStyle() {
-      const path = "http://127.0.0.1:5000/set_gameplay";
-      try {
-        // Send selected option to backend
-        const response = await axios.post(path, {
-          play_option: this.play_option,
-        });
-        if (response.status == 200) {
-          this.$router.push("/gameplay");
+        const path = 'http://127.0.0.1:5000/set_gameplay';
+        try {
+            // Send selected option to backend
+            const response = await axios.post(path, { play_option: this.play_option });
+            if (response.status == 200) {
+                this.$router.push('/gameplay');
+            }
+        } catch (error) {
+            this.errors = `Error occurred when getting parameters: ${
+                error.response?.data?.error || error.message || error
+            }`;
+            this.$router.push({
+                name: "error",
+                query: {
+                    errorMessage: this.errors,
+                },
+            });
         }
-      } catch (error) {
-        this.errors = `Error occurred when getting parameters: ${
-          error.response?.data?.error || error.message || error
-        }`;
-
-        this.$router.push({
-          name: "error",
-          query: {
-            errorMessage: this.errors,
-          },
-        });
-      }
     },
   },
 };

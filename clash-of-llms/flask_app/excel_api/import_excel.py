@@ -6,7 +6,7 @@ import pandas as pd
 
 
 def validate_settings(team: dict) -> list:
-    '''Checks if imported values for simulation settings are valid'''
+    '''Checks if imported values for blue and red agents are valid'''
 
     errors = []
 
@@ -40,24 +40,45 @@ def validate_settings(team: dict) -> list:
     
     return errors
 
+
+def validate_end_conditions(conditions: dict) -> list:
+    '''Checks if imported values for custom termination conditions are valid'''
+    errors = []
+
+    _alignment = int(conditions["population_alignment"])
+    _rounds = int(conditions["round_number"])
+
+    if _alignment < 0 or _alignment > 100: 
+        errors.append("invalid custom termination condition for population alignment. Must be within the range of 0-100 (inclusive)")
+    if _rounds < 0 or _rounds > 50: 
+        errors.append("invalid custom termination condition for number of rounds. Must be within the range of 0-50 (inclusive)")
+
+    return errors
+
+
 def import_settings(xls_path) -> tuple:
     '''Returns settings for red and blue teams as dictionaries'''
     settings = pd.read_excel(xls_path)
 
     red_team = settings.loc[0]
     blue_team = settings.loc[1]
-
+    termination_conditions = {
+        "population_alignment" : settings.loc[4]['Model_ID'],
+        "round_number" : settings.loc[5]['Model_ID']
+    }
+    
     red_team = red_team.to_dict()
     blue_team = blue_team.to_dict()
 
     input_errors = ["errors"]
     input_errors.extend(validate_settings(red_team))
     input_errors.extend(validate_settings(blue_team))
+    input_errors.extend(validate_end_conditions(termination_conditions))
 
     if len(input_errors) > 1:
         return tuple(input_errors)
 
-    return red_team, blue_team
+    return red_team, blue_team, termination_conditions
 
 def validate_attributes(nodes: dict):
     '''Checks imported attribute values are valid and returns alignments if so.'''

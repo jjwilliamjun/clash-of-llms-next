@@ -18,6 +18,7 @@ class Simulation:
         self._green_team = green_team
         self._msg_content = []
         self._current_team = 'red'
+        self._termination_reason = None
 
     def start(self):
         """Run Simulation"""
@@ -74,34 +75,36 @@ class Simulation:
         return self._victor
     
     
-    def next_round(self):
+    def next_round(self, terminating_conditions):
         """Run Simulation"""
 
+        
         # Energy depletion
         if self._blue_team._energy == 0:
             self._victor = 'red'
-            print("Blue Team has run out of energy")
-            return self._victor
+            self._termination_reason = "Blue team energy depletion"
+            return self._victor, self._termination_reason
 
         # Population majority
-        if self._red_team._alignment >= 80:
+        if self._red_team._alignment >= terminating_conditions._alignment or self._blue_team._alignment < 1:
             self._victor = 'red'
-            print("Red Team has gained majority support")
-            return self._victor
+            self._termination_reason = "Majority support for red team"
+            return self._victor, self._termination_reason
         
-        elif self._blue_team._alignment >= 80:
+        elif self._blue_team._alignment >= terminating_conditions._alignment or self._blue_team._alignment < 1:
             self._victor = "blue"
-            print("Blue Team has gained majority support")
-            return self._victor
-    
-        # If there is no winner yet, play the next round        
+            self._termination_reason = "Majority support for blue team"
+            return self._victor, self._termination_reason
+        
+        # Agents perform turn actions
         if self._current_team == 'red':
             self._red_team.generate_message()
             self._red_team.apply_penalty()
             if(not isinstance(self._red_team._potency,str)):
                 self._green_team.broadcast_message(self._red_team._potency, self._red_team, self._red_team._influence_factor)
                 self._green_team.update_green_network()
-
+            print("updated")
+            
         elif self._current_team == 'blue':
             self._blue_team.generate_message()
             if(not isinstance(self._blue_team._potency,str)):
@@ -109,14 +112,14 @@ class Simulation:
                 self._green_team.update_green_network()
             energy_cost=self._blue_team.energy_cost()
             self._blue_team.update_energy_level(energy_cost)
-            
+        
 
         # Update alignments for red and blue teams
         self._red_team.update_alignment(round(self._green_team.red_alignment(), 2))
         self._blue_team.update_alignment(round(self._green_team.blue_alignment(), 2))
         
         # End Simulation
-        return self._victor
+        return self._victor, self._termination_reason
     
     def switch_teams(self):
         """Switch current team for next round"""
@@ -151,4 +154,6 @@ class Simulation:
                 blue_alignment=self._blue_team._alignment
             )
         
+        # End Simulation
         return turn_data
+    

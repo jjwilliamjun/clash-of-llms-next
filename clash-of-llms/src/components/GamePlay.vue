@@ -46,7 +46,7 @@
               </p>
             </div>
             <!--only display if winner has not been decided-->
-            <div v-if="blue_team_turn && !winner">
+            <div v-if="blue_team_turn && !termination_reason && !continuous">
               <button
                 style="background-color: #0b7ffc; border: none"
                 @click="nextTurn"
@@ -96,7 +96,7 @@
               </p>
             </div>
             <!--only display if winner has not been decided-->
-            <div v-if="red_team_turn && !winner">
+            <div v-if="red_team_turn && !termination_reason && !continuous">
               <button
                 style="background-color: red; border: none"
                 @click="nextTurn"
@@ -109,16 +109,16 @@
       </div>
 
       <!-- Message and Potency Display -->
-      <div v-if="message && potency && !winner" id="Message">
+      <div v-if="message && potency" id="Message">
         <div v-if="red_team_turn">
           <p>
-            <span style="font-weight: bold">Blue Team Message: </span>
+            <span style="font-weight: bold">Blue Agent Message: </span>
             {{ message }}
           </p>
         </div>
         <div v-else>
           <p>
-            <span style="font-weight: bold">Red Team Message: </span>
+            <span style="font-weight: bold">Red Agent Message: </span>
             {{ message }}
           </p>
         </div>
@@ -135,27 +135,28 @@
 
       <!-- Winner Announcement -->
       <div id="app">
-        <div v-if="winner" class="popup">
+        <div v-if="termination_reason" class="popup">
           <div class="popup-inner">
             <div>
-              <h1
+              <h1 v-if="victor "
                 :id="
-                  winner.toLowerCase() === 'red'
+                  victor.toLowerCase() === 'red'
                     ? 'redTeam'
-                    : winner.toLowerCase() === 'blue'
+                    : victor.toLowerCase() === 'blue'
                     ? 'blueTeam'
                     : ''
                 "
                 class="font-bold mb-100"
               >
-                Winner: {{ winner }}
+                Winner: {{ victor }}
               </h1>
+              <h3 v-if="termination_reason" style="text-align: left;">End reason: {{ termination_reason }}</h3>
             </div>
             <div class="button-group">
               <router-link to="/">
                 <button
                   class="home-button bg-green-500 text-white rounded hover:bg-green-600 transition"
-                >
+                @click="cleanup">
                   <span>🏠</span> Home Page
                 </button>
               </router-link>
@@ -192,9 +193,12 @@ export default {
       blue_team_turn: false,
       message: null,
       potency: null,
-      winner: null,
       currentRound: 0, // Track the current round number
       game_style: null,
+      termination_conditions: null,
+      termination_reason: null,
+      victor: null,
+      cors_errors: false,
       penalty_applied: false
     };
   },
@@ -252,8 +256,10 @@ export default {
           this.red_team = response.data[0];
           this.blue_team = response.data[1];
           this.game_style = response.data[3];
+          this.termination_conditions = response.data[4];
+          this.continuous = this.game_style == "continuous";
 
-          if (this.game_style == "continuous") {
+          if (this.continuous) {
             this.startContinuousGame();
             return;
           }
@@ -284,11 +290,12 @@ export default {
 
           this.red_team_turn = !this.red_team_turn;
           this.blue_team_turn = !this.blue_team_turn;
-          this.message = response.data[0];
-          this.potency = response.data[1];
-          this.winner = response.data[2];
-          this.red_team = response.data[3];
-          this.blue_team = response.data[4];
+          this.message = response.data.message;
+          this.potency = response.data.potency;
+          this.red_team = response.data.red_team;
+          this.blue_team = response.data.blue_team;
+          this.termination_reason = response.data.termination_reason;
+          this.victor = response.data.victor;
 
           if (!this.red_team_turn && (this.red_team._potency != this.red_team._unpenalised_potency)) {
             this.penalty_applied = true;
@@ -311,6 +318,34 @@ export default {
             },
           });
 
+        });
+    },
+    cleanup(){
+        const path = "http://127.0.0.1:5000/cleanup";
+        axios
+        .get(path)
+        .then((response) => {
+          if (response.data.length < 2) {
+            this.display_error = true;
+            this.errors = "No parameters uploaded";
+            return;
+          }
+
+          this.red_team = response.data[0];
+          this.blue_team = response.data[1];
+          this.game_style = response.data[3];
+          this.termination_conditions = response.data[4];
+          this.continuous = this.game_style == "continuous";
+
+          if (this.continuous) {
+            this.startContinuousGame();
+            return;
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          this.display_error = true;
+          this.errors = error;
         });
     },
     async fetchAndDrawNetwork(roundNumber) {
@@ -340,26 +375,27 @@ export default {
 
       while (this.red_team_turn || this.blue_team_turn) {
         try {
-          const response = await axios.get(path);
+            const response = await axios.get(path);
+                this.red_team_turn = !this.red_team_turn;
+                this.blue_team_turn = !this.blue_team_turn;
+                this.message = response.data.message;
+                console.log(this.message)
+                this.potency = response.data.potency;
+                this.red_team = response.data.red_team;
+                this.blue_team = response.data.blue_team;
+                this.termination_reason = response.data.termination_reason;
+                this.victor = response.data.victor;
 
-                    this.red_team_turn = !this.red_team_turn;
-                    this.blue_team_turn = !this.blue_team_turn;
-                    this.message = response.data.message;
-                    this.potency = response.data.potency;
-                    this.winner = response.data.victor;
-                    this.red_team = response.data.red_team;
-                    this.blue_team = response.data.blue_team;
+                if (!this.red_team_turn && (this.red_team._potency !== this.red_team._unpenalised_potency)) {
+                    this.penalty_applied = true;
+                    console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
+                }
 
-                    if (!this.red_team_turn && (this.red_team._potency !== this.red_team._unpenalised_potency)) {
-                      this.penalty_applied = true;
-                      console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
-                    }
+            // Increment the round number after each turn
+            this.currentRound++;
 
-          // Increment the round number after each turn
-          this.currentRound++;
-
-          // Fetch and draw the network for the new round
-          this.fetchAndDrawNetwork(this.currentRound);
+            // Fetch and draw the network for the new round
+            this.fetchAndDrawNetwork(this.currentRound);
         } catch (error) {
           console.error(error);
           this.errors = `Error occurred when running continuous simulation: ${error.response?.data?.error || error.message || error}`;
@@ -372,15 +408,14 @@ export default {
           });
           return;
         }
-
-                if (this.winner == 'red' || this.winner == 'blue') {
-                    break;
-                }
-                
-                // Wait 25 seconds before next round - chatgpt query takes time
-                await new Promise(resolve => setTimeout(resolve, 15000));
+            if (this.victor == 'red' || this.victor == 'blue') {
+                return;
             }
-            return;
+                
+            // Wait 25 seconds before next round - chatgpt query takes time
+            await new Promise(resolve => setTimeout(resolve, 15000));
+        }
+         return;
         }
     }
   };
@@ -421,13 +456,14 @@ export default {
 
   .popup-inner {
     width: 300px;
-    height: 150px;
+    height: 200px;
     background: #fff;
     display: flex;
     flex-direction: column;
     justify-content: start;
     align-items: center;
     padding: 40px;
+    border-radius: 10px;
   }
 
   .popup-inner h1 {
@@ -436,6 +472,7 @@ export default {
   }
 
   .button-group {
+    float:inline-end;
     display: flex;
     gap: 8px;
     padding: 20px;
