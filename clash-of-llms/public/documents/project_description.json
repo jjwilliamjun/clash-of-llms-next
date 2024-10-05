@@ -3,15 +3,15 @@
   "overview": [
     {
       "subtitle": "Introduction",
-      "content": "This app simulates and tests the dynamics between <strong>two competing LLM agents</strong>: a Red agent, which spreads misinformation to sway public opinion, and a Blue agent, which strives to debunk that misinformation and restore trust. Both teams aim to gain majority alignment of a population of neutral agents, called Green Nodes, represented in a directed network. Each Green Node has its own predisposition towards either the Red or Blue Team and has direct influence over the alignment of their connected neighbouring nodes."
+      "content": "This app simulates and tests the dynamics between <strong>two competing LLM agents</strong>: a Red Agent, which spreads misinformation to sway public opinion, and a Blue Agent, which strives to debunk that misinformation and restore trust. Both teams aim to gain majority alignment of a population of neutral agents, called Green Nodes, represented in a directed network. Each Green Node has its own predisposition towards either the Red or Blue Team and has direct influence over the alignment of their connected neighbouring nodes."
     },
     {
       "subtitle": "Simulation Dynamics",
-      "content": "In each round of the simulation, the active agent must decide on a message to broadcast to the population, as well as its potency, which reflects how influential or strong the message is. Higher potency messages have a greater impact on the population and shift the alignment of Green Nodes more strongly toward the broadcasting team. <br><br> The red agent acts with unlimited resources and can broadcast as many high potency messages as desired, however, will incur a penalty when broadcasting messages with excessively high potency. This penalty mirrors real world situations where well informed populations are typically more sceptical of misinformation, and so Green Nodes that have stronger alignment toward the Blue team are less easily swayed by high potency messages. <br><br> On the other hand, the blue agent must efficiently manage their limited resources, which is represented by their “energy” levels. Each message broadcast by the blue agent comes at a cost, so to win, they must make strategic decisions on how to counter the red agent’s influence, as highly potent messages are more expensive to broadcast and therefore have a greater negative impact on their remaining energy levels."
+      "content": "In each round of the simulation, the active agent must decide on a message to broadcast to the population, as well as its potency, which reflects how influential or strong the message is. Higher potency messages have a greater impact on the population and shift the alignment of Green Nodes more strongly toward the broadcasting team. <br><br> The Red Agent acts with unlimited resources and can broadcast as many high potency messages as desired, however, will incur a penalty when broadcasting messages with excessively high potency. This penalty mirrors real world situations where well informed populations are typically more sceptical of misinformation, and so Green Nodes that have stronger alignment toward the Blue team are less easily swayed by high potency messages. <br><br> On the other hand, the Blue Agent must efficiently manage their limited resources, which is represented by their “energy” levels. Each message broadcast by the Blue Agent comes at a cost, so to win, they must make strategic decisions on how to counter the Red Agent’s influence, as highly potent messages are more expensive to broadcast and therefore have a greater negative impact on their remaining energy levels."
     },
     {
       "subtitle": "Results",
-      "content": "The simulation terminates when either the Red or Blue agent wins by successfully gaining majority alignment of the Green Nodes population, representing a decisive shift in public opinion. Alternatively, the simulation may also terminate when the maximum number of rounds is reached, representing a stalemate where neither side can fully dominate the network. Hence, the simulation offers a dynamic model for exploring how LLMs with opposing objectives and differing limitations compete for dominance."
+      "content": "The simulation terminates when either the Red or Blue Agent wins by successfully gaining majority alignment of the Green Nodes population, representing a decisive shift in public opinion. Alternatively, the simulation may also terminate when the maximum number of rounds is reached, representing a stalemate where neither side can fully dominate the network. Hence, the simulation offers a dynamic model for exploring how LLMs with opposing objectives and differing limitations compete for dominance."
     }
   ],
   "instructions": {
@@ -26,7 +26,7 @@
     "uiTitle": "To Run with Customised Parameters:",
     "uiSteps": [
       "On the Home page, click “Enter Parameters”.",
-      "Select desired values for both the red and blue agents (if running with a custom LLM, see the “Custom LLM Guide” below).",
+      "Select desired values for both the Red and blue agents (if running with a custom LLM, see the “Custom LLM Guide” below).",
       "Select “User Input” from the drop down menu for the Green Node Configuration and select desired values for the green network/population.",
       "Click “Next” to then either choose to run the simulation continuously (without user input) or in turns (where the simulation requires the user to click “next turn” to progress to the next round)."
     ]

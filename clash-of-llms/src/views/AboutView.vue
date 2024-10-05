@@ -44,7 +44,7 @@
         <ol>
           <li v-for="step in guideData.parameterInstructions.uiSteps" :key="step">{{ step }}</li>
         </ol>
-        <p>For an explaination of the parameters, see -</p>
+        <p>For an explaination of the parameters, see: Parameter Information</p>
 
         <h3>{{ guideData.importingFiles.title }}</h3>
         <ol>
