@@ -4,7 +4,7 @@
     <nav class="sticky-sidebar">
       <ul>
         <li><a href="javascript:void(0)" @click="scrollToSection('project-description')">Project Description</a></li>
-        <li><a href="javascript:void(0)" @click="scrollToSection('importing-files')">Importing Files</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('instructions')">Importing Files</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('simulation-settings')">Simulation Settings</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('custom-llm-guide')">Custom LLM Guide</a></li> <!-- New Section -->
         <li><a href="javascript:void(0)" @click="scrollToSection('node-connections')">Node Connections</a></li>
@@ -22,18 +22,59 @@
       <!-- Project Description Section -->
       <section id="project-description" v-if="!loading && projectDescription">
         <h1>{{ projectDescription.title }}</h1>
-        <div v-for="section in projectDescription.sections" :key="section.subtitle">
+        <div v-for="section in projectDescription.overview" :key="section.subtitle">
           <h3>{{ section.subtitle }}</h3>
           <p v-html="section.content"></p>
+          <br>
         </div>
       </section>
 
       <!-- Importing Files Section -->
-      <section id="importing-files" v-if="!loading && guideData.importingFiles">
-        <h2>{{ guideData.importingFiles.title }}</h2>
+      <section id="instructions" v-if="!loading && guideData.importingFiles && guideData.parameterInstructions">
+        <!-- Project Instructions -->
+        <h1>{{ guideData.parameterInstructions.title }}</h1>
+        <p>{{ guideData.parameterInstructions.overview }}</p>
+
+        <h3>{{ guideData.parameterInstructions.defaultTitle }}</h3>
+        <ol>
+          <li v-for="step in guideData.parameterInstructions.defaultSteps" :key="step">{{ step }}</li>
+        </ol>
+
+        <h3>{{ guideData.parameterInstructions.uiTitle }}</h3>
+        <ol>
+          <li v-for="step in guideData.parameterInstructions.uiSteps" :key="step">{{ step }}</li>
+        </ol>
+        <p>For an explaination of the parameters, see -</p>
+
+        <h3>{{ guideData.importingFiles.title }}</h3>
         <ol>
           <li v-for="step in guideData.importingFiles.steps" :key="step">{{ step }}</li>
         </ol>
+        <p>For information on how to format and structure these excel files, please see below.</p>
+      </section>
+
+      <section id="parameter-info" v-if="!loading && guideData.parameterInfo">
+        <h1>{{ guideData.parameterInfo.title }}</h1>
+
+        <h3>{{ guideData.parameterInfo.settings.title }}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th v-for="header in guideData.parameterInfo.settings.tableHeaders" :key="header">{{ header }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in guideData.parameterInfo.settings.tableContent" :key="row[0]">
+              <td v-for="cell in row" :key="cell">{{ cell }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <ul>
+          <li v-for="parameter in guideData.parameterInfo.settings.contents" :key="parameter">
+            <strong>{{ parameter.parameter }}: </strong>
+            {{ parameter.definition }}
+          </li>
+        </ul>
       </section>
 
       <!-- Simulation Settings Section -->

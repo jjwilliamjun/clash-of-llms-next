@@ -111,7 +111,7 @@
       "title": "File Structure: Settings for Agents",
       "tableHeaders": ["Column", "Description", "Default"],
       "tableContent": [
-        ["Team", "The colour identifier of the team that the settings are for. The first row must specifiy settings for the red agent, and the second row must specify settings for the blue agent. There must be one and only only 'Red' agent and one 'Blue' agent.", "Can only be 'Red' or 'Blue'."],
+        ["Team", "The colour identifier of the team that the settings are for. The first row must specifiy settings for the red agent, and the second row must specify settings for the blue agent. There must only be one 'Red' agent and one 'Blue' agent.", "Can only be 'Red' or 'Blue'."],
         ["Model_ID", "The unique identifier for each LLM connected to the simulation. If using a custom LLM, enter 'custom'.", "gpt-3.5 turbo"],
         ["Energy", "A whole number between 1 and 100 (inclusive) representing the initial energy levels of the blue team only (any input for the red team is discarded as the red team has infinite energy). This value depletes after every turn the blue team takes, depending on the message’s energy cost.", "100"],
         ["Msgs_Generated", "A whole number between 1 and 10 (inclusive) which dictates the number of messages at different potency levels the model generates per turn.", "5"],
@@ -184,6 +184,69 @@
       "Run the simulation after confirming all data is correctly imported."
     ]
   }, 
+  "parameterInstructions": {
+    "title": "Instructions",
+    "overview": "The simulation can be run with either default or customised parameters. Parameters can be set either through the UI or by uploading excel files.",
+    "defaultTitle": "To Run with Default Parameters:",
+    "defaultSteps": [
+      "On the Home page, click “Enter Parameters”.",
+      "Select “Random” from the drop down menu for the Green Node Configuration.",
+      "Click “Next” to then either choose to run the simulation continuously (without user input) or in turns (where the simulation requires the user to click “next turn” to progress to the next round)."
+    ],
+    "uiTitle": "To Run with Customised Parameters:",
+    "uiSteps": [
+      "On the Home page, click “Enter Parameters”.",
+      "Select desired values for both the red and blue agents (if running with a custom LLM, see the “Custom LLM Guide” below).",
+      "Select “User Input” from the drop down menu for the Green Node Configuration and select desired values for the green network/population.",
+      "Click “Next” to then either choose to run the simulation continuously (without user input) or in turns (where the simulation requires the user to click “next turn” to progress to the next round)."
+    ]
+  },
+  "parameterInfo": {
+    "title": "Parameter Definitions",
+    "settings": {
+      "title": "Simulation Settings Parameters",
+      "tableHeaders": ["Parameter", "Definition"],
+      "tableContent": [
+        ["Energy", "is the initial energy levels of the blue team only. This value depletes after every turn the blue team takes, depending on the message’s energy cost. Upon each turn, the blue team generates messages of varying potency levels and assigns an 'energy cost' to each one. The blue team’s overall energy level decreases by the energy cost of a message sent out to the simulation on a given turn. The red team does not have an energy level, as they are acting with 'unlimited resources'."],
+        ["Number of Messages Generated Per Turn", "specifies the number of messages at different potency levels the model generates per turn. Each message will be of a different potency level, ranging from low to high potency. For example, if this parameter is set to 3, the model will generate three messages: one low potency message, one medium potency message, and one high potency message."],
+        ["Temperature", "A value between 0 and 1 that determines how random or predictable the model’s output should be. A lower temperature will result in more deterministic output whereas higher values like 0.8 will result in more random output."],
+        ["Influence Factor", "A value between 0 and 1 that represents the influence the team has over other nodes in the simulation."],
+        ["Maximum Energy Cost of Messages", "An integer value that represents the maximum cost a message can have."],
+        ["Penalty", "A percentage value (between 0 to 100 inclusive) applied to the potency of the message when it exceeds a certain threshold."],
+        ["Penalty Threshold (Penalise Messages with Potencies over)", "A value between 0 to 100 (inclusive) which determines when the penalty is applied to the potency of a red team message. If the potency of a message exceeds this threshold, a penalty (set as a percentage) is applied to reduce the potency."]
+      ],
+      "contents": [
+        {
+          "parameter": "Energy",
+          "definition": "represents how much 'energy' the blue team begins with. This can be thought of as the resources available to the blue team. Upon each turn, the blue team generates messages of varying potency levels and assigns an 'energy cost' to each one. The blue team’s overall energy level decreases by the energy cost of a message sent out to the simulation on a given turn. The red team does not have an energy level, as they are acting with 'unlimited resources'." 
+        },
+        {
+          "parameter": "Number of Messages Generated Per Turn",
+          "definition": "the number of messages at different potency levels the model generates per turn. " 
+        },
+        {
+          "parameter": "Temperature",
+          "definition": "determines how random or predictable the model’s output should be. A lower temperature will result in more deterministic output whereas higher values like 0.8 will result in more random output." 
+        },
+        {
+          "parameter": "Influence Factor",
+          "definition": "represents the influence the team has over other nodes in the simulation." 
+        },
+        {
+          "parameter": "Maximum Energy Cost of Messages",
+          "definition": "represents the maximum cost a message can have." 
+        },
+        {
+          "parameter": "Penalty",
+          "definition": "a percentage value applied to the potency of the message when it exceeds a certain threshold. Only applies to the red team, any input for the blue team is discarded." 
+        },
+        {
+          "parameter": "Penalty Threshold (Penalise Messages with Potencies over)",
+          "definition": "determines when the penalty is applied to the potency of a red team message. If the potency of a message exceeds this threshold, a penalty (set as a percentage) is applied to reduce the potency." 
+        }
+      ]
+    }
+  },
   "helpSection": {
     "title": "Help Section",
     "errors": {
