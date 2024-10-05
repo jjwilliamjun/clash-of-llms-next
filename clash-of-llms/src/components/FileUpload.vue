@@ -3,17 +3,17 @@
   <form @submit.prevent="startSimulation" class="file-upload-form">
     <div class="file-upload-row">
       <label for="settingsUpload">Simulation Settings:</label>
-      <input type="file" id="settingsUpload" @change="handleSettingsUpload" accept=".xlsx, .xls" />
+      <input type="file" id="settingsUpload" class="custom-upload-btn-grey" @change="handleSettingsUpload" accept=".xlsx, .xls" />
     </div>
 
     <div class="file-upload-row">
       <label for="attributesUpload">Node Attributes:</label>
-      <input type="file" id="attributesUpload" @change="handleAttributesUpload" accept=".xlsx, .xls" />
+      <input type="file" id="attributesUpload" class="custom-upload-btn-grey" @change="handleAttributesUpload" accept=".xlsx, .xls" />
     </div>
 
     <div class="file-upload-row">
       <label for="connectionsUpload">Node Connections:</label>
-      <input type="file" id="connectionsUpload" @change="handleConnectionsUpload" accept=".xlsx, .xls" />
+      <input type="file" id="connectionsUpload" class="custom-upload-btn-grey" @change="handleConnectionsUpload" accept=".xlsx, .xls" />
     </div>
     
     <button type="submit" class="submit-button">Upload Files</button>
@@ -111,6 +111,6 @@ export default {
       const connections_file = document.getElementById("connectionsUpload").files[0];
       this.file_data.append('connections_file', connections_file);
     }
-  }
+  }  
 };
 </script>
