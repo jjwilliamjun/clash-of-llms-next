@@ -97,10 +97,10 @@
 
         <!-- Green Node Settings -->
         <div class="flex-child green-team">
-          <h2 id="greenTeam">Green Network</h2>
+          <h2 id="greenTeam">Population</h2>
           <div id="greenParameters">
             <div class="select-parameter">
-              <label for="green_node_count_option">Green Node Configuration: </label>
+              <label for="green_node_count_option">Population Configuration: </label>
               <select id="green_node_count_option" v-model="green_node_count_option">
                 <option value="userData">User Data</option>
                 <option value="userInput">User Input</option>
@@ -115,7 +115,7 @@
               </div>
               <div class="select-parameter">
                 <label for="red_alignments">Red Alignment: {{ red_alignments }}%</label>
-                <input type="range" id="red_alignments" v-model="red_alignments" min="0" max="100" step="10">
+                <input type="range" id="red_alignments" class="accent" v-model="red_alignments" min="0" max="100" step="10">
               </div>
               <div class="select-parameter">
                 <label for="blue_alignments">Blue Alignment: {{ blue_alignments }}%</label>
@@ -129,7 +129,19 @@
           </div>
         </div>
       </div>
-
+      <div class="condition-box">
+        <h2 class="condition-heading">Terminating Conditions</h2>
+        <div class="custom-conditions">
+            <div class="select-parameter">
+                <label for="population_alignments">Population Alignment: {{ population_alignment }}%</label>
+                <input type="range" class="condition-accent" v-model="population_alignment" min="0" max="100" step="5">
+            </div>
+            <div class="select-parameter">
+                <label for="round_number">Round number: {{ round_number }}</label>
+                <input type="range" class="condition-accent" v-model="round_number" min="0" max="50" step="1">
+            </div>
+        </div>
+      </div>
       <button type="submit" class="submit-button">{{ green_node_count_option === 'userData' ? 'To Excel File Upload' : 'Next' }}</button>
     </form>
   </div>
@@ -179,6 +191,10 @@ export default {
       green_alignments: 0,
       display_params: false,
       errors: null,
+
+      // Custom terminating conditions
+      population_alignment: 80,
+      round_number: 20,
     };
   },
   computed: {
@@ -266,6 +282,10 @@ export default {
           green_nodes_count: this.green_nodes_count,
           red_alignments: this.red_alignments,
           blue_alignments: this.blue_alignments,
+
+          // custom terminating conditions
+          population_alignment: this.population_alignment,
+          round_number: this.round_number,
         };
 
         const response = await axios.post('http://127.0.0.1:5000/ui_parameters', data);
