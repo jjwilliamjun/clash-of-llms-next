@@ -16,8 +16,10 @@
 
             <!-- File Upload for Custom Model -->
             <div v-if="blue_team.Model_ID === 'custom'" class="select-parameter">
-              <label for="file_upload_blue">Upload Custom File: </label>
-              <input type="file" id="file_upload_blue" @change="handleFileUploadBlue" />
+              <label for="file_upload_blue">Upload Custom File:</label>
+              <input type="file" id="file_upload_blue" class="hidden-input" @change="handleFileUploadBlue" />
+              <button type="button" class="custom-upload-btn-blue" @click="triggerFileUpload('file_upload_blue')">Choose File</button>
+              <span id="file-upload-blue-name">{{ blue_team.Custom_File ? blue_team.Custom_File.name : 'No file chosen' }}</span>
             </div>
 
             <!-- Existing Parameters -->
@@ -60,10 +62,12 @@
               </select>
             </div>
 
-            <!-- File Upload for Custom Model -->
+            <!-- File Upload for Custom Model (Red Team) -->
             <div v-if="red_team.Model_ID === 'custom'" class="select-parameter">
-              <label for="file_upload_red">Upload Custom File: </label>
-              <input type="file" id="file_upload_red" @change="handleFileUploadRed" />
+              <label for="file_upload_red">Upload Custom File:</label>
+              <input type="file" id="file_upload_red" class="hidden-input" @change="handleFileUploadRed" />
+              <button type="button" class="custom-upload-btn-red" @click="triggerFileUpload('file_upload_red')">Choose File</button>
+              <span id="file-upload-red-name">{{ red_team.Custom_File ? red_team.Custom_File.name : 'No file chosen' }}</span>
             </div>
 
             <!-- Existing Parameters -->
@@ -205,6 +209,9 @@ export default {
   methods: {
     updateAlignments() {
       this.green_alignments = Math.max(0, 100 - this.red_alignments - this.blue_alignments);
+    },
+    triggerFileUpload(inputId) {
+      document.getElementById(inputId).click();
     },
     handleFileUploadBlue(event) {
       const file = event.target.files[0];

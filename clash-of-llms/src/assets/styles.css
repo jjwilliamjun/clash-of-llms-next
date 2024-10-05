@@ -208,3 +208,42 @@ input[type="range"] {
 .condition-accent {
     accent-color: #585858;
 }
+
+.hidden-input {
+  display: none; 
+}
+
+.custom-upload-btn-blue {
+  background-color: #007bff; 
+  color: #fff;
+  border: none;
+  padding: 5px 7px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.custom-upload-btn:hover {
+  background-color: #0056b3; 
+}
+
+.custom-upload-btn-red {
+  background-color: #dc3545; 
+  color: #fff;
+  border: none;
+  padding: 5px 7px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.custom-upload-btn-red:hover {
+  background-color: #a71d2a; 
+}
+
+#file-upload-blue-name,
+#file-upload-red-name {
+  margin-left: 8px;
+  font-style: italic;
+  color: #666;
+}
