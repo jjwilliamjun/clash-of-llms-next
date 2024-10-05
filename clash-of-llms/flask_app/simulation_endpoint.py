@@ -52,10 +52,48 @@ def upload_llm():
         file_path = os.path.join(llm_files_directory, new_filename)
         file.save(file_path)
 
-        return jsonify({"message": f"LLM file '{new_filename}' uploaded successfully at '{file_path}'."}), 200
+        # Extract metadata from the uploaded model
+        metadata = extract_metadata(file_path)
+        if metadata:
+            # Optionally save metadata for later use
+            metadata_path = os.path.join(llm_files_directory, f"{team.lower()}_metadata.json")
+            with open(metadata_path, 'w') as meta_file:
+                json.dump(metadata, meta_file)
+
+        return jsonify({"message": f"LLM file '{new_filename}' uploaded successfully at '{file_path}'.", "metadata": metadata}), 200
 
     except Exception as e:
         print(f"Error occurred: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/get_models_metadata', methods=['GET'])
+@cross_origin()
+def get_models_metadata():
+    """Fetch metadata for all available models"""
+    try:
+        return jsonify(custom_llms), 200  # Return metadata stored in `custom_llms`
+    except Exception as e:
+        return jsonify({"error": f"Error retrieving model metadata: {str(e)}"}), 500
+
+@app.route('/get_team_metadata/<team>', methods=['GET'])
+@cross_origin()
+def get_team_metadata(team):
+    """Fetches metadata for the specified team (blue or red)"""
+    metadata_file_path = os.path.join(LLM_FILES_DIRECTORY, f"{team.lower()}_metadata.json")
+
+    if not os.path.exists(metadata_file_path):
+        return jsonify({"error": f"Metadata file for {team} not found"}), 404
+
+    try:
+        with open(metadata_file_path, 'r') as f:
+            metadata = json.load(f)
+        return jsonify(metadata), 200
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
@@ -224,6 +262,7 @@ def get_parameters():
     output = [red_team.__dict__, blue_team.__dict__, green_attributes, game_style, conditions]
     
     return jsonify(output), 200
+
 
 # Route to handle UI parameters input
 @app.route('/ui_parameters', methods=['POST'])
