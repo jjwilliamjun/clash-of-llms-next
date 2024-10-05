@@ -108,9 +108,10 @@
       "content": "The simulation settings file defines parameters for the red and blue teams. It specifies LLMs for both the red and blue teams, and the necessary parameters which influence how the models play in the simulation. It is important to note that models specified in this file must be already connected to the simulation system."
     },
     "structure": {
-      "title": "File Structure",
+      "title": "File Structure: Settings for Agents",
       "tableHeaders": ["Column", "Description", "Default"],
       "tableContent": [
+        ["Team", "The colour identifier of the team that the settings are for. The first row must specifiy settings for the red agent, and the second row must specify settings for the blue agent. There must be one and only only 'Red' agent and one 'Blue' agent.", "Can only be 'Red' or 'Blue'."],
         ["Model_ID", "The unique identifier for each LLM connected to the simulation. If using a custom LLM, enter 'custom'.", "gpt-3.5 turbo"],
         ["Energy", "A whole number between 1 and 100 (inclusive) representing the initial energy levels of the blue team only (any input for the red team is discarded as the red team has infinite energy). This value depletes after every turn the blue team takes, depending on the message’s energy cost.", "100"],
         ["Msgs_Generated", "A whole number between 1 and 10 (inclusive) which dictates the number of messages at different potency levels the model generates per turn.", "5"],
@@ -152,6 +153,25 @@
         "Enter the data as shown in the example, ensuring that each parameter is correctly entered and is within the correct range.",
         "Save the file and upload it by following the standard importing process."
       ]
+    }, 
+    "customEndConditions": {
+      "title": "Custom Termination Conditions",
+      "structure": {
+        "title": "File Structure: Settings for Custom Termination Conditions",
+        "tableHeaders": ["Column", "Description", "Default"],
+        "tableContent": [
+          ["Population Alignment", "A percentage value between 0 to 100 (inclusive) which defines the population percentage required for either the red or blue team to win. Once a team reaches this percentage of alignment, the simulation ends.", "80."],
+          ["Round Number", "A whole number between 0 and 50 (inclusive) which sets a limit on the maximum number of rounds the simulation can run for. The simulation will terminate once this number of rounds is reached, regardless of the population alignments.", "20"]
+        ]
+      },
+      "example": {
+        "title": "Example",
+        "tableHeaders": ["Termination Condition", "Value"],
+        "tableContent": [
+          ["Population Alignment", "80"],
+          ["Round Number", "20"]
+        ]
+      }
     }
   },
   "importingFiles": {

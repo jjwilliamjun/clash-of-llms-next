@@ -42,7 +42,7 @@
         <h3>{{ guideData.simulationSettings.overview.title }}</h3>
         <p>{{ guideData.simulationSettings.overview.content }}</p>
 
-        <!-- Simulation Settings Structure Table -->
+        <!-- Simulation Settings Structure Table For Agents -->
         <h3>{{ guideData.simulationSettings.structure.title }}</h3>
         <table>
           <thead>
@@ -52,6 +52,21 @@
           </thead>
           <tbody>
             <tr v-for="row in guideData.simulationSettings.structure.tableContent" :key="row[0]">
+              <td v-for="cell in row" :key="cell">{{ cell }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Simulation Settings Structure Table For Custom Termination Conditions -->
+        <h3>{{ guideData.simulationSettings.customEndConditions.structure.title }}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th v-for="header in guideData.simulationSettings.customEndConditions.structure.tableHeaders" :key="header">{{ header }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in guideData.simulationSettings.customEndConditions.structure.tableContent" :key="row[0]">
               <td v-for="cell in row" :key="cell">{{ cell }}</td>
             </tr>
           </tbody>
@@ -73,7 +88,7 @@
         <h3>{{ guideData.simulationSettings.penaltyExplaination.title }}</h3>
         <p>{{ guideData.simulationSettings.penaltyExplaination.content }}</p>
 
-        <!-- Simulation Settings Example Table -->
+        <!-- Simulation Settings Example Table For Agents-->
         <h3>{{ guideData.simulationSettings.example.title }}</h3>
         <span id="example-settings">
           <table>
@@ -84,6 +99,22 @@
             </thead>
             <tbody>
               <tr v-for="row in guideData.simulationSettings.example.tableContent" :key="row[0]">
+                <td v-for="cell in row" :key="cell">{{ cell }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </span>
+        
+        <!-- Simulation Settings Example Table For Agents-->
+        <span>
+          <table>
+            <thead>
+              <tr>
+                <th v-for="header in guideData.simulationSettings.customEndConditions.example.tableHeaders" :key="header">{{ header }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in guideData.simulationSettings.customEndConditions.example.tableContent" :key="row[0]">
                 <td v-for="cell in row" :key="cell">{{ cell }}</td>
               </tr>
             </tbody>
