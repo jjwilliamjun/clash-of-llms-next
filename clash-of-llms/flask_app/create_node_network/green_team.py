@@ -20,7 +20,7 @@ class GreenTeam:
 
 
     def update_green_network(self):
-        print('updating green network')
+        #print('updating green network')
         self._previous_network_graph=copy.deepcopy(self._network_graph)
 
         for old_node in self._previous_network_graph.nodes():
@@ -60,24 +60,19 @@ class GreenTeam:
         current_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
         self._previous_network_graph=copy.deepcopy(self._network_graph)
         alignment_influence=(float(potency)/100)*influence_factor
-        num_nodes_updated=0
         for node in self._network_graph.nodes():
             #Assumes blue alignment is negative, and red alignment is positive
             if team._team.lower() == 'blue': 
                 new_alignment=current_alignment[node] - alignment_influence
                 self.update_node_alignment(node, new_alignment)
             else:
-                print(team._team.lower())
                 updated_red_rejection_attribute=RedTeam.red_agent_penalty(red_team, potency, node, self._network_graph)
                 if updated_red_rejection_attribute[node] == False:
                     #Still accepting red messaging
-                    num_nodes_updated += 1
-                    print('updating for red finleunce for node', node)
                     new_alignment=current_alignment[node] + alignment_influence
                     self.update_node_alignment(node, new_alignment)
-                else: 
-                    print(node," is rejecting red messaging")
-        print("For round, ",num_nodes_updated, "updated")
+                # else: 
+                #     print(node," is rejecting red messaging")
         self.update_team_alignments()
             
         #self.new_alignments()
@@ -122,10 +117,9 @@ class GreenTeam:
                 self._red_alignment += 1
             elif current_alignment[node] <= self.alignment_min/2:
                 self._blue_alignment +=1
-        print('blue aligned: ', self._blue_alignment)
         #print('balance of alignment', self._blue_alignment + self._red_alignment, 'for size', self._network_graph.number_of_nodes())
 
-    def print_all_node_alignments():
+    def test_node_rejection():
         """Prints the alignment of all nodes in the network graph: for testing purposes only"""
         node_attributes, node_connections = create_network.generate_random_network(5)
         test_graph= create_network.create_node_network(node_attributes, node_connections)
@@ -161,6 +155,3 @@ class GreenTeam:
         print("The number of nodes in this network is ", green_team_test._size)
         green_team_test.blue_alignment()
         green_team_test._red_alignment()
-
-    if __name__ == '__main__':
-        print_all_node_alignments()

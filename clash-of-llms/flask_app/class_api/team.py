@@ -107,7 +107,7 @@ class RedTeam(Team):
         alignment = nx.get_node_attributes(network_graph, "Alignment")
         red_alignment_cutoff = 0.5
 
-        if potency >= self._penalty_threshold and random.random() <= 0.8 and isAccepting[node_id] == False and alignment[node_id] <= red_alignment_cutoff: #change to user defined threshold for potency
+        if potency >= self._penalty_threshold and random.random() <= 0.5 and isAccepting[node_id] == False and alignment[node_id] <= red_alignment_cutoff: 
             nx.set_node_attributes(network_graph, {node_id: True}, "rejectMessaging")
             #If rejecting red team messaging, set alignment to maximum blue team alignment 
             nx.set_node_attributes(network_graph, {node_id: -1}, "Alignment")
