@@ -116,8 +116,9 @@
         </div>
         <!-- Download custom llm insruction md file -->
         <div class="download-section">
-          <h3>Download Instructions for Custom LLM Integration</h3>
+          <h3>Download Instructions for Custom LLM Integration and Example file</h3>
           <a href="/documents/Custom_LLM.md" download="Custom_LLM.md">Custom_LLM.md</a>
+          <a href="/documents/simple_pytorch_model.pt" download="simple_pytorch_model.pt">simple_pytorch_model.pt</a>
         </div>
       </section>      
 
