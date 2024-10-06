@@ -230,7 +230,7 @@
       "title": "Termination Conditions",
       "tableHeaders":["Parameter", "Definition"],
       "tableContent": [
-        ["Population Alignment", "Defines the perentage of the population which must be aligned to either the Blue or Red Agent for either side to win. Once this percentage of the population is aligned to either the Red or Blue Agent, the simulation is terminated and the agent with the majority alignment defined by this parameter is declared the winner."],
+        ["Population Alignment", "Defines the percentage of the population which must be aligned to either the Blue or Red Agent for either side to win. Once this percentage of the population is aligned to either the Red or Blue Agent, the simulation is terminated and the agent with the majority alignment defined by this parameter is declared the winner."],
         ["Round Number", "Sets a limit on the maximum number of rounds the simulation can run for. The simulation will terminate once this number of rounds is reached, regardless of the population alignments."]
       ]
     }
