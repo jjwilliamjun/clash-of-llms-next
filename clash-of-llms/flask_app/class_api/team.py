@@ -4,7 +4,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from class_api.gpt_endpoint import get_message
 from excel_api.import_excel import *
 from create_node_network.create_network import * 
-import create_node_network.create_network as GreenNetwork
 
 class Team:
     def __init__(self, team, model_ID, potency, msg_count, influence_factor, temperature, alignment):
@@ -82,15 +81,31 @@ class RedTeam(Team):
         self._penalty_threshold = penalty_threshold
         self._unpenalised_potency = 0 # store potency before penalty is applied to provide actual data to export
     
-    def apply_penalty(self):
-        """
-        Applies penalty to messages with a potency over a specified threshold.
-        """
+    # def apply_penalty(self):
+    #     """
+    #     Applies penalty to messages with a potency over a specified threshold.
+    #     """
         
-        if self._penalty_threshold <= self._potency:
-            self._unpenalised_potency = self._potency
-            self._potency -= math.floor(self._potency * (self._penalty / 100))
-        else:
-            self._unpenalised_potency = self._potency
+    #     if self._penalty_threshold <= self._potency:
+    #         self._unpenalised_potency = self._potency
+    #         self._potency -= math.floor(self._potency * (self._penalty / 100))
+    #     else:
+    #         self._unpenalised_potency = self._potency
         
-        return    
+    #     return    
+    def red_agent_penalty(self, potency, node_id, network_graph):
+        """Applies a penalty randomly to the broadcasting of red messages if:
+        -the message is above the penalty threshold
+        -the node is currently still receiving red messages
+        -the node is not red_aligned
+        """
+        isAccepting= nx.get_node_attributes(network_graph, "rejectMessaging")
+        alignment = nx.get_node_attributes(network_graph, "Alignment")
+        red_alignment_cutoff = 0.5
+
+        if potency >= self._penalty_threshold and random.random() <= 0.8 and isAccepting[node_id] == False and alignment[node_id] <= red_alignment_cutoff: #change to user defined threshold for potency
+            nx.set_node_attributes(network_graph, {node_id: True}, "rejectMessaging")
+            #If rejecting red team messaging, set alignment to maximum blue team alignment 
+            nx.set_node_attributes(network_graph, {node_id: -1}, "Alignment")
+            print("Node rejecting red messaging")
+        return nx.get_node_attributes(network_graph, "rejectMessaging")

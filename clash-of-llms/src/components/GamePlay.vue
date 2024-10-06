@@ -123,11 +123,11 @@
           </p>
         </div>
         <!-- <p><span style="font-weight: bold;">Message: </span> {{ message }}</p> -->
-                <div v-if="!red_team_turn && penalty_applied">
+                <!-- <div v-if="!red_team_turn && penalty_applied">
                   <p><span style="font-weight: bold;">Potency (Penalty Applied): </span> {{ red_team._potency }}</p>
                   <p><span style="font-weight: bold;">Original Potency (Before Penalty): </span> {{ red_team._unpenalised_potency }}</p>
-                </div>
-                <div v-else>
+                </div> -->
+                <div>
           <p><span style="font-weight: bold">Potency: </span> {{ potency }}</p>
                   <p><span style="font-weight: bold;">Energy Cost: </span> {{ blue_team._msg_cost }}</p>
                 </div>
@@ -199,7 +199,7 @@ export default {
       termination_reason: null,
       victor: null,
       cors_errors: false,
-      penalty_applied: false
+      //penalty_applied: false
     };
   },
   mounted() {
@@ -297,9 +297,9 @@ export default {
           this.termination_reason = response.data.termination_reason;
           this.victor = response.data.victor;
 
-          if (!this.red_team_turn && (this.red_team._potency != this.red_team._unpenalised_potency)) {
-            this.penalty_applied = true;
-          }
+          // if (!this.red_team_turn && (this.red_team._potency != this.red_team._unpenalised_potency)) {
+          //   this.penalty_applied = true;
+          // }
 
           // Increment the round number after each turn
           this.currentRound++;
@@ -386,10 +386,10 @@ export default {
                 this.termination_reason = response.data.termination_reason;
                 this.victor = response.data.victor;
 
-                if (!this.red_team_turn && (this.red_team._potency !== this.red_team._unpenalised_potency)) {
-                    this.penalty_applied = true;
-                    console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
-                }
+                // if (!this.red_team_turn && (this.red_team._potency !== this.red_team._unpenalised_potency)) {
+                //     this.penalty_applied = true;
+                //     console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
+                // }
 
             // Increment the round number after each turn
             this.currentRound++;
