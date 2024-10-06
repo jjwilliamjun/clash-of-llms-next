@@ -3,9 +3,9 @@ import networkx as nx
 import os, sys
 import random
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-sys.path.append('./create_node_network')
-sys.path.append('../class_api')
-import create_network
+# sys.path.append('./create_node_network')
+# sys.path.append('../class_api')
+from create_node_network.create_network import *
 from class_api.team import RedTeam
 
 class GreenTeam:
