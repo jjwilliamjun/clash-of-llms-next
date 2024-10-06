@@ -83,6 +83,10 @@
                   <span style="font-weight: bold;">Penalise Messages with Potency of: </span>
                   {{ red_team._penalty_threshold }}
                 </p>
+                <p>
+                  <span style="font-weight: bold">Topic: </span>
+                  {{ red_team._topic }}
+                </p>
               </div>
             </div>
           </div>

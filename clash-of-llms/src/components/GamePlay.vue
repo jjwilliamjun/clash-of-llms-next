@@ -195,7 +195,8 @@ export default {
       winner: null,
       currentRound: 0, // Track the current round number
       game_style: null,
-      penalty_applied: false
+      penalty_applied: false,
+      topic: null
     };
   },
   mounted() {
