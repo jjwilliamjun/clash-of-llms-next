@@ -4,11 +4,12 @@
     <nav class="sticky-sidebar">
       <ul>
         <li><a href="javascript:void(0)" @click="scrollToSection('project-description')">Project Description</a></li>
-        <li><a href="javascript:void(0)" @click="scrollToSection('instructions')">Importing Files</a></li>
-        <li><a href="javascript:void(0)" @click="scrollToSection('simulation-settings')">Simulation Settings</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('instructions')">Instructions</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('parameter-info')">Parameter Definitions</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('custom-llm-guide')">Custom LLM Guide</a></li> <!-- New Section -->
-        <li><a href="javascript:void(0)" @click="scrollToSection('node-connections')">Node Connections</a></li>
-        <li><a href="javascript:void(0)" @click="scrollToSection('node-attributes')">Node Attributes</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('simulation-settings')">Importing Simulation Settings</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('node-connections')">Importing Node Connections</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('node-attributes')">Importing Node Attributes</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('export-simulation-data')">Export Simulation Data</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('help-section')">Help Section</a></li>
       </ul>
@@ -29,9 +30,8 @@
         </div>
       </section>
 
-      <!-- Importing Files Section -->
+      <!-- Project Instructions Section -->
       <section id="instructions" v-if="!loading && guideData.importingFiles && guideData.parameterInstructions">
-        <!-- Project Instructions -->
         <h1>{{ guideData.parameterInstructions.title }}</h1>
         <p>{{ guideData.parameterInstructions.overview }}</p>
 
@@ -44,18 +44,26 @@
         <ol>
           <li v-for="step in guideData.parameterInstructions.uiSteps" :key="step">{{ step }}</li>
         </ol>
-        <p>For an explaination of the parameters, see: Parameter Information</p>
+        <p>For an explanation of the parameters, please see: 
+          <a href="javascript:void(0)" @click="scrollToSection('parameter-info')">Parameter Definitions</a>
+        </p>
 
         <h3>{{ guideData.importingFiles.title }}</h3>
         <ol>
           <li v-for="step in guideData.importingFiles.steps" :key="step">{{ step }}</li>
         </ol>
-        <p>For information on how to format and structure these excel files, please see below.</p>
+        <p>For information on how to format and structure these excel files, please see: 
+          <a href="javascript:void(0)" @click="scrollToSection('simulation-settings')">Simulation Settings</a>, 
+          <a href="javascript:void(0)" @click="scrollToSection('node-attributes')">Node Attributes</a> and
+          <a href="javascript:void(0)" @click="scrollToSection('node-connections')">Node Connections</a>, 
+        </p>
       </section>
 
+      <!-- Parameter Definitions Section -->
       <section id="parameter-info" v-if="!loading && guideData.parameterInfo">
         <h1>{{ guideData.parameterInfo.title }}</h1>
 
+        <!-- Simulation Setting Parameter Definitions -->
         <h3>{{ guideData.parameterInfo.settings.title }}</h3>
         <table>
           <thead>
@@ -69,14 +77,66 @@
             </tr>
           </tbody>
         </table>
-        <ul>
-          <li v-for="parameter in guideData.parameterInfo.settings.contents" :key="parameter">
-            <strong>{{ parameter.parameter }}: </strong>
-            {{ parameter.definition }}
-          </li>
-        </ul>
-      </section>
+        
+        <!-- Green Node Network Parameter Definitions -->
+        <h3>{{ guideData.parameterInfo.greenSettings.title }}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th v-for="header in guideData.parameterInfo.greenSettings.tableHeaders" :key="header">{{ header }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in guideData.parameterInfo.greenSettings.tableContent" :key="row[0]">
+              <td v-for="cell in row" :key="cell">{{ cell }}</td>
+            </tr>
+          </tbody>
+        </table>
 
+        <!-- Termination Conditions Parameter Definitions -->
+        <h3>{{ guideData.parameterInfo.terminationConditions.title }}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th v-for="header in guideData.parameterInfo.terminationConditions.tableHeaders" :key="header">{{ header }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in guideData.parameterInfo.terminationConditions.tableContent" :key="row[0]">
+              <td v-for="cell in row" :key="cell">{{ cell }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </section>
+      
+      <!-- Custom LLM Guide Section -->
+      <section id="custom-llm-guide" v-if="!loading && customLLMGuide">
+        <h1>{{ customLLMGuide.title }}</h1>
+        <p>{{ customLLMGuide.description }}</p>
+        
+        <!-- Steps to create Custom LLM File -->
+        <div v-for="step in customLLMGuide.steps" :key="step.title">
+          <h3>{{ step.title }}</h3>
+          <ul>
+            <li v-for="(content, index) in step.content" :key="index">
+              <template v-if="typeof content === 'string'">
+                {{ content }}
+              </template>
+              <template v-else>
+                <pre>{{ JSON.stringify(content.template, null, 2) }}</pre>
+              </template>
+            </li>
+          </ul>
+        </div>
+        <!-- Download custom llm insruction md file -->
+        <div class="download-section">
+          <h3>Download Instructions for Custom LLM Integration and Example file</h3>
+          <a href="/documents/Custom_LLM.md" download="Custom_LLM.md">Custom_LLM.md</a>
+          <a href="/documents/simple_pytorch_model.pt" download="simple_pytorch_model.pt">simple_pytorch_model.pt</a>
+        </div>
+      </section>  
+      
       <!-- Simulation Settings Section -->
       <section id="simulation-settings" v-if="!loading && guideData.simulationSettings">
         <h1>{{ guideData.simulationSettings.title }}</h1>
@@ -114,20 +174,20 @@
         </table>
 
         <!-- Energy Explanation -->
-        <h3>{{ guideData.simulationSettings.energyExplanation.title }}</h3>
-        <p>{{ guideData.simulationSettings.energyExplanation.content }}</p>
+        <!-- <h3>{{ guideData.simulationSettings.energyExplanation.title }}</h3>
+        <p>{{ guideData.simulationSettings.energyExplanation.content }}</p> -->
 
         <!-- Msgs Generated Explanation -->
-        <h3>{{ guideData.simulationSettings.msgsGeneratedExplanation.title }}</h3>
-        <p>{{ guideData.simulationSettings.msgsGeneratedExplanation.content }}</p>
+        <!-- <h3>{{ guideData.simulationSettings.msgsGeneratedExplanation.title }}</h3>
+        <p>{{ guideData.simulationSettings.msgsGeneratedExplanation.content }}</p> -->
 
         <!-- Temperature Explanation -->
-        <h3>{{ guideData.simulationSettings.temperatureExplanation.title }}</h3>
-        <p>{{ guideData.simulationSettings.temperatureExplanation.content }}</p>
+        <!-- <h3>{{ guideData.simulationSettings.temperatureExplanation.title }}</h3>
+        <p>{{ guideData.simulationSettings.temperatureExplanation.content }}</p> -->
 
         <!-- Penalty Explanation -->
-        <h3>{{ guideData.simulationSettings.penaltyExplaination.title }}</h3>
-        <p>{{ guideData.simulationSettings.penaltyExplaination.content }}</p>
+        <!-- <h3>{{ guideData.simulationSettings.penaltyExplaination.title }}</h3>
+        <p>{{ guideData.simulationSettings.penaltyExplaination.content }}</p> -->
 
         <!-- Simulation Settings Example Table For Agents-->
         <h3>{{ guideData.simulationSettings.example.title }}</h3>
@@ -173,33 +233,6 @@
           <a href="/documents/SimulationSettings.xlsx" download="SimulationSettings.xlsx">SimulationSettings.xlsx</a>
         </div>
       </section>
-      
-      <!-- Custom LLM Guide Section -->
-      <section id="custom-llm-guide" v-if="!loading && customLLMGuide">
-        <h1>{{ customLLMGuide.title }}</h1>
-        <p>{{ customLLMGuide.description }}</p>
-        
-        <!-- Steps to create Custom LLM File -->
-        <div v-for="step in customLLMGuide.steps" :key="step.title">
-          <h3>{{ step.title }}</h3>
-          <ul>
-            <li v-for="(content, index) in step.content" :key="index">
-              <template v-if="typeof content === 'string'">
-                {{ content }}
-              </template>
-              <template v-else>
-                <pre>{{ JSON.stringify(content.template, null, 2) }}</pre>
-              </template>
-            </li>
-          </ul>
-        </div>
-        <!-- Download custom llm insruction md file -->
-        <div class="download-section">
-          <h3>Download Instructions for Custom LLM Integration and Example file</h3>
-          <a href="/documents/Custom_LLM.md" download="Custom_LLM.md">Custom_LLM.md</a>
-          <a href="/documents/simple_pytorch_model.pt" download="simple_pytorch_model.pt">simple_pytorch_model.pt</a>
-        </div>
-      </section>      
 
       <!-- Node Connections Section -->
       <section id="node-connections" v-if="!loading && guideData.nodeConnections">

@@ -4,7 +4,7 @@
     "content": "This guide is designed to help researchers set up their own node connections, node attributes, and system settings for use in the simulation environment. The setup involves creating three Excel files: one for defining the connections between nodes and their corresponding influence factors, another for specifying node attributes such as alignment, and a third for setting system parameters for the red and blue teams. This guide provides step-by-step instructions on how to format these files, what each column represents, and how to ensure compatibility with the simulation system."
   },
   "nodeConnections": {
-    "title": "Node Connections File",
+    "title": "Importing Node Connections From Excel",
     "overview": {
       "title": "Overview",
       "content": "The Node Connections file defines how each node in the network is connected to other nodes and the strength of those connections (influence factors). This file should be saved as an Excel file with the sheet named 'NodeConnections'."
@@ -45,7 +45,7 @@
     }
   },
   "nodeAttributes": {
-    "title": "Node Attributes File",
+    "title": "Importing Node Attributes From Excel",
     "overview": {
       "title": "Overview",
       "content": "The Node Attributes file defines the properties of each node, such as alignment. This file should be saved as an Excel file with the sheet named 'NodeAttributes'."
@@ -102,7 +102,7 @@
     }
   },
   "simulationSettings": {
-    "title": "Simulation Settings File",
+    "title": "Importing Simulation Settings From Excel",
     "overview": {
       "title": "Overview",
       "content": "The simulation settings file defines parameters for the red and blue teams. It specifies LLMs for both the red and blue teams, and the necessary parameters which influence how the models play in the simulation. It is important to note that models specified in this file must be already connected to the simulation system."
@@ -207,43 +207,31 @@
       "title": "Simulation Settings Parameters",
       "tableHeaders": ["Parameter", "Definition"],
       "tableContent": [
-        ["Energy", "is the initial energy levels of the blue team only. This value depletes after every turn the blue team takes, depending on the message’s energy cost. Upon each turn, the blue team generates messages of varying potency levels and assigns an 'energy cost' to each one. The blue team’s overall energy level decreases by the energy cost of a message sent out to the simulation on a given turn. The red team does not have an energy level, as they are acting with 'unlimited resources'."],
-        ["Number of Messages Generated Per Turn", "specifies the number of messages at different potency levels the model generates per turn. Each message will be of a different potency level, ranging from low to high potency. For example, if this parameter is set to 3, the model will generate three messages: one low potency message, one medium potency message, and one high potency message."],
-        ["Temperature", "A value between 0 and 1 that determines how random or predictable the model’s output should be. A lower temperature will result in more deterministic output whereas higher values like 0.8 will result in more random output."],
-        ["Influence Factor", "A value between 0 and 1 that represents the influence the team has over other nodes in the simulation."],
-        ["Maximum Energy Cost of Messages", "An integer value that represents the maximum cost a message can have."],
-        ["Penalty", "A percentage value (between 0 to 100 inclusive) applied to the potency of the message when it exceeds a certain threshold."],
-        ["Penalty Threshold (Penalise Messages with Potencies over)", "A value between 0 to 100 (inclusive) which determines when the penalty is applied to the potency of a red team message. If the potency of a message exceeds this threshold, a penalty (set as a percentage) is applied to reduce the potency."]
-      ],
-      "contents": [
-        {
-          "parameter": "Energy",
-          "definition": "represents how much 'energy' the blue team begins with. This can be thought of as the resources available to the blue team. Upon each turn, the blue team generates messages of varying potency levels and assigns an 'energy cost' to each one. The blue team’s overall energy level decreases by the energy cost of a message sent out to the simulation on a given turn. The red team does not have an energy level, as they are acting with 'unlimited resources'." 
-        },
-        {
-          "parameter": "Number of Messages Generated Per Turn",
-          "definition": "the number of messages at different potency levels the model generates per turn. " 
-        },
-        {
-          "parameter": "Temperature",
-          "definition": "determines how random or predictable the model’s output should be. A lower temperature will result in more deterministic output whereas higher values like 0.8 will result in more random output." 
-        },
-        {
-          "parameter": "Influence Factor",
-          "definition": "represents the influence the team has over other nodes in the simulation." 
-        },
-        {
-          "parameter": "Maximum Energy Cost of Messages",
-          "definition": "represents the maximum cost a message can have." 
-        },
-        {
-          "parameter": "Penalty",
-          "definition": "a percentage value applied to the potency of the message when it exceeds a certain threshold. Only applies to the red team, any input for the blue team is discarded." 
-        },
-        {
-          "parameter": "Penalty Threshold (Penalise Messages with Potencies over)",
-          "definition": "determines when the penalty is applied to the potency of a red team message. If the potency of a message exceeds this threshold, a penalty (set as a percentage) is applied to reduce the potency." 
-        }
+        ["Energy", "Sets the Blue Agent’s initial energy levels. These energy levels decrease after each turn, based on the energy cost of the message broadcasted. In every round, the Blue Agent generates messages with different potency levels, and each message has an associated energy cost. The Blue Agent’s total energy is reduced by the energy cost of the message sent during that turn. The Red Agent does not have an energy limit and can broadcast messages with unlimited resources."],
+        ["Number of Messages Generated Per Turn", "Specifies the number of messages at different potency levels the model generates per turn. Each message will be of a different potency level, ranging from low to high potency. For example, if this parameter is set to 3, the model will generate three messages: one low potency message, one medium potency message, and one high potency message."],
+        ["Temperature", "Determines how random or predictable the model’s output should be. A lower temperature will result in more deterministic output whereas higher values like 0.8 will result in more random output."],
+        ["Influence Factor", "determines the strength of an agent’s ability to influence Green Nodes in the population. It dictates how much a broadcasted message from the Red or Blue Agent affects the alignment of Green Nodes. A higher influence factor causes a stronger shift in alignment, while a lower factor results in a weaker shift."],
+        ["Maximum Energy Cost of Messages", "Defines the maximum amount of energy that the Blue Agent must spend to broadcast a single message. This cost is determined by the potency of the message, where more powerful or influential messages consume more energy and therefore have a higher cost."],
+        ["Penalty", "Is a percentage reduction applied to the potency of the Red Agent's message when its potency exceeds a predefined threshold. This penalty reduces the effectiveness of high-potency messages to simulate real-world scepticism toward extreme claims. The penalty is calculated as a percentage of the message's potency and subtracted from the total potency, preventing overly powerful influence. A penalty of 0% indicates no reduction in potency."],
+        ["Penalty Threshold (Penalise Messages with Potencies over)", "The penalty threshold is the potency level at which the penalty is triggered. If the potency of a Red Agent's message exceeds this threshold, the penalty is applied, reducing the potency by a set percentage. The threshold ensures that only messages exceeding a certain strength are penalised, allowing less potent messages to be broadcast without reduction."]
+      ]
+    },
+    "greenSettings": {
+      "title": "Green Network Parameters",
+      "tableHeaders":["Parameter", "Definition"],
+      "tableContent":[
+        ["Number of Green Nodes", "Defines the size of the population."],
+        ["Red Alignment", "Defines the percentage of green nodes that are aligned to the Red Agent before the simulation starts."],
+        ["Blue Alignment", "Defines the percentage of green nodes that are aligned to the Blue Agent before the simulation starts."],
+        ["Green Alignment", "Defines the percentage of green nodes that are neutral, that is they are not aligned to either side before the simulation starts."]
+      ]
+    },
+    "terminationConditions": {
+      "title": "Termination Conditions",
+      "tableHeaders":["Parameter", "Definition"],
+      "tableContent": [
+        ["Population Alignment", "Defines the perentage of the population which must be aligned to either the Blue or Red Agent for either side to win. Once this percentage of the population is aligned to either the Red or Blue Agent, the simulation is terminated and the agent with the majority alignment defined by this parameter is declared the winner."],
+        ["Round Number", "Sets a limit on the maximum number of rounds the simulation can run for. The simulation will terminate once this number of rounds is reached, regardless of the population alignments."]
       ]
     }
   },
