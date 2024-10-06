@@ -4,8 +4,7 @@ import json
 import random
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '...')))
-from .green_team import GreenTeam
-from excel_api.import_excel import *
+
 
 green_team = None
 
@@ -19,7 +18,8 @@ def generate_random_network(node_count):
         
         node_attributes[node_id] = {
             "Alignment": alignment,
-            "id": node_id
+            "id": node_id,
+            "rejectMessaging": False, #Default is false 
         }
         
         # Generate random directed connections for each node
@@ -57,7 +57,8 @@ def generate_user_input_network(node_count, connections_per_node):
         
         node_attributes[node_id] = {
             "Alignment": alignment,
-            "id": node_id
+            "id": node_id,
+            "rejectMessaging": False, #Default is false 
         }
         
         # Use user-defined connections for each node

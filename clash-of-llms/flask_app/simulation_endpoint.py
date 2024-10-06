@@ -397,12 +397,12 @@ def start_next_round():
     current_team.generate_message()
 
     # Apply penalty to potency of red team message
-    if current_team._team.lower() == 'red':
-        current_team.apply_penalty()
+    # if current_team._team.lower() == 'red':
+    #     current_team.apply_penalty()
 
     # Update green network
     if (not isinstance(current_team._potency, str)):
-        green_team.broadcast_message(current_team._potency, current_team._team, current_team._influence_factor)
+        green_team.broadcast_message(red_team, current_team._potency, current_team, current_team._influence_factor)
         green_team.update_green_network()
 
         # Add the new function to create and save a JSON file for the current round

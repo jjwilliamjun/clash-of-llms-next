@@ -1,7 +1,5 @@
 import os, sys
 sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]))
-from class_api import gpt_endpoint
-from class_api.team import Team
 import pandas as pd
 
 
