@@ -46,11 +46,15 @@ class BlueTeam(Team):
         Attempt to generate and send a message. Consumes energy equal to message_cost.
         """
         #End game if energy reaches 0
+        minimum_depletion_rate = 0.1  
+        depletion_factor = max(minimum_depletion_rate, self._energy / 100) 
+
+        scaled_energy_cost = energy_cost * depletion_factor
         if isinstance(energy_cost,float): #Sanitising GPT output
-            if self._energy - energy_cost <= 0 :
+            if self._energy - scaled_energy_cost <= 0 :
                 self._energy = 0
             else:
-                self._energy -= energy_cost
+                self._energy -= scaled_energy_cost
     
     #TODO potentially bring out to game  parameters
     def energy_cost(self):
