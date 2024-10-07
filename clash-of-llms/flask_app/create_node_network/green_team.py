@@ -1,6 +1,12 @@
 import copy
 import networkx as nx
-
+import os, sys
+import random
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# sys.path.append('./create_node_network')
+# sys.path.append('../class_api')
+from create_node_network.create_network import *
+from class_api.team import RedTeam
 
 class GreenTeam:
     def __init__(self, network_graph, blue_alignment, red_alignment):
@@ -12,13 +18,15 @@ class GreenTeam:
         self.alignment_min=-1 #to change once parsed in from excel files
         self.alignment_max=1 #To change once that's parsed in from excel files
 
+
     def update_green_network(self):
-        print('updating green network')
+        #print('updating green network')
         self._previous_network_graph=copy.deepcopy(self._network_graph)
 
         for old_node in self._previous_network_graph.nodes():
             previous_alignment=nx.get_node_attributes(self._previous_network_graph, "Alignment")
             current_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
+            isRejectingRedMessaging=nx.get_node_attributes(self._network_graph, "rejectMessaging")
             node_alignment=previous_alignment[old_node] 
             neighbors = list(self._previous_network_graph.neighbors(old_node))
 
@@ -33,6 +41,9 @@ class GreenTeam:
                         self.update_node_alignment(neighbor, new_alignment)
 
                     else:
+                        if isRejectingRedMessaging[neighbor] == True:
+                        #Nodes rejecting red messaging are less accepting to influence from red aligning neighbours
+                            influence_factor=influence_factor*0.5
                         new_alignment=current_alignment[neighbor] + influence_factor
                         self.update_node_alignment(neighbor, new_alignment)
         self.update_team_alignments()
@@ -42,24 +53,36 @@ class GreenTeam:
         for node in self._network_graph.nodes():
             print(node, alignment[node])
 
-    def broadcast_message(self, potency, team, influence_factor):
+    def broadcast_message(self, red_team, potency, team, influence_factor):
         print('broadcasting message')
         "Updates the green nodes when a message is broadcasted from red or blue teams"
-        team = str(team)
+        
         current_alignment=nx.get_node_attributes(self._network_graph, "Alignment")
         self._previous_network_graph=copy.deepcopy(self._network_graph)
         alignment_influence=(float(potency)/100)*influence_factor
         for node in self._network_graph.nodes():
             #Assumes blue alignment is negative, and red alignment is positive
-            if team.lower() == 'blue': 
+            if team._team.lower() == 'blue': 
                 new_alignment=current_alignment[node] - alignment_influence
                 self.update_node_alignment(node, new_alignment)
             else:
-                new_alignment=current_alignment[node] + alignment_influence
-                self.update_node_alignment(node, new_alignment)
+                updated_red_rejection_attribute=RedTeam.red_agent_penalty(red_team, potency, node, self._network_graph)
+                if updated_red_rejection_attribute[node] == False:
+                    #Still accepting red messaging
+                    new_alignment=current_alignment[node] + alignment_influence
+                    self.update_node_alignment(node, new_alignment)
+                # else: 
+                #     print(node," is rejecting red messaging")
         self.update_team_alignments()
             
         #self.new_alignments()
+
+    # def red_agent_penalty(self, potency, node_id, network_graph):
+    #     if potency >= 0.8 and random.random() <= 0.3: #change to user defined threshold for potency
+    #         nx.set_node_attributes(self._network_graph, {node_id: True}, "rejectMessaging")
+    #     return nx.get_node_attributes(self._network_graph, "rejectMessaging")
+
+
 
 
     def update_node_alignment(self, current_node, new_alignment):
@@ -94,15 +117,28 @@ class GreenTeam:
                 self._red_alignment += 1
             elif current_alignment[node] <= self.alignment_min/2:
                 self._blue_alignment +=1
-
         #print('balance of alignment', self._blue_alignment + self._red_alignment, 'for size', self._network_graph.number_of_nodes())
 
-    def print_all_node_alignments(self):
+    def test_node_rejection():
         """Prints the alignment of all nodes in the network graph: for testing purposes only"""
-        alignment = nx.get_node_attributes(self._network_graph, "Alignment")
-        for node_id in self._network_graph.nodes():
+        node_attributes, node_connections = create_network.generate_random_network(5)
+        test_graph= create_network.create_node_network(node_attributes, node_connections)
+        alignment = nx.get_node_attributes(test_graph, "Alignment")
+        rejected = nx.get_node_attributes(test_graph, "rejectMessaging")
+        for node_id in test_graph.nodes():
             node_alignment=alignment[node_id]
-            print(f"Node {node_id}: Alignment = {node_alignment}")
+            is_rejected=rejected[node_id]
+            print(f"Node {node_id}: Alignment = {node_alignment}, and rejected {is_rejected}")
+        print("Testing polarisation of node network")
+        for node_id in test_graph.nodes():
+            if random.random() <= 0.3:
+                nx.set_node_attributes(test_graph, {node_id: True}, "rejectMessaging")
+        rejected = nx.get_node_attributes(test_graph, "rejectMessaging")
+        for node_id in test_graph.nodes():
+            test_rejected=rejected[node_id]
+            print(f"Node  rejected {test_rejected}")
+
+                
     
     def blue_alignment(self):
         """Returns the % of the population that aligns with the blue team"""
@@ -114,7 +150,7 @@ class GreenTeam:
 
         
     def test_scripts():
-        #WIP
+    
         green_team_test=GreenTeam(network, 30, 20)
         print("The number of nodes in this network is ", green_team_test._size)
         green_team_test.blue_alignment()

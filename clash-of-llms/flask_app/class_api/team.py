@@ -4,20 +4,17 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from class_api.gpt_endpoint import get_message
 from excel_api.import_excel import *
 from create_node_network.create_network import * 
-import create_node_network.create_network as GreenNetwork
 
 class Team:
-    def __init__(self, team, model_ID, energy, potency, msg_count, influence_factor, max_cost, temperature, alignment=0):
+    def __init__(self, team, model_ID, potency, msg_count, influence_factor, temperature, alignment):
         """Setting parameters for team"""
         self._team = team
         self._model_ID = model_ID
-        self._energy = energy
         self._potency = None
         self._message = None
         self._message_count = msg_count
         self._influence_factor = influence_factor
         self._alignment = alignment
-        self._max_cost = max_cost
         self._temperature = temperature
     
     def next_round(self):
@@ -26,22 +23,38 @@ class Team:
     
     def generate_message(self):
         """generate a message with the team's current parameters"""
-        self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, self._energy)
+
+        if self._team.lower() == "blue":
+            self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, self._energy)
+        else:
+            self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, energy=50)
         #GreenNetwork.green_team.broadcast_message(self._potency, self._team, self._influence_factor)
+
+    def update_alignment(self, alignment):
+        self._alignment = alignment
+
+
+class BlueTeam(Team):
+    def __init__(self, team, model_ID, potency, msg_count, influence_factor, temperature, energy, max_cost, alignment):
+        super().__init__(team=team, model_ID=model_ID, msg_count=msg_count, influence_factor=influence_factor, temperature=temperature, alignment=alignment, potency=0)
+        self._energy = energy
+        self._max_cost = max_cost
+        self._msg_cost = 0
 
     def update_energy_level(self, energy_cost):
         """
         Attempt to generate and send a message. Consumes energy equal to message_cost.
         """
         #End game if energy reaches 0
+        minimum_depletion_rate = 0.1  
+        depletion_factor = max(minimum_depletion_rate, self._energy / 100) 
+
+        scaled_energy_cost = energy_cost * depletion_factor
         if isinstance(energy_cost,float): #Sanitising GPT output
-            if self._energy - energy_cost <= 0 :
+            if self._energy - scaled_energy_cost <= 0 :
                 self._energy = 0
             else:
-                self._energy -= energy_cost
-    
-    def update_alignment(self, alignment):
-        self._alignment = alignment
+                self._energy -= scaled_energy_cost
     
     #TODO potentially bring out to game  parameters
     def energy_cost(self):
@@ -60,5 +73,43 @@ class Team:
         if not (0 <= self._potency <= 100):
             raise ValueError("Potency must be between 0 and 100.")
         #TODO more research needed on the way to get energy cost from potency
-        energy_cost = self._max_cost * (self._potency / 100)
+        energy_cost = round(self._max_cost * (self._potency / 100), 2)
+        self._msg_cost = energy_cost
         return energy_cost
+
+    
+class RedTeam(Team):    
+    def __init__(self, team, model_ID, potency, msg_count, influence_factor, temperature, penalty, penalty_threshold, alignment):
+        super().__init__(team=team, model_ID=model_ID, msg_count=msg_count, influence_factor=influence_factor, temperature=temperature, alignment=alignment, potency=0)
+        self._penalty = penalty
+        self._penalty_threshold = penalty_threshold
+        self._unpenalised_potency = 0 # store potency before penalty is applied to provide actual data to export
+    
+    # def apply_penalty(self):
+    #     """
+    #     Applies penalty to messages with a potency over a specified threshold.
+    #     """
+        
+    #     if self._penalty_threshold <= self._potency:
+    #         self._unpenalised_potency = self._potency
+    #         self._potency -= math.floor(self._potency * (self._penalty / 100))
+    #     else:
+    #         self._unpenalised_potency = self._potency
+        
+    #     return    
+    def red_agent_penalty(self, potency, node_id, network_graph):
+        """Applies a penalty randomly to the broadcasting of red messages if:
+        -the message is above the penalty threshold
+        -the node is currently still receiving red messages
+        -the node is not red_aligned
+        """
+        isAccepting= nx.get_node_attributes(network_graph, "rejectMessaging")
+        alignment = nx.get_node_attributes(network_graph, "Alignment")
+        red_alignment_cutoff = 0.5
+
+        if potency >= self._penalty_threshold and random.random() <= 0.5 and isAccepting[node_id] == False and alignment[node_id] <= red_alignment_cutoff: 
+            nx.set_node_attributes(network_graph, {node_id: True}, "rejectMessaging")
+            #If rejecting red team messaging, set alignment to maximum blue team alignment 
+            nx.set_node_attributes(network_graph, {node_id: -1}, "Alignment")
+            print("Node rejecting red messaging")
+        return nx.get_node_attributes(network_graph, "rejectMessaging")

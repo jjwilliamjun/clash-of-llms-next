@@ -2,6 +2,7 @@
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
+  max-height: 800px;
 }
 
 h1 {
@@ -27,7 +28,7 @@ h1 {
 
 .flex-child {
   flex: 1;
-  max-width: 32%;
+  max-width: 33%;
   margin: 0 10px;
 }
 
@@ -170,7 +171,10 @@ input[type="range"] {
 #Message {
     text-align: center;
     border: 1px solid #949494;
-    margin: 40px, 200px;
+    margin-top: 20px;
+    margin-left: 80px;
+    margin-right: 80px;
+    padding: 5px;
     border-radius: 10px;
     box-shadow: 2px 2px 5px #cecece;
 }
@@ -179,4 +183,28 @@ input[type="range"] {
   margin: 0.5em;
   font-size: 0.8em;
   color: red;
+}
+
+/* custom ending conditions styles */
+.custom-conditions {
+  padding: 20px;
+  border: 1px solid #949494;
+  border-radius: 10px;
+  box-shadow: 2px 2px 5px #cecece;
+  margin-bottom: 20px;
+  border-left: 4px solid #585858;
+}
+
+.condition-heading {
+    color: #585858;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.condition-box {
+    margin-left: 10px;
+}
+
+.condition-accent {
+    accent-color: #585858;
 }

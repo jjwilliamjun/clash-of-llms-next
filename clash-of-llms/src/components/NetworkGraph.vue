@@ -67,6 +67,15 @@ export default {
         this.drawGraph(networkData);
       } catch (error) {
         this.fetchError = `Round ${roundNumber} data not found.`;
+        this.errors = `Error updating graph: ${
+            error.response?.data?.error || error.message || error
+          }`;
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
       }
     },
     drawGraph(networkData) {
