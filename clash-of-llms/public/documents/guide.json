@@ -4,7 +4,7 @@
     "content": "This guide is designed to help researchers set up their own node connections, node attributes, and system settings for use in the simulation environment. The setup involves creating three Excel files: one for defining the connections between nodes and their corresponding influence factors, another for specifying node attributes such as alignment, and a third for setting system parameters for the red and blue teams. This guide provides step-by-step instructions on how to format these files, what each column represents, and how to ensure compatibility with the simulation system."
   },
   "nodeConnections": {
-    "title": "Node Connections File",
+    "title": "Importing Node Connections From Excel",
     "overview": {
       "title": "Overview",
       "content": "The Node Connections file defines how each node in the network is connected to other nodes and the strength of those connections (influence factors). This file should be saved as an Excel file with the sheet named 'NodeConnections'."
@@ -31,10 +31,9 @@
     "instructions": {
       "title": "Instructions",
       "content": [
-        "Open Excel and create a new workbook.",
-        "Rename the first sheet to 'NodeConnections'.",
+        "Open Excel and create a new workbook. This workbook must have the exact same layout and titles as provided in the example excel files.",
         "Enter the data as shown in the example, ensuring that each node's connections and influence factors are correctly listed.",
-        "Save the file with an appropriate name (e.g., 'NodeConnections.xlsx')."
+        "Save the file and upload it by following the standard importing process."
       ]
     },
     "tips": {
@@ -46,7 +45,7 @@
     }
   },
   "nodeAttributes": {
-    "title": "Node Attributes File",
+    "title": "Importing Node Attributes From Excel",
     "overview": {
       "title": "Overview",
       "content": "The Node Attributes file defines the properties of each node, such as alignment. This file should be saved as an Excel file with the sheet named 'NodeAttributes'."
@@ -76,7 +75,6 @@
         }
       ]
     },
-
     "example": {
       "title": "Example",
       "tableHeaders": ["Node_ID", "Alignment"],
@@ -90,10 +88,9 @@
     "instructions": {
       "title": "Instructions",
       "content": [
-        "Open Excel and create a new workbook.",
-        "Rename the first sheet to 'NodeAttributes'.",
+        "Open Excel and create a new workbook. This workbook must have the exact same layout and titles as provided in the example excel files.",
         "Enter the data as shown in the example, ensuring that each node's attributes are correctly listed.",
-        "Save the file with an appropriate name (e.g., 'NodeAttributes.xlsx')."
+        "Save the file and upload it by following the standard importing process."
       ]
     },
     "tips": {
@@ -105,22 +102,24 @@
     }
   },
   "simulationSettings": {
-    "title": "Simulation Settings File",
+    "title": "Importing Simulation Settings From Excel",
     "overview": {
       "title": "Overview",
       "content": "The simulation settings file defines parameters for the red and blue teams. It specifies LLMs for both the red and blue teams, and the necessary parameters which influence how the models play in the simulation. It is important to note that models specified in this file must be already connected to the simulation system."
     },
     "structure": {
-      "title": "File Structure",
+      "title": "File Structure: Settings for Agents",
       "tableHeaders": ["Column", "Description", "Default"],
       "tableContent": [
-        ["Model_ID", "The unique identifier for each LLM connected to the simulation.", "gpt-3.5 turbo"],
-        ["Energy", "A whole number/integer/value between 1 and 100 (inclusive) representing the initial energy levels of the blue team only (any input for the red team is discarded as the red team has infinite energy). This value depletes after every turn the blue team takes, depending on the message’s energy cost.", "100"],
-        ["Msgs_Generated", "A whole number/integer/value between 1 and 10 (inclusive) which dictates the number of messages at different potency levels the model generates per turn.", "5"],
+        ["Team", "The colour identifier of the team that the settings are for. The first row must specifiy settings for the red agent, and the second row must specify settings for the blue agent. There must only be one 'Red' agent and one 'Blue' agent.", "Can only be 'Red' or 'Blue'."],
+        ["Model_ID", "The unique identifier for each LLM connected to the simulation. If using a custom LLM, enter 'custom'.", "gpt-3.5 turbo"],
+        ["Energy", "A whole number between 1 and 100 (inclusive) representing the initial energy levels of the blue team only (any input for the red team is discarded as the red team has infinite energy). This value depletes after every turn the blue team takes, depending on the message’s energy cost.", "100"],
+        ["Msgs_Generated", "A whole number between 1 and 10 (inclusive) which dictates the number of messages at different potency levels the model generates per turn.", "5"],
         ["Temperature", "A value between 0 and 1 that determines how random or predictable the model’s output should be. A lower temperature will result in more deterministic output whereas higher values like 0.8 will result in more random output.", "0.5"],
         ["Influence_Factor", "A value between 0 and 1 that represents the influence the team has over other nodes in the simulation.", "0.5"],
-        ["Alignment", "A percentage representing the number of green nodes aligned to each team.", "50"],
-        ["Max_Cost", "An integer value that represents the maximum cost a message can have.", "5"]
+        ["Max_Cost", "An integer value that represents the maximum cost a message can have.", "5"],
+        ["Penalty", "A percentage value (between 0 to 100 inclusive) applied to the potency of the message when it exceeds a certain threshold.", "50"],
+        ["Penalty_Threshold", "A value between 0 to 100 (inclusive) which determines when the penalty is applied to the potency of a red team message. If the potency of a message exceeds this threshold, a penalty (set as a percentage) is applied to reduce the potency.", "50"]
       ]
     },
     "energyExplanation": {
@@ -135,38 +134,113 @@
       "title": "'Temperature' Explanation",
       "content": "The Temperature value determines how random or predictable the model’s output should be: Low temperature (0.0 to 0.25): more deterministic and predictable output. Neutral temperature (0.5): balanced output. High temperature (0.75 to 1.0): more random and non-deterministic output."
     },
+    "penaltyExplaination": {
+      "title": "'Penalty' Explanation",
+      "content": "The penalty value represents a reduction in the potency of the red team’s messages when they exceed a certain potency threshold. This threshold acts as a limit, beyond which the potency of a message is penalised. The penalty is applied as a percentage reduction of the message's potency. For each turn, if a red team message surpasses the potency threshold, the penalty is calculated as a percentage of the potency, and is then subtracted from the original potency, hence reducing its effectiveness in the simulation. The blue team does not have a penalty."
+    },
     "example": {
       "title": "Example",
-      "tableHeaders": ["Column", "Red Team", "Blue Team"],
+      "tableHeaders": ["Team", "Model ID", "Energy", "Msgs Generated", "Temperature", "Influence Factor", "Max Cost", "Penalty", "Penalty Threshold"],
       "tableContent": [
-        ["Model_ID", "gemini-1.5-flash", "gpt-3.5"],
-        ["Initial_Energy_Level", "100", "100"],
-        ["Msgs_Generated", "4", "6"],
-        ["Temperature", "0.75", "0.4"],
-        ["Influence_Factor", "0.7", "0.8"],
-        ["Alignment", "50", "50"],
-        ["Max_Cost", "1", "1"]
+        ["Red", "gpt-3.5-turbo", "100", "4", "0.9", "0.3", "1", "75", "20"],
+        ["Blue", "custom", "100", "6",	"0.4", "0.8",	"20",	"50",	"50"]
       ]
     },
     "instructions": {
       "title": "Instructions",
       "content": [
-        "Open Excel and create a new workbook.",
-        "Rename the first sheet to 'SimulationSettings'.",
+        "Open Excel and create a new workbook. This workbook must have the exact same layout and titles as provided in the example excel files.",
         "Enter the data as shown in the example, ensuring that each parameter is correctly entered and is within the correct range.",
-        "Save the file with an appropriate name (e.g., 'SimulationSettings.xlsx').",
-        "Upload the file into the simulation system following the standard importing process."
+        "Save the file and upload it by following the standard importing process."
       ]
+    }, 
+    "customEndConditions": {
+      "title": "Custom Termination Conditions",
+      "structure": {
+        "title": "File Structure: Settings for Custom Termination Conditions",
+        "tableHeaders": ["Column", "Description", "Default"],
+        "tableContent": [
+          ["Population Alignment", "A percentage value between 0 to 100 (inclusive) which defines the population percentage required for either the red or blue team to win. Once a team reaches this percentage of alignment, the simulation ends.", "80."],
+          ["Round Number", "A whole number between 0 and 50 (inclusive) which sets a limit on the maximum number of rounds the simulation can run for. The simulation will terminate once this number of rounds is reached, regardless of the population alignments.", "20"]
+        ]
+      },
+      "example": {
+        "title": "Example",
+        "tableHeaders": ["Termination Condition", "Value"],
+        "tableContent": [
+          ["Population Alignment", "80"],
+          ["Round Number", "20"]
+        ]
+      }
     }
   },
   "importingFiles": {
-    "title": "Importing the Files into the Simulation",
+    "title": "Importing Parameters from Excel Files",
     "steps": [
-      "Upload the Excel files (NodeConnections, NodeAttributes, and SimulationSettings) to the simulation system.",
-      "Verify the connections and attributes by running a test simulation.",
-      "If necessary, adjust the files based on test results and re-upload them.",
+      "Navigate to the Home page and select 'Upload Excel Files'.", 
+      "Upload all three required Excel files (NodeConnections, NodeAttributes, and SimulationSettings) one at a time by clicking 'Choose file' for each file. When prompted, select the file you wish to upload and click 'open'.",
+      "Once you have selected all three files, proceed to upload them by clicking 'Upload Files'. If successful, you will be redirected to confirm the imported values are correct. If an error occurs, please check the file formatting and entered values are correct.",
+      "If necessary, adjust the files and re-upload them by going back to the 'Home' page.",
       "Run the simulation after confirming all data is correctly imported."
     ]
+  }, 
+  "parameterInstructions": {
+    "title": "Instructions",
+    "overview": "The simulation can be run with either default or customised parameters. Parameters can be set either through the UI or by uploading excel files.",
+    "defaultTitle": "To Run with Default Parameters:",
+    "defaultSteps": [
+      "On the Home page, click “Enter Parameters”.",
+      "Select “Random” from the drop down menu for the Green Node Configuration.",
+      "Click “Next” to then either choose to run the simulation continuously (without user input) or in turns (where the simulation requires the user to click “next turn” to progress to the next round)."
+    ],
+    "uiTitle": "To Run with Customised Parameters:",
+    "uiSteps": [
+      "On the Home page, click “Enter Parameters”.",
+      "Select desired values for both the red and blue agents (if running with a custom LLM, see the “Custom LLM Guide” below).",
+      "Select “User Input” from the drop down menu for the Green Node Configuration and select desired values for the green network/population.",
+      "Click “Next” to then either choose to run the simulation continuously (without user input) or in turns (where the simulation requires the user to click “next turn” to progress to the next round)."
+    ]
+  },
+  "parameterInfo": {
+    "title": "Parameter Definitions",
+    "settings": {
+      "title": "Simulation Settings Parameters",
+      "tableHeaders": ["Parameter", "Definition"],
+      "tableContent": [
+        ["Energy", "Sets the Blue Agent’s initial energy levels. These energy levels decrease after each turn, based on the energy cost of the message broadcasted. In every round, the Blue Agent generates messages with different potency levels, and each message has an associated energy cost. The Blue Agent’s total energy is reduced by the energy cost of the message sent during that turn. The Red Agent does not have an energy limit and can broadcast messages with unlimited resources."],
+        ["Number of Messages Generated Per Turn", "Specifies the number of messages at different potency levels the model generates per turn. Each message will be of a different potency level, ranging from low to high potency. For example, if this parameter is set to 3, the model will generate three messages: one low potency message, one medium potency message, and one high potency message."],
+        ["Temperature", "Determines how random or predictable the model’s output should be. A lower temperature will result in more deterministic output whereas higher values like 0.8 will result in more random output."],
+        ["Influence Factor", "determines the strength of an agent’s ability to influence Green Nodes in the population. It dictates how much a broadcasted message from the Red or Blue Agent affects the alignment of Green Nodes. A higher influence factor causes a stronger shift in alignment, while a lower factor results in a weaker shift."],
+        ["Maximum Energy Cost of Messages", "Defines the maximum amount of energy that the Blue Agent must spend to broadcast a single message. This cost is determined by the potency of the message, where more powerful or influential messages consume more energy and therefore have a higher cost."],
+        ["Penalty", "Is applied when the potency of the Red Agent's message exceeds the penalty threshold. When applied, a random percentage of nodes will stop being influenced by Red messaging and have their alignment shifted to maximum Blue alignment. These nodes then become less susceptible to influence from their neighbours, further diminishing the Red Agent's overall impact."],
+        ["Penalty Threshold (Penalise Messages with Potencies over)", "The penalty threshold is the potency level at which the penalty is triggered. If the potency of a Red Agent's message exceeds this threshold, the penalty is applied, causing a random portion of the population to become resistant to Red messaging and align with the Blue Agent. The threshold ensures that only messages exceeding a certain strength are penalised, allowing less potent messages to be broadcast without significant consequence."]
+      ]
+    },
+    "greenSettings": {
+      "title": "Green Network Parameters",
+      "tableHeaders":["Parameter", "Definition"],
+      "tableContent":[
+        ["Number of Green Nodes", "Defines the size of the population."],
+        ["Red Alignment", "Defines the percentage of green nodes that are aligned to the Red Agent before the simulation starts."],
+        ["Blue Alignment", "Defines the percentage of green nodes that are aligned to the Blue Agent before the simulation starts."],
+        ["Green Alignment", "Defines the percentage of green nodes that are neutral, that is they are not aligned to either side before the simulation starts."]
+      ]
+    },
+    "terminationConditions": {
+      "title": "Termination Conditions",
+      "tableHeaders":["Parameter", "Definition"],
+      "tableContent": [
+        ["Population Alignment", "Defines the percentage of the population which must be aligned to either the Blue or Red Agent for either side to win. Once this percentage of the population is aligned to either the Red or Blue Agent, the simulation is terminated and the agent with the majority alignment defined by this parameter is declared the winner."],
+        ["Round Number", "Sets a limit on the maximum number of rounds the simulation can run for. The simulation will terminate once this number of rounds is reached, regardless of the population alignments."]
+      ]
+    }
+  },
+  "helpSection": {
+    "title": "Help Section",
+    "errors": {
+      "Error occurred when importing files: Issue found in (file name) file format ...'" : "This occurs when the file uploaded for simulation settings has incorrect formatting. The error message may be followed by something along the lines of 'Model_ID' or 'Alignment', which indicates there may be a missing column for that parameter. Please ensure that the excel files have the exact same formatting and titles as the provided example files.",
+      "Error occurred when importing files: invalid (parameter) for Red/Blue agent," : "This occurs when the file uploaded contains invalid values for the specified parameter. Please ensure that all required parameters are provided and all entered values are of the correct type and within the specified ranges (see above)."
+    }
   }
 }
 
