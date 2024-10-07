@@ -46,7 +46,7 @@ class Simulation:
 
             # Red team generates a message and updates energy
             self._red_team.generate_message()
-            self._green_team.broadcast_message(self._red_team._potency, self._red_team, self._red_team._influence_factor)
+            self._green_team.broadcast_message(self._red_team, self._red_team._potency, self._red_team, self._red_team._influence_factor)
             self._green_team.update_green_network()
 
             # Update alignments for red and blue teams
@@ -55,7 +55,7 @@ class Simulation:
 
             # Blue team generates a message and updates energy
             self._blue_team.generate_message()
-            self._green_team.broadcast_message(self._blue_team._potency, self._blue_team, self._blue_team._influence_factor)
+            self._green_team.broadcast_message(self._red_team, self._blue_team._potency, self._blue_team, self._blue_team._influence_factor)
             blue_energy_cost = self._blue_team.energy_cost()
             self._blue_team.update_energy_level(blue_energy_cost)
 
@@ -99,16 +99,15 @@ class Simulation:
         # Agents perform turn actions
         if self._current_team == 'red':
             self._red_team.generate_message()
-            self._red_team.apply_penalty()
             if(not isinstance(self._red_team._potency,str)):
-                self._green_team.broadcast_message(self._red_team._potency, self._red_team, self._red_team._influence_factor)
+                self._green_team.broadcast_message(self._red_team,self._red_team._potency, self._red_team, self._red_team._influence_factor)
                 self._green_team.update_green_network()
             print("updated")
             
         elif self._current_team == 'blue':
             self._blue_team.generate_message()
             if(not isinstance(self._blue_team._potency,str)):
-                self._green_team.broadcast_message(self._blue_team._potency, self._blue_team, self._blue_team._influence_factor)
+                self._green_team.broadcast_message(self._red_team,self._blue_team._potency, self._blue_team, self._blue_team._influence_factor)
                 self._green_team.update_green_network()
             energy_cost=self._blue_team.energy_cost()
             self._blue_team.update_energy_level(energy_cost)

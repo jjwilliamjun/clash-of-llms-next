@@ -3,21 +3,24 @@
     <!-- Always visible title -->
     <h1>Clash of LLMs</h1>
     
-    <!-- Option toggle for selecting input method -->
-    <div class="option-toggle">
-      <label>
-        <input type="radio" v-model="inputOption" value="manual" />
-        Enter Parameters
-      </label>
-      <label>
-        <input type="radio" v-model="inputOption" value="upload" />
-        Upload Excel Files
-      </label>
-    </div>
+    <!-- Render UserLogin first -->
+    <UserLogin v-if="!isLoggedIn" @login-success="handleLogin" />
 
-    <!-- Conditionally render the forms based on the selected option -->
-    <ParameterInputForm v-if="inputOption === 'manual'" />
-    <FileUploadForm v-else />
+    <div v-else>
+      <div class="option-toggle">
+        <label>
+          <input type="radio" v-model="inputOption" value="manual" />
+          Enter Parameters
+        </label>
+        <label>
+          <input type="radio" v-model="inputOption" value="upload" />
+          Upload Excel Files
+        </label>
+      </div>
+
+      <ParameterInputForm v-if="inputOption === 'manual'" />
+      <FileUploadForm v-else />
+    </div>
   </div>
 </template>
 
@@ -25,18 +28,25 @@
 import axios from 'axios';
 import ParameterInputForm from '@/components/ParameterInput.vue';
 import FileUploadForm from '@/components/FileUpload.vue';
+import UserLogin from '@/components/UserLogin.vue';
 
 export default {
   data() {
     return {
-      inputOption: 'manual' // Default option
+      inputOption: 'manual', // Default option
+      isLoggedIn: false // Add state for logged-in status
     };
   },
   components: {
     ParameterInputForm,
-    FileUploadForm
+    FileUploadForm,
+    UserLogin
   },
   methods: {
+    async handleLogin() {
+      // Logic for handling login success
+      this.isLoggedIn = true; // Set logged-in status
+    },
     downloadExcel() {
       axios({
         url: 'http://localhost:5000/excel_export', 

@@ -1,7 +1,5 @@
 import os, sys
 sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]))
-from class_api import gpt_endpoint
-from class_api.team import Team
 import pandas as pd
 
 
@@ -69,6 +67,10 @@ def import_settings(xls_path) -> tuple:
     
     red_team = red_team.to_dict()
     blue_team = blue_team.to_dict()
+
+    # To be updated once network files are read
+    red_team["Alignment"] = 0
+    blue_team["Alignment"] = 0
 
     input_errors = ["errors"]
     input_errors.extend(validate_settings(red_team))
