@@ -58,6 +58,7 @@
           <h2 id="redTeam">Red Agent</h2>
           <div id="redParameters">
             <div class="select-parameter">
+              <label for="red_model">Model: </label>
               <div class="styled-select">
                 <select name="red_model" v-model="red_team.Model_ID">
                   <option v-for="(item, index) in models" :key="index" :value="item">{{ item }}</option>

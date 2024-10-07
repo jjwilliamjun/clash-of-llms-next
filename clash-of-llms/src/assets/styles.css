@@ -14,10 +14,6 @@ h1 {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
-  padding: 10px;
-  background-color: #f0f0f0; 
-  border-radius: 10px; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
 }
 
 .option-toggle input[type="radio"] {
@@ -48,6 +44,7 @@ h1 {
 .option-toggle label + input[type="radio"] + label {
   margin-left: 10px;
 }
+
 
 
 .flex-container {
