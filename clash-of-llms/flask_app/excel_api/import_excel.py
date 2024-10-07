@@ -68,6 +68,10 @@ def import_settings(xls_path) -> tuple:
     red_team = red_team.to_dict()
     blue_team = blue_team.to_dict()
 
+    # To be updated once network files are read
+    red_team["Alignment"] = 0
+    blue_team["Alignment"] = 0
+
     input_errors = ["errors"]
     input_errors.extend(validate_settings(red_team))
     input_errors.extend(validate_settings(blue_team))
