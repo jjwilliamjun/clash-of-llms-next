@@ -71,20 +71,20 @@ export default {
         if (error.response) {
           this.errors = `Error occurred when importing files: ${error.response?.data?.error || error.message || error}`;
           this.invalid_value = true;
-          // this.$router.push({
-          //   name: "error",
-          //   query: {
-          //     errorMessage: this.errors,
-          //   },
-          // });
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
         } else {
           this.errors = `Error occurred when importing files: ${error}`;
-          // this.$router.push({
-          //   name: "error",
-          //   query: {
-          //     errorMessage: this.errors,
-          //   },
-          // });
+          this.$router.push({
+            name: "error",
+            query: {
+              errorMessage: this.errors,
+            },
+          });
         }
       }
     },
