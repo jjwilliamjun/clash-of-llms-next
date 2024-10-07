@@ -1,6 +1,6 @@
 import math
 import os, subprocess
-from flask import Flask, send_file, jsonify, request
+from flask import Flask, send_file, jsonify, request, send_from_directory
 from flask_cors import CORS, cross_origin
 import json
 import random
@@ -15,7 +15,8 @@ from class_api.simulation import *
 from class_api.termination import Termination
 from llm_api.llm_handler import *
 
-app = Flask(__name__)
+dist_folder = os.path.abspath('dist')
+app = Flask(__name__, static_folder=dist_folder, static_url_path='')
 
 # Allow requests from http://localhost: 8080
 CORS(app, resources={r"/*": {"origins":"http://127.0.0.1:5000:8080"}})
@@ -30,6 +31,14 @@ custom_llms = {}  # Placeholder to store custom LLMs
 game_style = None
 continuous_game = None
 terminating_conditions = None
+# Serve Vue static files from the dist folder
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_vue(path):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    return send_from_directory(app.static_folder, 'index.html')
+
 
 @app.route('/upload_llm', methods=['POST'])
 @cross_origin()

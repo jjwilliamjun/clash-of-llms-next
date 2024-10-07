@@ -1,5 +1,4 @@
 <template>
-  <h2>Upload User File</h2>
   <form @submit.prevent="startSimulation" class="file-upload-form">
     <div class="file-upload-row">
       <label for="settingsUpload">Simulation Settings:</label>
@@ -24,21 +23,13 @@
   </div>
   
   <div v-if="errors" class="error-container">
-    
-    <span v-if="invalid_value">
-      <strong>Error in Excel input:</strong>
-      <div v-for="(value, key) in errors" :key="key" class="error-message">
-        {{ value }}
-      </div>
-    </span>
-    <span v-else>
-      <strong>Error in Excel input: {{ errors }}</strong>
-    </span>
+    <ErrorPage :errorMessage="errors"></ErrorPage>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import ErrorPage from './ErrorPage.vue';
 
 export default {
   data() {
@@ -51,12 +42,21 @@ export default {
       invalid_value: false
     };
   },
+  components: {
+    ErrorPage
+  },
   methods: {
     async startSimulation() {
       const path = 'http://127.0.0.1:5000/excel_import';
 
       this.errors = null;
       this.invalid_value = false;
+
+      const num_files = Array.from(this.file_data.keys()).length;
+      if (num_files < 3) {
+        this.errors = "Please upload all 3 required files (uploaded " + num_files + " files).";
+        return;
+      }
 
       try {
         const response = await axios.post(path, this.file_data);
@@ -66,18 +66,10 @@ export default {
         this.$router.push('/preview'); // Uncomment if you want to redirect to parameters view
       } catch (error) {
         this.show_errors = true;
-        this.file_data.delete("settings_file");
-        this.file_data.delete("attributes_fies");
-        this.file_data.delete("connections_file");
-        
-        if (error.status == 500) {
-          this.errors = error.response.data.error;
-          return;
-        }
+        this.deleteUploads();
 
         if (error.response) {
           this.errors = `Error occurred when importing files: ${error.response?.data?.error || error.message || error}`;
-          console.log("Unable to upload/read files. Error: ", error);
           this.invalid_value = true;
           this.$router.push({
             name: "error",
@@ -86,10 +78,7 @@ export default {
             },
           });
         } else {
-          console.log("Unable to upload/read files. Error: ", error);
           this.errors = `Error occurred when importing files: ${error}`;
-          console.log(this.errors);
-          alert("Unable to upload/read files.");
           this.$router.push({
             name: "error",
             query: {
@@ -110,6 +99,15 @@ export default {
     handleConnectionsUpload() {
       const connections_file = document.getElementById("connectionsUpload").files[0];
       this.file_data.append('connections_file', connections_file);
+    },
+    deleteUploads() {
+      this.file_data.delete("settings_file");
+      this.file_data.delete("attributes_fies");
+      this.file_data.delete("connections_file");
+      
+      document.getElementById("settingsUpload").value = '';
+      document.getElementById("attributesUpload").value = ''
+      document.getElementById("connectionsUpload").value = '';
     }
   }
 };

@@ -48,3 +48,5 @@ pnpm-debug.log*
 *.sw?
 
 /venv
+/clash-of-llms/flask_app/dist
+/clash-of-llms/dist
