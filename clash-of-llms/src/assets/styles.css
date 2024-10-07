@@ -297,3 +297,43 @@ input[type="range"] {
   font-style: italic;
   color: #666;
 }
+
+/* Styled Select Container */
+.styled-select {
+  position: relative;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.styled-select select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #949494;
+  background-color: #f9f9f9;
+  box-shadow: 2px 2px 5px #cecece;
+  appearance: none; /* Remove default dropdown arrow */
+  cursor: pointer;
+  color: #333;
+  font-size: 1rem;
+}
+
+.styled-select:after {
+  content: '▼';
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none; 
+  color: #777;
+}
+
+.styled-select select:focus {
+  outline: none;
+  border-color: #007bff; 
+}
+
+.styled-select option {
+  padding: 5px 10px;
+  color: #333;
+}

@@ -9,9 +9,11 @@
           <div id="blueParameters">
             <div class="select-parameter">
               <label for="blue_model">Model: </label>
-              <select name="blue_model" v-model="blue_team.Model_ID">
-                <option v-for="(item, index) in models" :key="index" :value="item">{{ item }}</option>
-              </select>
+              <div class="styled-select">
+                <select name="blue_model" v-model="blue_team.Model_ID">
+                  <option v-for="(item, index) in models" :key="index" :value="item">{{ item }}</option>
+                </select>
+              </div>  
             </div>
 
             <!-- File Upload for Custom Model -->
@@ -56,10 +58,11 @@
           <h2 id="redTeam">Red Agent</h2>
           <div id="redParameters">
             <div class="select-parameter">
-              <label for="red_model">Model: </label>
-              <select name="red_model" id="model" v-model="red_team.Model_ID">
-                <option v-for="(item, index) in models" :key="index" :value="item">{{ item }}</option>
-              </select>
+              <div class="styled-select">
+                <select name="red_model" v-model="red_team.Model_ID">
+                  <option v-for="(item, index) in models" :key="index" :value="item">{{ item }}</option>
+                </select>
+              </div>  
             </div>
 
             <!-- File Upload for Custom Model (Red Team) -->
@@ -105,11 +108,13 @@
           <div id="greenParameters">
             <div class="select-parameter">
               <label for="green_node_count_option">Population Configuration: </label>
-              <select id="green_node_count_option" v-model="green_node_count_option">
-                <option value="userData">User Data</option>
-                <option value="userInput">User Input</option>
-                <option value="random">Random</option>
-              </select>
+              <div class="styled-select">
+                <select id="green_node_count_option" v-model="green_node_count_option">
+                  <option value="userData">User Data</option>
+                  <option value="userInput">User Input</option>
+                  <option value="random">Random</option>
+                </select>
+              </div>
             </div>
 
             <div v-if="green_node_count_option === 'userInput'">
