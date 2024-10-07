@@ -243,25 +243,26 @@ input[type="range"] {
 }
 
 .custom-upload-btn-grey {
-  background-color: #6c757d; /* Grey color for neutral option */
+  background-color: #6c757d;
   color: #fff;
   border: none;
   padding: 5px 7px;
   cursor: pointer;
   border-radius: 5px;
   transition: background-color 0.3s ease;
-  width: fit-content;
 }
 
 .custom-upload-btn-grey:hover {
-  background-color: #5a6268; /* Darker grey for hover effect */
+  background-color: #5a6268;
 }
+
 
 #file-upload-blue-name,
 #file-upload-red-name,
 #file-upload-settings-name,
 #file-upload-attributes-name,
-#file-upload-connections-name {
+#file-upload-connections-name,
+#file-upload-name {
   margin-left: 8px;
   font-style: italic;
   color: #666;
