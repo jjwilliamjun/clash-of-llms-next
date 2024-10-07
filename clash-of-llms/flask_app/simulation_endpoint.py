@@ -30,6 +30,7 @@ winning_pop_percent = 80
 custom_llms = {}  # Placeholder to store custom LLMs
 game_style = None
 continuous_game = None
+topic = None
 
 
 @app.route('/upload_llm', methods=['POST'])
@@ -268,9 +269,11 @@ def set_gameplay():
         global red_team
         global blue_team
         global green_team
+        global topic
 
         data = request.get_json()
         game_style = data['play_option']
+        topic = data['topic']
 
         if game_style == "continuous":
             global continuous_game

@@ -73,11 +73,6 @@
               <input type="range" id="red_penalty" class="accent" max="100" value="50" step="1" v-model="red_team.Penalty">
             </div>
             <div class="select-parameter">
-              <label for="red_topic">Topic: {{ red_team.Topic }}</label>
-              <br>
-              <input type="text" id="red_topic" class="accent" v-model="red_team.Topic" placeholder="Enter a topic">
-            </div>
-            <div class="select-parameter">
               <label for="red_msgs">Number of Messages Generated per Turn: {{ red_team.Msgs_Generated }}</label>
               <br>
               <input type="range" id="red_msgs" class="accent" min="1" max="10" value="5" step="1" v-model="red_team.Msgs_Generated">
@@ -175,7 +170,6 @@ export default {
         Custom_File: null, // New property to store the uploaded file for the red team
         Penalty: 50,
         Penalty_Threshold: 50,
-        Topic: '', // Combat topic for Red team
 
       },
       green_node_count_option: 'userData',

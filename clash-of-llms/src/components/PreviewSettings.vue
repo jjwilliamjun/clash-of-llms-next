@@ -84,8 +84,8 @@
                   {{ red_team._penalty_threshold }}
                 </p>
                 <p>
-                  <span style="font-weight: bold">Topic: </span>
-                  {{ red_team._topic }}
+                  <span style="font-weight: bold;">Topic:</span>
+                  <input v-model="topic" placeholder="Enter topic" />
                 </p>
               </div>
             </div>
@@ -167,6 +167,7 @@ export default {
       winner: null,
       currentTeam: null,
       play_option: null,
+      topic: null
     };
   },
   mounted() {
@@ -236,6 +237,7 @@ export default {
         // Send selected option to backend
         const response = await axios.post(path, {
           play_option: this.play_option,
+          topic: this.topic,
         });
         if (response.status == 200) {
           this.$router.push("/gameplay");

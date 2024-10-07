@@ -7,7 +7,7 @@ from create_node_network.create_network import *
 import create_node_network.create_network as GreenNetwork
 
 class Team:
-    def __init__(self, team, model_ID, potency, msg_count, influence_factor, temperature, alignment, topic):
+    def __init__(self, team, model_ID, potency, msg_count, influence_factor, temperature, alignment):
         """Setting parameters for team"""
         self._team = team
         self._model_ID = model_ID
@@ -17,7 +17,6 @@ class Team:
         self._influence_factor = influence_factor
         self._alignment = alignment
         self._temperature = temperature
-        self._topic = topic  # This is the required argument
     
     def next_round(self):
         """Increment number of messages sent"""
@@ -29,7 +28,7 @@ class Team:
         if self._team.lower() == "blue":
             self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, self._energy)
         else:
-            self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, self._topic, energy=50)
+            self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, energy=50)
         #GreenNetwork.green_team.broadcast_message(self._potency, self._team, self._influence_factor)
 
     def update_alignment(self, alignment):
@@ -77,8 +76,8 @@ class BlueTeam(Team):
 
     
 class RedTeam(Team):    
-    def __init__(self, team, model_ID, potency, msg_count, influence_factor, temperature, penalty, penalty_threshold, alignment, topic):
-        super().__init__(team=team, model_ID=model_ID, msg_count=msg_count, influence_factor=influence_factor, temperature=temperature, alignment=alignment, topic=topic, potency=0)
+    def __init__(self, team, model_ID, potency, msg_count, influence_factor, temperature, penalty, penalty_threshold, alignment):
+        super().__init__(team=team, model_ID=model_ID, msg_count=msg_count, influence_factor=influence_factor, temperature=temperature, alignment=alignment, potency=0)
         self._penalty = penalty
         self._penalty_threshold = penalty_threshold
         self._unpenalised_potency = 0 # store potency before penalty is applied to provide actual data to export
