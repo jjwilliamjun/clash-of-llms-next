@@ -29,15 +29,7 @@
   </div>
   
   <div v-if="errors" class="error-container">
-    <span v-if="invalid_value">
-      <strong>Error in Excel input:</strong>
-      <div v-for="(value, key) in errors" :key="key" class="error-message">
-        {{ value }}
-      </div>
-    </span>
-    <span v-else>
-      <strong>Error in Excel input: {{ errors }}</strong>
-    </span>
+    <ErrorPage :errorMessage="errors"></ErrorPage>
   </div>
 </template>
 
