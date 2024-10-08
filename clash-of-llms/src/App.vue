@@ -20,9 +20,9 @@
 #app-nav {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 20px; 
   padding: 15px;
-  background-color: #a2a2a2;
+  background-color: #e6e6e6;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
