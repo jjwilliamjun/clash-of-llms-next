@@ -201,7 +201,7 @@ export default {
       termination_reason: null,
       victor: null,
       cors_errors: false,
-      //penalty_applied: false
+      //penalty_applied: false,
     };
   },
   mounted() {
