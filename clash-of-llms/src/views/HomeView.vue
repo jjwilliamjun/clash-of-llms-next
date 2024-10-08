@@ -21,6 +21,7 @@
       <ParameterInputForm v-if="inputOption === 'manual'" />
       <FileUploadForm v-else />
     </div>
+    <br>
   </div>
 </template>
 
