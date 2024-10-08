@@ -234,10 +234,14 @@ export default {
     async submitGameStyle() {
       const path = "http://127.0.0.1:5000/set_gameplay";
       try {
+
+        // Check if topic is null or empty and set to 'random' if true
+        const selected_topic = this.topic && this.topic.trim() !== "" ? this.topic : "random";
+
         // Send selected option to backend
         const response = await axios.post(path, {
           play_option: this.play_option,
-          topic: this.topic,
+          topic: selected_topic
         });
         if (response.status == 200) {
           this.$router.push("/gameplay");
