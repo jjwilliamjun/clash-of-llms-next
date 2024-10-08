@@ -1,7 +1,7 @@
 import os
 import importlib.util
 import torch  # For PyTorch (placeholder)
-# import tensorflow as tf  # For TensorFlow (placeholder)
+import tensorflow as tf  # For TensorFlow (placeholder)
 from llm_api.llm_handler import *
 from class_api.gpt_endpoint import *
 
@@ -43,10 +43,10 @@ def extract_metadata(model_file):
             # PyTorch model case with weights_only=True for security
             checkpoint = torch.load(model_file, map_location='cpu', weights_only=True)
             metadata = checkpoint.get('metadata', {})
-        # elif model_file.endswith(('.h5', '.pb')):
-        #     # TensorFlow model case (assuming metadata is saved in a specific way)
-        #     model = tf.keras.models.load_model(model_file)
-        #     metadata = getattr(model, 'metadata', {})
+        elif model_file.endswith(('.h5', '.pb')):
+            # TensorFlow model case (assuming metadata is saved in a specific way)
+            model = tf.keras.models.load_model(model_file)
+            metadata = getattr(model, 'metadata', {})
         else:
             # Handle other user-defined models or formats (like Python files)
             print(f"Unknown format for extracting metadata: {model_file}")
@@ -68,10 +68,10 @@ def get_metadata(model_file):
             metadata = checkpoint.get('metadata', {})
             if not metadata:
                 print(f"No metadata found in {model_file}, using default metadata.")
-        # elif model_file.endswith(('.h5', '.pb')):
-        #     # TensorFlow model case (assuming metadata is saved in a specific way)
-        #     model = tf.keras.models.load_model(model_file)
-        #     metadata = getattr(model, 'metadata', {})
+        elif model_file.endswith(('.h5', '.pb')):
+            # TensorFlow model case (assuming metadata is saved in a specific way)
+            model = tf.keras.models.load_model(model_file)
+            metadata = getattr(model, 'metadata', {})
             if not metadata:
                 print(f"No metadata found in {model_file}, using default metadata.")
     except Exception as e:
@@ -132,24 +132,24 @@ def serve_pytorch_model(model_file, input_data, metadata):
         print("PyTorch is not installed. Please install it to use PyTorch models.")
         return None
 
-# def serve_tensorflow_model(model_file, input_data, metadata):
-#     """Serve a TensorFlow model with metadata."""
-#     try:
-#         print(f"Serving TensorFlow model from {model_file} with input data: {input_data}")
+def serve_tensorflow_model(model_file, input_data, metadata):
+    """Serve a TensorFlow model with metadata."""
+    try:
+        print(f"Serving TensorFlow model from {model_file} with input data: {input_data}")
 
-#         # Load the TensorFlow model
-#         model = tf.keras.models.load_model(model_file)
+        # Load the TensorFlow model
+        model = tf.keras.models.load_model(model_file)
 
-#         # Convert input_data to a format TensorFlow can handle (future logic will adapt this)
-#         input_tensor = tf.convert_to_tensor(input_data)
+        # Convert input_data to a format TensorFlow can handle (future logic will adapt this)
+        input_tensor = tf.convert_to_tensor(input_data)
 
-#         # Run inference
-#         output = model(input_tensor)
+        # Run inference
+        output = model(input_tensor)
 
-#         return {"output": output.numpy().tolist(), "metadata": metadata}
-#     except ImportError:
-#         print("TensorFlow is not installed. Please install it to use TensorFlow models.")
-#         return None
+        return {"output": output.numpy().tolist(), "metadata": metadata}
+    except ImportError:
+        print("TensorFlow is not installed. Please install it to use TensorFlow models.")
+        return None
 
 
 def run_custom_model(team, input_data):
