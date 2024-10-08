@@ -191,7 +191,7 @@ export default {
         Max_Cost: 20,
         Custom_File: null, // New property to store the uploaded file for the red team
         Penalty: 50,
-        Penalty_Threshold: 50,
+        Penalty_Threshold: 50
 
       },
       green_node_count_option: 'userData',

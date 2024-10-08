@@ -30,7 +30,6 @@ green_team = None
 custom_llms = {}  # Placeholder to store custom LLMs
 game_style = None
 continuous_game = None
-topic = None
 terminating_conditions = None
 # Serve Vue static files from the dist folder
 @app.route('/', defaults={'path': ''})
@@ -326,15 +325,13 @@ def set_gameplay():
         global red_team
         global blue_team
         global green_team
-        global topic
 
         data = request.get_json()
         game_style = data['play_option']
-        topic = data['topic']
 
         if game_style == "continuous":
             global continuous_game
-            continuous_game = Simulation(red_team, blue_team, green_team, topic)
+            continuous_game = Simulation(red_team, blue_team, green_team)
 
         return '', 200
     
@@ -375,7 +372,6 @@ def start_next_round():
     global green_team
     global red_team
     global blue_team
-    global topic
 
     turn_data = GameTurnData()
     turn_counter = turn_counter + 1
@@ -407,7 +403,7 @@ def start_next_round():
     if current_team._model_ID == 'custom':
         current_team._model_ID = 'gpt-3.5-turbo'
 
-    current_team.generate_message(topic)
+    current_team.generate_message()
 
     # Apply penalty to potency of red team message
     # if current_team._team.lower() == 'red':
@@ -495,10 +491,9 @@ def continuous_game():
         global continuous_game
         global game_data
         global turn_counter
-        global topic
         global terminating_conditions
         turn_data = GameTurnData()
-
+        
         if continuous_game._termination_reason is None:
             turn_counter += 1
             victor, termination_reason = continuous_game.next_round(terminating_conditions)
