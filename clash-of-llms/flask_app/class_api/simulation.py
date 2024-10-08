@@ -79,6 +79,8 @@ class Simulation:
     def next_round(self, terminating_conditions):
         """Run Simulation"""
 
+        if self._victor is not None:
+            return self._victor, self._termination_reason
         
         # Energy depletion
         if self._blue_team._energy == 0:
@@ -100,7 +102,7 @@ class Simulation:
         # Agents perform turn actions
         if self._current_team == 'red':
             self._red_team.generate_message(topic=self._topic)
-            self._red_team.apply_penalty()
+            # self._red_team.apply_penalty()
             if(not isinstance(self._red_team._potency,str)):
                 self._green_team.broadcast_message(self._red_team,self._red_team._potency, self._red_team, self._red_team._influence_factor)
                 self._green_team.update_green_network()

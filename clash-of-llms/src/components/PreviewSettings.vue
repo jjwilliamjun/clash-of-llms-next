@@ -114,7 +114,7 @@
 
         <!-- Green Node Settings -->
         <div class="flex-child">
-          <h2 id="greenTeam">Green Network</h2>
+          <h2 id="greenTeam">Population</h2>
           <div id="greenParameters">
             <div class="select-parameter">
               <div v-if="green_team">
