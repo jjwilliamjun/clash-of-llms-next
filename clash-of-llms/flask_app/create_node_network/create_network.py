@@ -93,7 +93,11 @@ def create_node_network(node_attributes, node_connections):
     # Add nodes with their attributes
     for node_id, attributes in node_attributes.items():
         graph.add_node(node_id, **attributes)
-
+        
+    # Ensure all nodes have the `rejectMessaging` attribute
+    for node_id in graph.nodes:
+        if 'rejectMessaging' not in graph.nodes[node_id]:
+            graph.nodes[node_id]['rejectMessaging'] = False
     # Add edges (connections between nodes) with weights
     for node_id, connection in node_connections.items():
         connected_nodes = connection['Connected_Nodes'].split(',')
