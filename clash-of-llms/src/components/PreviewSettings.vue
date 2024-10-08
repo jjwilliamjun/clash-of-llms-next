@@ -93,10 +93,10 @@
                   <span style="font-weight: bold;">Penalise Messages with Potency of: </span>
                   {{ red_team._penalty_threshold }}
                 </p>
-                <p>
+                <!-- <p>
                   <span style="font-weight: bold;">Topic:</span>
                   <input v-model="topic" placeholder="Enter topic" />
-                </p>
+                </p> -->
                 
                 <!-- Metadata for Custom Red Team Model -->
                 <div v-if="red_metadata">
@@ -147,6 +147,13 @@
                     </div>
                 </div>
             </div>
+      </div>
+
+      <div>
+        <p>
+          <span style="font-weight: bold;">Enter a Simulation Topic (Optional): </span>
+          <input v-model="topic" placeholder="Enter topic" />
+        </p>
       </div>
 
       <h3>
