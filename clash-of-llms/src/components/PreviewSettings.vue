@@ -93,6 +93,10 @@
                   <span style="font-weight: bold;">Penalise Messages with Potency of: </span>
                   {{ red_team._penalty_threshold }}
                 </p>
+                <!-- <p>
+                  <span style="font-weight: bold;">Topic:</span>
+                  <input v-model="topic" placeholder="Enter topic" />
+                </p> -->
                 
                 <!-- Metadata for Custom Red Team Model -->
                 <div v-if="red_metadata">
@@ -110,7 +114,7 @@
 
         <!-- Green Node Settings -->
         <div class="flex-child">
-          <h2 id="greenTeam">Green Network</h2>
+          <h2 id="greenTeam">Population</h2>
           <div id="greenParameters">
             <div class="select-parameter">
               <div v-if="green_team">
@@ -143,6 +147,13 @@
                     </div>
                 </div>
             </div>
+      </div>
+
+      <div>
+        <p>
+          <span style="font-weight: bold;">Enter a Simulation Topic (Optional): </span>
+          <input v-model="topic" placeholder="Enter topic" />
+        </p>
       </div>
 
       <h3>
@@ -191,6 +202,7 @@ export default {
       winner: null,
       currentTeam: null,
       play_option: null,
+      topic: null
     };
   },
   mounted() {
@@ -282,24 +294,32 @@ export default {
         });
     },
     async submitGameStyle() {
-        const path = 'http://127.0.0.1:5000/set_gameplay';
-        try {
-            // Send selected option to backend
-            const response = await axios.post(path, { play_option: this.play_option });
-            if (response.status == 200) {
-                this.$router.push('/gameplay');
-            }
-        } catch (error) {
-            this.errors = `Error occurred when getting parameters: ${
-                error.response?.data?.error || error.message || error
-            }`;
-            this.$router.push({
-                name: "error",
-                query: {
-                    errorMessage: this.errors,
-                },
-            });
+      const path = "http://127.0.0.1:5000/set_gameplay";
+      try {
+
+        // Check if topic is null or empty and set to 'random' if true
+        const selected_topic = this.topic && this.topic.trim() !== "" ? this.topic : "random";
+
+        // Send selected option to backend
+        const response = await axios.post(path, {
+          play_option: this.play_option,
+          topic: selected_topic
+        });
+        if (response.status == 200) {
+          this.$router.push("/gameplay");
         }
+      } catch (error) {
+        this.errors = `Error occurred when getting parameters: ${
+          error.response?.data?.error || error.message || error
+        }`;
+
+        this.$router.push({
+          name: "error",
+          query: {
+            errorMessage: this.errors,
+          },
+        });
+      }
     },
   },
 };

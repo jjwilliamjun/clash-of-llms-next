@@ -127,10 +127,9 @@
                   <p><span style="font-weight: bold;">Potency (Penalty Applied): </span> {{ red_team._potency }}</p>
                   <p><span style="font-weight: bold;">Original Potency (Before Penalty): </span> {{ red_team._unpenalised_potency }}</p>
                 </div> -->
-                <div>
+          <div>
           <p><span style="font-weight: bold">Potency: </span> {{ potency }}</p>
-                  <p><span style="font-weight: bold;">Energy Cost: </span> {{ blue_team._msg_cost }}</p>
-                </div>
+        </div>
       </div>
 
       <!-- Winner Announcement -->
@@ -268,7 +267,7 @@ export default {
           if (this.blue_team._model_ID === "custom") {
             this.getTeamMetadata("blue");
           }
-          if (this.continuous) {
+          if (this.continuous && !this.termination_reason) {
             this.startContinuousGame();
             return;
           }
@@ -411,23 +410,15 @@ export default {
       while (this.red_team_turn || this.blue_team_turn) {
         try {
             const response = await axios.get(path);
-                this.red_team_turn = !this.red_team_turn;
-                this.blue_team_turn = !this.blue_team_turn;
-                this.message = response.data.message;
-                console.log(this.message)
-                this.potency = response.data.potency;
-                this.red_team = response.data.red_team;
-                this.blue_team = response.data.blue_team;
-                this.termination_reason = response.data.termination_reason;
-                this.victor = response.data.victor;
-
-          this.red_team_turn = !this.red_team_turn;
-          this.blue_team_turn = !this.blue_team_turn;
-          this.message = response.data.message;
-          this.potency = response.data.potency;
-          this.winner = response.data.victor;
-          this.red_team = response.data.red_team;
-          this.blue_team = response.data.blue_team;
+              this.red_team_turn = !this.red_team_turn;
+              this.blue_team_turn = !this.blue_team_turn;
+              this.message = response.data.message;
+              console.log(this.message)
+              this.potency = response.data.potency;
+              this.red_team = response.data.red_team;
+              this.blue_team = response.data.blue_team;
+              this.termination_reason = response.data.termination_reason;
+              this.victor = response.data.victor;
 
           // Preserve custom model metadata
           if (this.red_team._model_ID === "custom" && this.red_metadata) {
@@ -438,8 +429,8 @@ export default {
           }
 
           // if (!this.red_team_turn && this.red_team._potency !== this.red_team._unpenalised_potency) {
-        //     this.penalty_applied = true;
-        //     console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
+          //     this.penalty_applied = true;
+          //     console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
           // }
             // Increment the round number after each turn
             this.currentRound++;
@@ -457,12 +448,12 @@ export default {
           });
           return;
         }
-            if (this.victor == 'red' || this.victor == 'blue') {
-                return;
-            }
+          if (this.victor == 'red' || this.victor == 'blue') {
+              return;
+          }
                 
-            // Wait 25 seconds before next round - chatgpt query takes time
-            await new Promise(resolve => setTimeout(resolve, 15000));
+          // Wait 25 seconds before next round - chatgpt query takes time
+          await new Promise(resolve => setTimeout(resolve, 15000));
         }
          return;
         }
