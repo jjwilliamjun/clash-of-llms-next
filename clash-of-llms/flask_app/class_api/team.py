@@ -21,13 +21,13 @@ class Team:
         """Increment number of messages sent"""
         self._message_count += 1
     
-    def generate_message(self):
+    def generate_message(self, topic):
         """generate a message with the team's current parameters"""
 
         if self._team.lower() == "blue":
-            self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, self._energy)
+            self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, self._energy, topic)
         else:
-            self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, energy=50)
+            self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, topic, energy=50)
         #GreenNetwork.green_team.broadcast_message(self._potency, self._team, self._influence_factor)
 
     def update_alignment(self, alignment):
@@ -55,6 +55,7 @@ class BlueTeam(Team):
                 self._energy = 0
             else:
                 self._energy -= scaled_energy_cost
+            self._energy = round(self._energy, 2)
     
     #TODO potentially bring out to game  parameters
     def energy_cost(self):
