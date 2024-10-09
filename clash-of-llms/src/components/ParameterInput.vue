@@ -282,6 +282,9 @@ export default {
           await this.uploadLLMFiles();
         }
 
+        this.red_team.Alignment = this.red_alignments;
+        this.blue_team.Alignment = this.blue_alignments;
+
         const data = {
           red_team: {
             ...this.red_team,
