@@ -62,15 +62,15 @@
       "title": "Alignment Explanation",
       "content": [
         {
-          "range": "Alignment ≥ (alignment_max / 2)",
+          "range": "Alignment ≥ 0.5",
           "description": "Represents a Red alignment, indicating the node is inclined towards the Red side."
         },
         {
-          "range": "(alignment_min / 2) < Alignment < (alignment_max / 2)",
+          "range": "-0.5 < Alignment < 0.5",
           "description": "Represents a Neutral alignment, indicating the node does not strongly favor either side."
         },
         {
-          "range": "Alignment ≤ (alignment_min / 2)",
+          "range": "Alignment ≤ -0.5",
           "description": "Represents a Blue alignment, indicating the node is inclined towards the Blue side."
         }
       ]
@@ -97,7 +97,7 @@
       "title": "Tips",
       "content": [
         "Ensure that the 'Node_ID' in this file matches the 'Node' identifiers in the Node Connections file.",
-        "The 'Alignment' values should all be between `alignment_max` and `alignment_min`."
+        "The 'Alignment' values should all be between -1 and 1."
       ]
     }
   },
@@ -140,10 +140,10 @@
     },
     "example": {
       "title": "Example",
-      "tableHeaders": ["Team", "Model ID", "Energy", "Msgs Generated", "Temperature", "Influence Factor", "Max Cost", "Penalty", "Penalty Threshold"],
+      "tableHeaders": ["Team", "Model ID", "Energy", "Msgs Generated", "Temperature", "Influence Factor", "Max Cost", "Penalty", "Penalty Threshold", "Alignment"],
       "tableContent": [
-        ["Red", "gpt-3.5-turbo", "100", "4", "0.9", "0.3", "1", "75", "20"],
-        ["Blue", "custom", "100", "6",	"0.4", "0.8",	"20",	"50",	"50"]
+        ["Red", "gpt-3.5-turbo", "100", "4", "0.9", "0.3", "1", "75", "20", "40"],
+        ["Blue", "custom", "100", "6",	"0.4", "0.8",	"20",	"50",	"50", "40"]
       ]
     },
     "instructions": {
@@ -210,8 +210,8 @@
         ["Energy", "Sets the Blue Agent’s initial energy levels. These energy levels decrease after each turn, based on the energy cost of the message broadcasted. In every round, the Blue Agent generates messages with different potency levels, and each message has an associated energy cost. The Blue Agent’s total energy is reduced by the energy cost of the message sent during that turn. The Red Agent does not have an energy limit and can broadcast messages with unlimited resources."],
         ["Number of Messages Generated Per Turn", "Specifies the number of messages at different potency levels the model generates per turn. Each message will be of a different potency level, ranging from low to high potency. For example, if this parameter is set to 3, the model will generate three messages: one low potency message, one medium potency message, and one high potency message."],
         ["Temperature", "Determines how random or predictable the model’s output should be. A lower temperature will result in more deterministic output whereas higher values like 0.8 will result in more random output."],
-        ["Influence Factor", "determines the strength of an agent’s ability to influence Green Nodes in the population. It dictates how much a broadcasted message from the Red or Blue Agent affects the alignment of Green Nodes. A higher influence factor causes a stronger shift in alignment, while a lower factor results in a weaker shift."],
-        ["Maximum Energy Cost of Messages", "Defines the maximum amount of energy that the Blue Agent must spend to broadcast a single message. This cost is determined by the potency of the message, where more powerful or influential messages consume more energy and therefore have a higher cost."],
+        ["Influence Factor", "Determines the strength of an agent’s ability to influence Green Nodes in the population. It dictates how much a broadcasted message from the Red or Blue Agent affects the alignment of Green Nodes. A higher influence factor causes a stronger shift in alignment, while a lower factor results in a weaker shift."],
+        ["Maximum Energy Cost of Messages", "Defines the maximum amount of energy that the Blue Agent can spend when broadcasting a single message. This cost is determined by the potency of the message, where more powerful or influential messages consume more energy and therefore have a higher cost."],
         ["Penalty", "Is applied when the potency of the Red Agent's message exceeds the penalty threshold. When applied, a random percentage of nodes will stop being influenced by Red messaging and have their alignment shifted to maximum Blue alignment. These nodes then become less susceptible to influence from their neighbours, further diminishing the Red Agent's overall impact."],
         ["Penalty Threshold (Penalise Messages with Potencies over)", "The penalty threshold is the potency level at which the penalty is triggered. If the potency of a Red Agent's message exceeds this threshold, the penalty is applied, causing a random portion of the population to become resistant to Red messaging and align with the Blue Agent. The threshold ensures that only messages exceeding a certain strength are penalised, allowing less potent messages to be broadcast without significant consequence."]
       ]
