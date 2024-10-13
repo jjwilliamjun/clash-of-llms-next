@@ -4,12 +4,14 @@
     <nav class="sticky-sidebar">
       <ul>
         <li><a href="javascript:void(0)" @click="scrollToSection('project-description')">Project Description</a></li>
-        <li><a href="javascript:void(0)" @click="scrollToSection('importing-files')">Importing Files</a></li>
-        <li><a href="javascript:void(0)" @click="scrollToSection('simulation-settings')">Simulation Settings</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('instructions')">Instructions</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('parameter-info')">Parameter Definitions</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('custom-llm-guide')">Custom LLM Guide</a></li> <!-- New Section -->
-        <li><a href="javascript:void(0)" @click="scrollToSection('node-connections')">Node Connections</a></li>
-        <li><a href="javascript:void(0)" @click="scrollToSection('node-attributes')">Node Attributes</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('simulation-settings')">Importing Simulation Settings</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('node-connections')">Importing Node Connections</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('node-attributes')">Importing Node Attributes</a></li>
         <li><a href="javascript:void(0)" @click="scrollToSection('export-simulation-data')">Export Simulation Data</a></li>
+        <li><a href="javascript:void(0)" @click="scrollToSection('help-section')">Help Section</a></li>
       </ul>
     </nav>
 
@@ -21,78 +23,91 @@
       <!-- Project Description Section -->
       <section id="project-description" v-if="!loading && projectDescription">
         <h1>{{ projectDescription.title }}</h1>
-        <div v-for="section in projectDescription.sections" :key="section.subtitle">
+        <div v-for="section in projectDescription.overview" :key="section.subtitle">
           <h3>{{ section.subtitle }}</h3>
           <p v-html="section.content"></p>
+          <br>
         </div>
       </section>
 
-      <!-- Importing Files Section -->
-      <section id="importing-files" v-if="!loading && guideData.importingFiles">
-        <h2>{{ guideData.importingFiles.title }}</h2>
+      <!-- Project Instructions Section -->
+      <section id="instructions" v-if="!loading && guideData.importingFiles && guideData.parameterInstructions">
+        <h1>{{ guideData.parameterInstructions.title }}</h1>
+        <p>{{ guideData.parameterInstructions.overview }}</p>
+
+        <h3>{{ guideData.parameterInstructions.defaultTitle }}</h3>
+        <ol>
+          <li v-for="step in guideData.parameterInstructions.defaultSteps" :key="step">{{ step }}</li>
+        </ol>
+
+        <h3>{{ guideData.parameterInstructions.uiTitle }}</h3>
+        <ol>
+          <li v-for="step in guideData.parameterInstructions.uiSteps" :key="step">{{ step }}</li>
+        </ol>
+        <p>For an explanation of the parameters, please see: 
+          <a href="javascript:void(0)" @click="scrollToSection('parameter-info')">Parameter Definitions</a>
+        </p>
+
+        <h3>{{ guideData.importingFiles.title }}</h3>
         <ol>
           <li v-for="step in guideData.importingFiles.steps" :key="step">{{ step }}</li>
         </ol>
+        <p>For information on how to format and structure these excel files, please see: 
+          <a href="javascript:void(0)" @click="scrollToSection('simulation-settings')">Simulation Settings</a>, 
+          <a href="javascript:void(0)" @click="scrollToSection('node-attributes')">Node Attributes</a> and
+          <a href="javascript:void(0)" @click="scrollToSection('node-connections')">Node Connections</a>, 
+        </p>
       </section>
 
-      <!-- Simulation Settings Section -->
-      <section id="simulation-settings" v-if="!loading && guideData.simulationSettings">
-        <h1>{{ guideData.simulationSettings.title }}</h1>
-        <h3>{{ guideData.simulationSettings.overview.title }}</h3>
-        <p>{{ guideData.simulationSettings.overview.content }}</p>
+      <!-- Parameter Definitions Section -->
+      <section id="parameter-info" v-if="!loading && guideData.parameterInfo">
+        <h1>{{ guideData.parameterInfo.title }}</h1>
 
-        <!-- Simulation Settings Structure Table -->
-        <h3>{{ guideData.simulationSettings.structure.title }}</h3>
+        <!-- Simulation Setting Parameter Definitions -->
+        <h3>{{ guideData.parameterInfo.settings.title }}</h3>
         <table>
           <thead>
             <tr>
-              <th v-for="header in guideData.simulationSettings.structure.tableHeaders" :key="header">{{ header }}</th>
+              <th v-for="header in guideData.parameterInfo.settings.tableHeaders" :key="header">{{ header }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="row in guideData.simulationSettings.structure.tableContent" :key="row[0]">
+            <tr v-for="row in guideData.parameterInfo.settings.tableContent" :key="row[0]">
+              <td v-for="cell in row" :key="cell">{{ cell }}</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <!-- Green Node Network Parameter Definitions -->
+        <h3>{{ guideData.parameterInfo.greenSettings.title }}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th v-for="header in guideData.parameterInfo.greenSettings.tableHeaders" :key="header">{{ header }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in guideData.parameterInfo.greenSettings.tableContent" :key="row[0]">
               <td v-for="cell in row" :key="cell">{{ cell }}</td>
             </tr>
           </tbody>
         </table>
 
-        <!-- Energy Explanation -->
-        <h3>{{ guideData.simulationSettings.energyExplanation.title }}</h3>
-        <p>{{ guideData.simulationSettings.energyExplanation.content }}</p>
-
-        <!-- Msgs Generated Explanation -->
-        <h3>{{ guideData.simulationSettings.msgsGeneratedExplanation.title }}</h3>
-        <p>{{ guideData.simulationSettings.msgsGeneratedExplanation.content }}</p>
-
-        <!-- Temperature Explanation -->
-        <h3>{{ guideData.simulationSettings.temperatureExplanation.title }}</h3>
-        <p>{{ guideData.simulationSettings.temperatureExplanation.content }}</p>
-
-        <!-- Simulation Settings Example Table -->
-        <h3>{{ guideData.simulationSettings.example.title }}</h3>
+        <!-- Termination Conditions Parameter Definitions -->
+        <h3>{{ guideData.parameterInfo.terminationConditions.title }}</h3>
         <table>
           <thead>
             <tr>
-              <th v-for="header in guideData.simulationSettings.example.tableHeaders" :key="header">{{ header }}</th>
+              <th v-for="header in guideData.parameterInfo.terminationConditions.tableHeaders" :key="header">{{ header }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="row in guideData.simulationSettings.example.tableContent" :key="row[0]">
+            <tr v-for="row in guideData.parameterInfo.terminationConditions.tableContent" :key="row[0]">
               <td v-for="cell in row" :key="cell">{{ cell }}</td>
             </tr>
           </tbody>
         </table>
 
-        <!-- Instructions -->
-        <h3>{{ guideData.simulationSettings.instructions.title }}</h3>
-        <ul>
-          <li v-for="instruction in guideData.simulationSettings.instructions.content" :key="instruction">{{ instruction }}</li>
-        </ul>
-        <!-- Download Simulation Settings Example -->
-        <div class="download-section">
-          <h3>Download Example File</h3>
-          <a href="/documents/SimulationSettings.xlsx" download="SimulationSettings.xlsx">SimulationSettings.xlsx</a>
-        </div>
       </section>
       
       <!-- Custom LLM Guide Section -->
@@ -120,7 +135,104 @@
           <a href="/documents/Custom_LLM.md" download="Custom_LLM.md">Custom_LLM.md</a>
           <a href="/documents/simple_pytorch_model.pt" download="simple_pytorch_model.pt">simple_pytorch_model.pt</a>
         </div>
-      </section>      
+      </section>  
+      
+      <!-- Simulation Settings Section -->
+      <section id="simulation-settings" v-if="!loading && guideData.simulationSettings">
+        <h1>{{ guideData.simulationSettings.title }}</h1>
+        <h3>{{ guideData.simulationSettings.overview.title }}</h3>
+        <p>{{ guideData.simulationSettings.overview.content }}</p>
+
+        <!-- Simulation Settings Structure Table For Agents -->
+        <h3>{{ guideData.simulationSettings.structure.title }}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th v-for="header in guideData.simulationSettings.structure.tableHeaders" :key="header">{{ header }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in guideData.simulationSettings.structure.tableContent" :key="row[0]">
+              <td v-for="cell in row" :key="cell">{{ cell }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Simulation Settings Structure Table For Custom Termination Conditions -->
+        <h3>{{ guideData.simulationSettings.customEndConditions.structure.title }}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th v-for="header in guideData.simulationSettings.customEndConditions.structure.tableHeaders" :key="header">{{ header }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in guideData.simulationSettings.customEndConditions.structure.tableContent" :key="row[0]">
+              <td v-for="cell in row" :key="cell">{{ cell }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Energy Explanation -->
+        <!-- <h3>{{ guideData.simulationSettings.energyExplanation.title }}</h3>
+        <p>{{ guideData.simulationSettings.energyExplanation.content }}</p> -->
+
+        <!-- Msgs Generated Explanation -->
+        <!-- <h3>{{ guideData.simulationSettings.msgsGeneratedExplanation.title }}</h3>
+        <p>{{ guideData.simulationSettings.msgsGeneratedExplanation.content }}</p> -->
+
+        <!-- Temperature Explanation -->
+        <!-- <h3>{{ guideData.simulationSettings.temperatureExplanation.title }}</h3>
+        <p>{{ guideData.simulationSettings.temperatureExplanation.content }}</p> -->
+
+        <!-- Penalty Explanation -->
+        <!-- <h3>{{ guideData.simulationSettings.penaltyExplaination.title }}</h3>
+        <p>{{ guideData.simulationSettings.penaltyExplaination.content }}</p> -->
+
+        <!-- Simulation Settings Example Table For Agents-->
+        <h3>{{ guideData.simulationSettings.example.title }}</h3>
+        <span id="example-settings">
+          <table>
+            <thead>
+              <tr>
+                <th v-for="header in guideData.simulationSettings.example.tableHeaders" :key="header">{{ header }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in guideData.simulationSettings.example.tableContent" :key="row[0]">
+                <td v-for="cell in row" :key="cell">{{ cell }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </span>
+        
+        <!-- Simulation Settings Example Table For Agents-->
+        <span>
+          <table>
+            <thead>
+              <tr>
+                <th v-for="header in guideData.simulationSettings.customEndConditions.example.tableHeaders" :key="header">{{ header }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in guideData.simulationSettings.customEndConditions.example.tableContent" :key="row[0]">
+                <td v-for="cell in row" :key="cell">{{ cell }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </span>
+
+        <!-- Instructions -->
+        <h3>{{ guideData.simulationSettings.instructions.title }}</h3>
+        <ol>
+          <li v-for="instruction in guideData.simulationSettings.instructions.content" :key="instruction">{{ instruction }}</li>
+        </ol>
+        <!-- Download Simulation Settings Example -->
+        <div class="download-section">
+          <h3>Download Example File</h3>
+          <a href="/documents/SimulationSettings.xlsx" download="SimulationSettings.xlsx">SimulationSettings.xlsx</a>
+        </div>
+      </section>
 
       <!-- Node Connections Section -->
       <section id="node-connections" v-if="!loading && guideData.nodeConnections">
@@ -160,9 +272,9 @@
 
         <!-- Instructions -->
         <h3>{{ guideData.nodeConnections.instructions.title }}</h3>
-        <ul>
+        <ol>
           <li v-for="instruction in guideData.nodeConnections.instructions.content" :key="instruction">{{ instruction }}</li>
-        </ul>
+        </ol>
 
         <!-- Tips -->
         <h3>{{ guideData.nodeConnections.tips.title }}</h3>
@@ -213,9 +325,9 @@
 
         <!-- Tips -->
         <h3>{{ guideData.nodeAttributes.tips.title }}</h3>
-        <ul>
+        <ol>
           <li v-for="tip in guideData.nodeAttributes.tips.content" :key="tip">{{ tip }}</li>
-        </ul>
+        </ol>
 
         <!-- Download Node Attributes Example -->
         <div class="download-section">
@@ -262,6 +374,18 @@
             </tbody>
           </table>
         </div>
+      </section>
+
+      <!-- Help Section -->
+      <section id="help-section" v-if="!loading && guideData.helpSection">
+        <h1>{{ guideData.helpSection.title }}</h1>
+        <p v-for="solution, errors in guideData.helpSection.errors" :key="errors">
+          <span>{{ errors }}</span>
+          <br>
+          <ul>
+            <li> {{ solution }}</li>
+          </ul>
+        </p>
       </section>
     </div>
   </div>
@@ -622,6 +746,42 @@ html {
   display: block; /* Makes sure each element starts on a new line */
   margin: 0; /* Remove any default margin */
   text-align: left; /* Aligns text to the left */
+}
+
+#example-settings table th:first-child, #example-settings table td:first-child {
+  width: 8%; /* Team */
+}
+
+#example-settings table th:nth-child(2), #example-settings table td:nth-child(2) {
+  width: 12%;  /* Model ID */
+}
+
+#example-settings table th:nth-child(3), #example-settings table td:nth-child(3) {
+  width: 8%;   /* Energy */
+}
+
+#example-settings table th:nth-child(4), #example-settings table td:nth-child(4) {
+  width: 12%;  /* Msgs Generated */
+}
+
+#example-settings table th:nth-child(5), #example-settings table td:nth-child(5) {
+  width: 12%;  /* Temp */
+}
+
+#example-settings table th:nth-child(6), #example-settings table td:nth-child(6) {
+  width: 10%;  /* Influence factor */
+}
+
+#example-settings table th:nth-child(7), #example-settings table td:nth-child(7) {
+  width: 8%;  /* Max Cost */
+}
+
+#example-settings table th:nth-child(8), #example-settings table td:nth-child(8) {
+  width: 10%;  /* Penalty */
+}
+
+#example-settings table th:nth-child(9), #example-settings table td:nth-child(9) {
+  width: 10%;  /* Penalty Threshold */
 }
 
 
