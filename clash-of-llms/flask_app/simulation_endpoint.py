@@ -437,6 +437,7 @@ def start_next_round():
     red_team.update_alignment(round(green_team.red_alignment(), 2))
     blue_team.update_alignment(round(green_team.blue_alignment(), 2))
     print(f'Current team has alignment {current_team._alignment}%')
+
     # Winning by majority support
     if red_team._alignment >= terminating_conditions._alignment:
         victor = red_team._team

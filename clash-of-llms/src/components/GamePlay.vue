@@ -41,7 +41,7 @@
                 {{ blue_team._message_count }}
               </p>
               <p>
-                <span style="font-weight: bold">Temperature</span>
+                <span style="font-weight: bold">Temperature: </span>
                 {{ blue_team._temperature }}
               </p>
             </div>
@@ -91,7 +91,7 @@
                 {{ red_team._message_count }}
               </p>
               <p>
-                <span style="font-weight: bold">Temperature</span>
+                <span style="font-weight: bold">Temperature: </span>
                 {{ red_team._temperature }}
               </p>
             </div>
@@ -137,7 +137,7 @@
         <div v-if="termination_reason" class="popup">
           <div class="popup-inner">
             <div>
-              <h1 v-if="victor "
+              <!-- <h1 v-if="victor "
                 :id="
                   victor.toLowerCase() === 'red'
                     ? 'redTeam'
@@ -148,7 +148,9 @@
                 class="font-bold mb-100"
               >
                 Winner: {{ victor }}
-              </h1>
+              </h1> -->
+              <h1 v-if="victor.toLowerCase() == 'red'" id="redTeam" class="font-bold mb-100">Red Agent Wins!</h1>
+              <h1 v-else-if="victor.toLowerCase() == 'blue'" id="blueTeam" class="font-bold mb-100">Blue Agent Wins!</h1>
               <h3 v-if="termination_reason" style="text-align: left;">End reason: {{ termination_reason }}</h3>
             </div>
             <div class="button-group">
