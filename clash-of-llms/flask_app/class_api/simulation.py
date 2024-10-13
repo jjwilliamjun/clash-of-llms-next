@@ -89,12 +89,12 @@ class Simulation:
             return self._victor, self._termination_reason
 
         # Population majority
-        if self._red_team._alignment >= terminating_conditions._alignment or self._blue_team._alignment < 1:
+        if self._red_team._alignment >= terminating_conditions._alignment:
             self._victor = 'red'
             self._termination_reason = "Majority support for red team"
             return self._victor, self._termination_reason
         
-        elif self._blue_team._alignment >= terminating_conditions._alignment or self._blue_team._alignment < 1:
+        elif self._blue_team._alignment >= terminating_conditions._alignment:
             self._victor = "blue"
             self._termination_reason = "Majority support for blue team"
             return self._victor, self._termination_reason

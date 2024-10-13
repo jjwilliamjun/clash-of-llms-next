@@ -200,7 +200,8 @@ export default {
       termination_reason: null,
       victor: null,
       cors_errors: false,
-      //penalty_applied: false
+      //penalty_applied: false,
+      terminated: false
     };
   },
   mounted() {
@@ -256,9 +257,8 @@ export default {
 
           this.red_team = response.data[0];
           this.blue_team = response.data[1];
-          this.game_style = response.data[3];
+          this.game_style = response.data[3].game_style;
           this.termination_conditions = response.data[4];
-          this.continuous = this.game_style == "continuous";
 
           // Only fetch metadata if custom models are used
           if (this.red_team._model_ID === "custom") {
@@ -267,8 +267,10 @@ export default {
           if (this.blue_team._model_ID === "custom") {
             this.getTeamMetadata("blue");
           }
-          if (this.continuous && !this.termination_reason) {
+
+          if (this.game_style == "continuous" && !this.termination_reason) {
             this.startContinuousGame();
+            console.log("starting continuous game");
             return;
           }
         })
@@ -367,14 +369,13 @@ export default {
 
           this.red_team = response.data[0];
           this.blue_team = response.data[1];
-          this.game_style = response.data[3];
+          this.game_style = response.data[3].game_style;
           this.termination_conditions = response.data[4];
-          this.continuous = this.game_style == "continuous";
 
-          if (this.continuous) {
-            this.startContinuousGame();
-            return;
-          }
+          // if (this.continuous) {
+          //   this.startContinuousGame();
+          //   return;
+          // }
         })
         .catch((error) => {
           console.error(error);
@@ -413,30 +414,36 @@ export default {
               this.red_team_turn = !this.red_team_turn;
               this.blue_team_turn = !this.blue_team_turn;
               this.message = response.data.message;
-              console.log(this.message)
               this.potency = response.data.potency;
               this.red_team = response.data.red_team;
               this.blue_team = response.data.blue_team;
               this.termination_reason = response.data.termination_reason;
               this.victor = response.data.victor;
 
-          // Preserve custom model metadata
-          if (this.red_team._model_ID === "custom" && this.red_metadata) {
-            this.red_team._model_ID = this.red_metadata.model_ID;
-          }
-          if (this.blue_team._model_ID === "custom" && this.blue_metadata) {
-            this.blue_team._model_ID = this.blue_metadata.model_ID;
-          }
+              // Preserve custom model metadata
+              if (this.red_team._model_ID === "custom" && this.red_metadata) {
+                this.red_team._model_ID = this.red_metadata.model_ID;
+              }
+              if (this.blue_team._model_ID === "custom" && this.blue_metadata) {
+                this.blue_team._model_ID = this.blue_metadata.model_ID;
+              }
 
-          // if (!this.red_team_turn && this.red_team._potency !== this.red_team._unpenalised_potency) {
-          //     this.penalty_applied = true;
-          //     console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
-          // }
-            // Increment the round number after each turn
-            this.currentRound++;
+              // if (!this.red_team_turn && this.red_team._potency !== this.red_team._unpenalised_potency) {
+              //     this.penalty_applied = true;
+              //     console.log("Penalty applied: ", this.red_team._potency, this.red_team._unpenalised_potency);
+              // }
+              // Increment the round number after each turn
+              this.currentRound++;
 
-            // Fetch and draw the network for the new round
-            this.fetchAndDrawNetwork(this.currentRound);
+              // Fetch and draw the network for the new round
+              this.fetchAndDrawNetwork(this.currentRound);
+              if (this.victor == 'red' || this.victor == 'blue' || this.termination_reason) {
+                console.log("Cont. game (in loop), victor is ", this.victor);
+                this.game_style = null;
+                this.blue_team_turn = false;
+                this.red_team_turn = false;
+                break;
+              }
         } catch (error) {
           console.error(error);
           this.errors = `Error occurred when running continuous simulation: ${error.response?.data?.error || error.message || error}`;
@@ -448,16 +455,16 @@ export default {
           });
           return;
         }
-          if (this.victor == 'red' || this.victor == 'blue') {
-              return;
-          }
-                
-          // Wait 25 seconds before next round - chatgpt query takes time
-          await new Promise(resolve => setTimeout(resolve, 15000));
+        if (this.victor == 'red' || this.victor == 'blue' || this.termination_reason) {
+          break;
+        } else {
+          // Wait 10 seconds before next round - chatgpt query takes time
+          await new Promise(resolve => setTimeout(resolve, 10000));
         }
-         return;
-        }
+      }
+      return;
     }
+  }
 };
 </script>
 

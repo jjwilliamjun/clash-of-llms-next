@@ -250,12 +250,17 @@ def get_parameters():
     global red_team
     global green_team
     global terminating_conditions
+    global game_style
 
     green_attributes = {
         "size": green_team._size,
         "blue_alignment": green_team._blue_alignment,
         "red_alignment": green_team._red_alignment,
         "neutral": green_team._size - green_team._blue_alignment - green_team._red_alignment
+    }
+
+    game_mode = {
+        "game_style": game_style
     }
     
     conditions = {
@@ -270,7 +275,7 @@ def get_parameters():
     if blue_team is None or red_team is None: 
         return jsonify({"error": "Parameters not found"}), 404
 
-    output = [red_team.__dict__, blue_team.__dict__, green_attributes, game_style, conditions]
+    output = [red_team.__dict__, blue_team.__dict__, green_attributes, game_mode, conditions]
     
     return jsonify(output), 200
 
@@ -536,8 +541,12 @@ def continuous_game():
             continuous_game.switch_teams()
             
             return jsonify(msg_content), 200
+        else:
+            print("Game terminated")
+            return jsonify(''), 200
         
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 500
     
 # Route for cleanup script
