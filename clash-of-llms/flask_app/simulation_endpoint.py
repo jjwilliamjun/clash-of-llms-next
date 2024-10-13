@@ -412,8 +412,12 @@ def start_next_round():
     original_model_id = current_team._model_ID
     if current_team._model_ID == 'custom':
         current_team._model_ID = 'gpt-3.5-turbo'
+    
+    previous_msg = ""
+    if red_team._message is not None and team_colour == 'blue':
+        previous_msg = red_team._message
 
-    current_team.generate_message(topic)
+    current_team.generate_message(topic, previous_msg)
 
     # Apply penalty to potency of red team message
     # if current_team._team.lower() == 'red':
