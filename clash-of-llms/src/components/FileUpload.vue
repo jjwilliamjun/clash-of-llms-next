@@ -18,7 +18,7 @@
       <label for="connectionsUpload">Node Connections:</label>
       <input type="file" id="connectionsUpload" class="hidden-input" @change="handleConnectionsUpload" accept=".xlsx, .xls" />
       <button type="button" class="custom-upload-btn-grey" @click="triggerFileUpload('connectionsUpload')">Choose File</button>
-      <span id="file-upload-name">{{ connectionsFileName ? connectionsFileName : 'No file chosen' }}</span>
+      <span class="file-upload-name">{{ connectionsFileName ? connectionsFileName : 'No file chosen' }}</span>
     </div>
     
     <button type="submit" class="submit-button">Upload Files</button>

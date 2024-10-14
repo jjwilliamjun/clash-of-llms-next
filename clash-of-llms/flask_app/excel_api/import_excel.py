@@ -16,7 +16,7 @@ def validate_settings(team: dict) -> list:
     _temp = float(team["Temperature"])
     _influence = float(team["Influence_Factor"])
     _max_cost = int(team["Max_Cost"])
-    _penalty = int(team["Penalty"])
+    # _penalty = int(team["Penalty"])
     _penalty_threshold = int(team["Penalty_Threshold"])
 
     if _model_id not in models:
@@ -31,8 +31,8 @@ def validate_settings(team: dict) -> list:
         errors.append("invalid influence factor value: for " + team["Team"] + " agent")
     if _max_cost < 0 or _max_cost > 100:
         errors.append("invalid max cost value for " + team["Team"] + " agent")
-    if _penalty < 0 or _penalty > 100:
-        errors.append("invalid penalty value: for " + team["Team"] + " agent")
+    # if _penalty < 0 or _penalty > 100:
+    #     errors.append("invalid penalty value: for " + team["Team"] + " agent")
     if _penalty_threshold < 0 or _penalty_threshold > 100:
         errors.append("invalid penalty threshold value: for " + team["Team"] + " agent")
     
@@ -71,6 +71,10 @@ def import_settings(xls_path) -> tuple:
     # To be updated once network files are read
     red_team["Alignment"] = 0
     blue_team["Alignment"] = 0
+
+    # Placeholder
+    red_team["Penalty"] = 50
+    blue_team["Penalty"] = 50
 
     input_errors = ["errors"]
     input_errors.extend(validate_settings(red_team))

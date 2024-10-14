@@ -194,7 +194,7 @@ export default {
         Penalty_Threshold: 50
 
       },
-      green_node_count_option: 'userData',
+      green_node_count_option: 'random',
       green_nodes_count: 30,
       red_alignments: 50,
       blue_alignments: 50,

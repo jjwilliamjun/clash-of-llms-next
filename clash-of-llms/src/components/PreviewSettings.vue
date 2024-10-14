@@ -73,10 +73,10 @@
                   <span style="font-weight: bold">Alignment: </span>
                   {{ red_team._alignment }} %
                 </p>
-                <p>
+                <!-- <p>
                   <span style="font-weight: bold;">Penalty: </span> 
                   {{ red_team._penalty }} %
-                </p>
+                </p> -->
                 <p>
                   <span style="font-weight: bold">Influence Factor: </span>
                   {{ red_team._influence_factor }}
@@ -149,12 +149,11 @@
             </div>
       </div>
 
-      <div>
-        <p>
-          <span style="font-weight: bold;">Enter a Simulation Topic (Optional): </span>
-          <input v-model="topic" placeholder="Enter topic" />
-        </p>
+      <div class="topic-entry-container">
+        <label for="topic" class="topic-label">Enter a Simulation Topic (Optional):</label>
+        <input v-model="topic" id="topic" class="topic-input" placeholder="Enter topic" />
       </div>
+
 
       <h3>
         Once confirmed these settings are correct, select how you want to play and

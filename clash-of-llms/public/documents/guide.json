@@ -112,13 +112,12 @@
       "tableHeaders": ["Column", "Description", "Default"],
       "tableContent": [
         ["Team", "The colour identifier of the team that the settings are for. The first row must specifiy settings for the red agent, and the second row must specify settings for the blue agent. There must only be one 'Red' agent and one 'Blue' agent.", "Can only be 'Red' or 'Blue'."],
-        ["Model_ID", "The unique identifier for each LLM connected to the simulation. If using a custom LLM, enter 'custom'.", "gpt-3.5 turbo"],
+        ["Model_ID", "The unique identifier for each LLM connected to the simulation. If using a custom LLM, enter 'custom'. Currently supports “gpt-4o-mini”, “gpt-4o”, “gpt-4o-turbo”, “gpt-3.5-turbo” and “custom”.", "gpt-3.5 turbo"],
         ["Energy", "A whole number between 1 and 100 (inclusive) representing the initial energy levels of the blue team only (any input for the red team is discarded as the red team has infinite energy). This value depletes after every turn the blue team takes, depending on the message’s energy cost.", "100"],
         ["Msgs_Generated", "A whole number between 1 and 10 (inclusive) which dictates the number of messages at different potency levels the model generates per turn.", "5"],
         ["Temperature", "A value between 0 and 1 that determines how random or predictable the model’s output should be. A lower temperature will result in more deterministic output whereas higher values like 0.8 will result in more random output.", "0.5"],
         ["Influence_Factor", "A value between 0 and 1 that represents the influence the team has over other nodes in the simulation.", "0.5"],
         ["Max_Cost", "An integer value that represents the maximum cost a message can have.", "5"],
-        ["Penalty", "A percentage value (between 0 to 100 inclusive) applied to the potency of the message when it exceeds a certain threshold.", "50"],
         ["Penalty_Threshold", "A value between 0 to 100 (inclusive) which determines when the penalty is applied to the potency of a red team message. If the potency of a message exceeds this threshold, a penalty (set as a percentage) is applied to reduce the potency.", "50"]
       ]
     },
@@ -140,10 +139,10 @@
     },
     "example": {
       "title": "Example",
-      "tableHeaders": ["Team", "Model ID", "Energy", "Msgs Generated", "Temperature", "Influence Factor", "Max Cost", "Penalty", "Penalty Threshold"],
+      "tableHeaders": ["Team", "Model ID", "Energy", "Msgs Generated", "Temperature", "Influence Factor", "Max Cost", "Penalty Threshold"],
       "tableContent": [
-        ["Red", "gpt-3.5-turbo", "100", "4", "0.9", "0.3", "1", "75", "20"],
-        ["Blue", "custom", "100", "6",	"0.4", "0.8",	"20",	"50",	"50"]
+        ["Red", "gpt-3.5-turbo", "100", "4", "0.9", "0.3", "1", "20"],
+        ["Blue", "custom", "100", "6",	"0.4", "0.8",	"20",	"50"]
       ]
     },
     "instructions": {
@@ -160,7 +159,7 @@
         "title": "File Structure: Settings for Custom Termination Conditions",
         "tableHeaders": ["Column", "Description", "Default"],
         "tableContent": [
-          ["Population Alignment", "A percentage value between 0 to 100 (inclusive) which defines the population percentage required for either the red or blue team to win. Once a team reaches this percentage of alignment, the simulation ends.", "80."],
+          ["Population Alignment", "A percentage value between 0 to 100 (inclusive) which defines the population percentage required for either the red or blue team to win. Once a team reaches this percentage of alignment, the simulation ends.", "80"],
           ["Round Number", "A whole number between 0 and 50 (inclusive) which sets a limit on the maximum number of rounds the simulation can run for. The simulation will terminate once this number of rounds is reached, regardless of the population alignments.", "20"]
         ]
       },
@@ -212,8 +211,7 @@
         ["Temperature", "Determines how random or predictable the model’s output should be. A lower temperature will result in more deterministic output whereas higher values like 0.8 will result in more random output."],
         ["Influence Factor", "Determines the strength of an agent’s ability to influence Green Nodes in the population. It dictates how much a broadcasted message from the Red or Blue Agent affects the alignment of Green Nodes. A higher influence factor causes a stronger shift in alignment, while a lower factor results in a weaker shift."],
         ["Maximum Energy Cost of Messages", "Defines the maximum amount of energy that the Blue Agent can spend when broadcasting a single message. This cost is determined by the potency of the message, where more powerful or influential messages consume more energy and therefore have a higher cost."],
-        ["Penalty", "Is applied when the potency of the Red Agent's message exceeds the penalty threshold. When applied, a random percentage of nodes will stop being influenced by Red messaging and have their alignment shifted to maximum Blue alignment. These nodes then become less susceptible to influence from their neighbours, further diminishing the Red Agent's overall impact."],
-        ["Penalty Threshold (Penalise Messages with Potencies over)", "The penalty threshold is the potency level at which the penalty is triggered. If the potency of a Red Agent's message exceeds this threshold, the penalty is applied, causing a random portion of the population to become resistant to Red messaging and align with the Blue Agent. The threshold ensures that only messages exceeding a certain strength are penalised, allowing less potent messages to be broadcast without significant consequence."]
+        ["Penalty Threshold (Penalise Messages with Potencies over)", "The penalty threshold is the potency level at which the penalty is triggered. If the potency of a Red Agent's message exceeds this threshold, the penalty is applied, causing a random portion of the population to become resistant to Red messaging and align with the Blue Agent. These nodes then become less susceptible to influence from their neighbours, further diminishing the Red Agent's overall impact. The threshold ensures that only messages exceeding a certain strength are penalised, allowing less potent messages to be broadcast without significant consequence."]
       ]
     },
     "greenSettings": {

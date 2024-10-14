@@ -77,8 +77,8 @@
                 {{ red_team._alignment }} %
               </p>
               <p>
-                <span style="font-weight: bold;">Penalty: </span> 
-                {{ red_team._penalty }} %
+                <span style="font-weight: bold;">Penalty Threshold: </span> 
+                {{ red_team._penalty_threshold }} %
               </p>
               <p>
                 <span style="font-weight: bold">Influence Factor: </span>
