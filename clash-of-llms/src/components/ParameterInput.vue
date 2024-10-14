@@ -75,11 +75,11 @@
             </div>
 
             <!-- Existing Parameters -->
-            <div class="select-parameter">
+            <!-- <div class="select-parameter">
               <label for="red_penalty">Penalty: {{ red_team.Penalty }} %</label>
               <br>
               <input type="range" id="red_penalty" class="accent" max="100" value="50" step="1" v-model="red_team.Penalty">
-            </div>
+            </div> -->
             <div class="select-parameter">
               <label for="red_msgs">Number of Messages Generated per Turn: {{ red_team.Msgs_Generated }}</label>
               <br>
