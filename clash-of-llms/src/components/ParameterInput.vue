@@ -213,8 +213,21 @@ export default {
     }
   },
   methods: {
-    updateAlignments() {
-      this.green_alignments = Math.max(0, 100 - this.red_alignments - this.blue_alignments);
+    updateAlignments(changed) {
+      const total = this.red_alignments + this.blue_alignments + this.green_alignments;
+
+      if (total > 100) {
+        this.green_alignments = Math.max(0, 100 - this.red_alignments - this.blue_alignments);
+        const total_after = this.red_alignments + this.blue_alignments + this.green_alignments;
+        
+        if (total_after > 100) {
+          if (changed === 'red') {
+            this.blue_alignments = Math.max(0, 100 - this.red_alignments - this.green_alignments);
+          } else if (changed === 'blue') {
+            this.red_alignments = Math.max(0, 100 - this.blue_alignments - this.green_alignments);
+          }
+        }
+      }
     },
     triggerFileUpload(inputId) {
       document.getElementById(inputId).click();
@@ -333,8 +346,12 @@ export default {
     }
   },
   watch: {
-    red_alignments: 'updateAlignments',
-    blue_alignments: 'updateAlignments',
+    red_alignments() {
+      this.updateAlignments('red');
+    },
+    blue_alignments() {
+      this.updateAlignments('blue');
+    },
   }
 };
 </script>
