@@ -140,10 +140,10 @@
     },
     "example": {
       "title": "Example",
-      "tableHeaders": ["Team", "Model ID", "Energy", "Msgs Generated", "Temperature", "Influence Factor", "Max Cost", "Penalty", "Penalty Threshold", "Alignment"],
+      "tableHeaders": ["Team", "Model ID", "Energy", "Msgs Generated", "Temperature", "Influence Factor", "Max Cost", "Penalty", "Penalty Threshold"],
       "tableContent": [
-        ["Red", "gpt-3.5-turbo", "100", "4", "0.9", "0.3", "1", "75", "20", "40"],
-        ["Blue", "custom", "100", "6",	"0.4", "0.8",	"20",	"50",	"50", "40"]
+        ["Red", "gpt-3.5-turbo", "100", "4", "0.9", "0.3", "1", "75", "20"],
+        ["Blue", "custom", "100", "6",	"0.4", "0.8",	"20",	"50",	"50"]
       ]
     },
     "instructions": {
