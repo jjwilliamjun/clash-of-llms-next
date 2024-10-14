@@ -29,22 +29,22 @@
         "description": "The remaining energy level of the Blue team after sending a message (Note: the Red team has infinite energy)."
       },
       {
-        "columnName": "Increased Alignment",
-        "description": "The percentage of nodes that shifted towards a team's alignment."
+        "columnName": "% of nodes red-aligned",
+        "description": "How many nodes are aligned with the Red Team after the turn is taken"
       },
       {
-        "columnName": "Decreased Alignment",
-        "description": "The percentage of nodes that shifted away from a team's alignment (only applicable for Red team)."
+        "columnName": "% of nodes blue-aligned",
+        "description": "How many nodes are aligned with the Blue Team after the turn is taken"
       }
     ]
   },
   "exampleTable": {
     "title": "Table Structure Example",
     "description": "The following table outlines how the exported Excel file will be structured:",
-    "headers": ["Turn", "Team", "Message Chosen", "Potency", "Energy Level", "Increased Alignment", "Decreased Alignment"],
+    "headers": ["Turn", "Team", "Message Chosen", "Potency", "Energy Level", "% of nodes red-aligned", "% of nodes blue-aligned"],
     "exampleData": [
-      ["1", "Blue", "Message is true", "0.8", "80", "60", ""],
-      ["2", "Red", "Message is false", "0.6", "", "40", "10"]
+      ["1", "Red", "Vaccines are dangerous", "0.8", "80", "40", "30"],
+      ["2", "Blue", "Vaccines saves lives", "0.6", "NA", "20", "45"]
     ]
   },
   "exampleText": {
