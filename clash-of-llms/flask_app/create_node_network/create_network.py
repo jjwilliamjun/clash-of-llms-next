@@ -109,6 +109,11 @@ def create_node_network(node_attributes, node_connections):
     # Convert the graph to node-link data format, which is suitable for saving as JSON
     graph_data = nx.node_link_data(graph)
 
+    # Create round_data directory if it doesn't exist
+    dir_path = os.path.join(os.getcwd(), 'flask_app', 'create_node_network', 'round_data')
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+
     # Save the graph data as `round_0.json`
     json_path = os.path.join(os.getcwd(), 'flask_app', 'create_node_network', 'round_data', 'round_0.json')
     print(f"Saving network to: {json_path}")

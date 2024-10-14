@@ -89,19 +89,19 @@ class Simulation:
             return self._victor, self._termination_reason
 
         # Population majority
-        if self._red_team._alignment >= terminating_conditions._alignment or self._blue_team._alignment < 1:
+        if self._red_team._alignment >= terminating_conditions._alignment:
             self._victor = 'red'
             self._termination_reason = "Majority support for red team"
             return self._victor, self._termination_reason
         
-        elif self._blue_team._alignment >= terminating_conditions._alignment or self._blue_team._alignment < 1:
+        elif self._blue_team._alignment >= terminating_conditions._alignment:
             self._victor = "blue"
             self._termination_reason = "Majority support for blue team"
             return self._victor, self._termination_reason
         
         # Agents perform turn actions
         if self._current_team == 'red':
-            self._red_team.generate_message(topic=self._topic)
+            self._red_team.generate_message(topic=self._topic, previous="")
             # self._red_team.apply_penalty()
             if(not isinstance(self._red_team._potency,str)):
                 self._green_team.broadcast_message(self._red_team,self._red_team._potency, self._red_team, self._red_team._influence_factor)
@@ -109,7 +109,7 @@ class Simulation:
             print("updated")
             
         elif self._current_team == 'blue':
-            self._blue_team.generate_message(topic=self._topic)
+            self._blue_team.generate_message(topic=self._topic, previous=self._red_team._message)
             if(not isinstance(self._blue_team._potency,str)):
                 self._green_team.broadcast_message(self._red_team,self._blue_team._potency, self._blue_team, self._blue_team._influence_factor)
                 self._green_team.update_green_network()

@@ -21,13 +21,13 @@ class Team:
         """Increment number of messages sent"""
         self._message_count += 1
     
-    def generate_message(self, topic):
+    def generate_message(self, topic, previous):
         """generate a message with the team's current parameters"""
 
         if self._team.lower() == "blue":
-            self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, self._energy, topic)
+            self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, self._energy, topic, previous)
         else:
-            self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, topic, energy=50)
+            self._message, self._potency = get_message(self._team, self._model_ID, self._alignment, self._temperature, self._message_count, topic, energy=50, previous_msg="")
         #GreenNetwork.green_team.broadcast_message(self._potency, self._team, self._influence_factor)
 
     def update_alignment(self, alignment):

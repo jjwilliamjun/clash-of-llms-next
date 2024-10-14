@@ -250,12 +250,17 @@ def get_parameters():
     global red_team
     global green_team
     global terminating_conditions
+    global game_style
 
     green_attributes = {
         "size": green_team._size,
         "blue_alignment": green_team._blue_alignment,
         "red_alignment": green_team._red_alignment,
         "neutral": green_team._size - green_team._blue_alignment - green_team._red_alignment
+    }
+
+    game_mode = {
+        "game_style": game_style
     }
     
     conditions = {
@@ -270,7 +275,7 @@ def get_parameters():
     if blue_team is None or red_team is None: 
         return jsonify({"error": "Parameters not found"}), 404
 
-    output = [red_team.__dict__, blue_team.__dict__, green_attributes, game_style, conditions]
+    output = [red_team.__dict__, blue_team.__dict__, green_attributes, game_mode, conditions]
     
     return jsonify(output), 200
 
@@ -407,8 +412,12 @@ def start_next_round():
     original_model_id = current_team._model_ID
     if current_team._model_ID == 'custom':
         current_team._model_ID = 'gpt-3.5-turbo'
+    
+    previous_msg = ""
+    if red_team._message is not None and team_colour == 'blue':
+        previous_msg = red_team._message
 
-    current_team.generate_message(topic)
+    current_team.generate_message(topic, previous_msg)
 
     # Apply penalty to potency of red team message
     # if current_team._team.lower() == 'red':
@@ -432,6 +441,7 @@ def start_next_round():
     red_team.update_alignment(round(green_team.red_alignment(), 2))
     blue_team.update_alignment(round(green_team.blue_alignment(), 2))
     print(f'Current team has alignment {current_team._alignment}%')
+
     # Winning by majority support
     if red_team._alignment >= terminating_conditions._alignment:
         victor = red_team._team
@@ -536,8 +546,12 @@ def continuous_game():
             continuous_game.switch_teams()
             
             return jsonify(msg_content), 200
+        else:
+            print("Game terminated")
+            return jsonify(''), 200
         
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 500
     
 # Route for cleanup script

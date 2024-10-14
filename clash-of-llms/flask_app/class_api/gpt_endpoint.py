@@ -8,7 +8,7 @@ def get_sys_content(_team: str, topic: str):
         return f"You are a foreign agent spreading misinformation on {topic} topic on social media."
     return "You are a government official combatting misinformation"
 
-def get_message(_team: str, model_ID: str, alignment: str, temperature: str, msg_count: str, topic: str, energy: str, use_gpt=True):
+def get_message(_team: str, model_ID: str, alignment: str, temperature: str, msg_count: str, topic: str, energy: str, previous_msg: str, use_gpt=True):
     """Returns message and potency based on team and alignment of population"""
     # Initialize variables with default values
     message = None
@@ -27,7 +27,8 @@ def get_message(_team: str, model_ID: str, alignment: str, temperature: str, msg
     
     if _team.lower() == "blue":
         optional_msg = (f"You are working with an energy constraint. {energy} energy remaining. "
-                        "You lose if your energy runs out.")
+                        f"You lose if your energy runs out. You must try to debunk this message: {previous_msg}. "
+                        "Using the same messages to debunk that is not effective. ")
     
     # Continue querying the LLM until a valid response is returned
     while message is None or potency is None:
