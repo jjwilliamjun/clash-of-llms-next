@@ -1,12 +1,44 @@
 import os
 import importlib.util
-import torch  # For PyTorch (placeholder)
-import tensorflow as tf  # For TensorFlow (placeholder)
 from llm_api.llm_handler import *
 from class_api.gpt_endpoint import *
 
 LLM_FILES_DIRECTORY = os.path.join('flask_app', 'llm_api', 'llm_files')
 os.makedirs(LLM_FILES_DIRECTORY, exist_ok=True)
+
+
+def _torch():
+    """Import PyTorch on demand.
+
+    Serving an uploaded model is optional -- the simulation itself only needs the
+    OpenAI API -- but importing torch and TensorFlow at module scope made several
+    gigabytes of wheels a hard requirement for starting the server at all, and
+    pinned the supported Python version to whatever those two happened to support.
+
+    The callers below already had `except ImportError` handlers; the module-level
+    import was what stopped them ever being reached.
+    """
+    try:
+        import torch
+    except ImportError as exc:
+        raise ImportError(
+            "PyTorch is required to load a .pt/.pth model. Install the optional "
+            "extras with: pip install -r requirements-custom-model.txt"
+        ) from exc
+    return torch
+
+
+def _tensorflow():
+    """Import TensorFlow on demand. See _torch above for why this is deferred."""
+    try:
+        import tensorflow as tf
+    except ImportError as exc:
+        raise ImportError(
+            "TensorFlow is required to load a .h5/.pb model. Install the optional "
+            "extras with: pip install -r requirements-custom-model.txt"
+        ) from exc
+    return tf
+
 
 def load_model(team):
     """Load a custom LLM model for the specified team."""
@@ -41,10 +73,12 @@ def extract_metadata(model_file):
     try:
         if model_file.endswith(('.pt', '.pth')):
             # PyTorch model case with weights_only=True for security
+            torch = _torch()
             checkpoint = torch.load(model_file, map_location='cpu', weights_only=True)
             metadata = checkpoint.get('metadata', {})
         elif model_file.endswith(('.h5', '.pb')):
             # TensorFlow model case (assuming metadata is saved in a specific way)
+            tf = _tensorflow()
             model = tf.keras.models.load_model(model_file)
             metadata = getattr(model, 'metadata', {})
         else:
@@ -64,12 +98,14 @@ def get_metadata(model_file):
     try:
         if model_file.endswith(('.pt', '.pth')):
             # PyTorch model case
+            torch = _torch()
             checkpoint = torch.load(model_file, map_location='cpu')
             metadata = checkpoint.get('metadata', {})
             if not metadata:
                 print(f"No metadata found in {model_file}, using default metadata.")
         elif model_file.endswith(('.h5', '.pb')):
             # TensorFlow model case (assuming metadata is saved in a specific way)
+            tf = _tensorflow()
             model = tf.keras.models.load_model(model_file)
             metadata = getattr(model, 'metadata', {})
             if not metadata:
@@ -116,6 +152,7 @@ def serve_pytorch_model(model_file, input_data, metadata):
         print(f"Serving PyTorch model from {model_file} with input data: {input_data}")
 
         # Load the PyTorch model
+        torch = _torch()
         checkpoint = torch.load(model_file, map_location='cpu')
         model = checkpoint.get('model')
         model.eval()  # Set the model to evaluation mode
@@ -138,6 +175,7 @@ def serve_tensorflow_model(model_file, input_data, metadata):
         print(f"Serving TensorFlow model from {model_file} with input data: {input_data}")
 
         # Load the TensorFlow model
+        tf = _tensorflow()
         model = tf.keras.models.load_model(model_file)
 
         # Convert input_data to a format TensorFlow can handle (future logic will adapt this)

@@ -490,7 +490,11 @@ def start_next_round():
 def create_round_json(round_number, network_graph):
     """Creates a JSON file for the network graph for the given round"""
     # Convert the graph to node-link data format
-    graph_data = nx.node_link_data(network_graph)
+    # edges="links" is not optional. networkx 3.6 changed this key's default from
+    # "links" to "edges" with no deprecation warning, and the frontend reads
+    # networkData.links (src/services/graphDataService.js). Leaving it implicit means
+    # a networkx upgrade silently empties the graph in the browser.
+    graph_data = nx.node_link_data(network_graph, edges="links")
     
     # Define the path to save the JSON file (e.g., round_1.json, round_2.json)
     json_filename = f'round_{round_number}.json'

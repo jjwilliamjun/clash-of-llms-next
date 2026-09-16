@@ -1,0 +1,16 @@
+# Optional: serving an uploaded PyTorch or TensorFlow model instead of the OpenAI API.
+#
+# Install on top of requirements.txt, and only if you intend to use that feature:
+#
+#     pip install -r requirements-custom-model.txt
+#
+# This is several gigabytes. The simulation itself never touches these -- it calls the
+# OpenAI API -- so a normal install does not need them. llm_api/llm_handler.py imports
+# both lazily and raises a pointed error naming this file if one is missing.
+#
+# These two also lag new Python releases, so they are the binding constraint on which
+# interpreter the project supports. Keeping them out of the base install is what lets
+# the rest of the stack stay current.
+
+torch>=2.4
+tensorflow>=2.17
