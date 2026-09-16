@@ -171,17 +171,23 @@ pip install -r requirements-dev.txt
 pytest
 ```
 
-> [!WARNING]
-> **The suite does not currently pass, and fixing it is the next job here.** Seven tests
-> exist, covering network generation, Red team message and potency behaviour, and the core
-> simulation loop. They are stale: `Team.__init__` gained `temperature` and `alignment`
-> parameters and the tests were never updated, so five of them fail with a `TypeError`
-> before asserting anything.
->
-> This went unnoticed because `pytest` used to abort during collection — two test modules
-> share the basename `test_create_network.py` and the default import mode cannot tell them
-> apart — so the failures were never printed. `pytest.ini` fixes collection; the tests
-> themselves still need rewriting against the current constructors.
+25 tests, no network access — the LLM call is mocked, so the suite checks the rules
+rather than message quality.
+
+| Area | Covers |
+| --- | --- |
+| Red team agent | Construction, round counting, alignment updates, and the penalty that turns a node away from Red — including the negative cases, with `random` pinned so the result is not a coin toss |
+| Simulation loop | `next_round` termination: blue energy exhausted, either side reaching the majority threshold, the threshold coming from the `Termination` object, and a decided game staying decided |
+| Network construction | Builds from the shipped spreadsheets and asserts the JSON contract the frontend reads |
+
+One of those is a regression test worth naming: `test_json_uses_the_links_key` fails if
+`node_link_data` stops emitting a `links` key. networkx 3.6 changed that default to
+`edges` with no deprecation warning, which would empty the graph in the browser with no
+error on either side.
+
+`Simulation.start()` is not covered because it is dead code — `self._round_num` is only
+assigned in a commented-out line, and it calls `generate_message` without the `previous`
+argument the method requires. `next_round` is what the Flask endpoint drives.
 
 ## Provenance
 
@@ -204,7 +210,7 @@ imply sole authorship of what was a team effort.
 - [ ] Replace the linear influence model with a validated opinion-dynamics formulation
 - [ ] Support model providers beyond the OpenAI API
 - [ ] Batch mode: run many simulations headless and aggregate outcomes
-- [ ] Fix the stale tests (see [Testing](#testing)), then widen coverage
+- [ ] Widen coverage into green-network propagation and the Excel import/export path
 - [ ] Remove the dead `excel_api/create_node_network/` duplicate
 - [ ] Package the backend properly so modules stop importing each other as top-level names
 
