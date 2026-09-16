@@ -1,14 +1,16 @@
 openaiVenv/
 .github/
-# Virtualenv
+# Virtualenv created directly in the repository root.
+# Anchored with a leading slash: unanchored, `scripts/` and `lib/` match a directory of
+# that name at ANY depth, which silently swallowed clash-of-llms/scripts/.
 # http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
-bin/
-include/
-lib/
-lib64/
-local/
-scripts/
-pyvenv.cfg
+/bin/
+/include/
+/lib/
+/lib64/
+/local/
+/scripts/
+/pyvenv.cfg
 .venv/
 pip-selfcheck.json
 node_modules/

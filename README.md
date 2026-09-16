@@ -90,15 +90,27 @@ npm run dev:api     # Flask on http://127.0.0.1:5000  (or ./run-backend.sh)
 npm run dev:web     # vue-cli dev server on http://localhost:8080
 ```
 
-> [!NOTE]
-> Flask's `--debug` reloader runs a supervisor process and a worker, so `npm run dev`
-> is four processes rather than two. Ctrl+C in a real terminal reaches all of them; a
-> force-kill of one will not, and the reloader will respawn what you killed. If a port
-> is ever still held after you stop the dev server:
+> [!IMPORTANT]
+> **On Windows, Ctrl+C does not reliably stop everything.** Killing a process does not
+> kill its children there, and this stack nests: a shell, the command, and then Flask's
+> `--debug` reloader forking a supervisor and a worker. What survives keeps holding the
+> port, and the next `npm run dev` then fails to bind for no visible reason.
+>
+> After Ctrl+C, if the ports are still busy:
+>
+> ```bash
+> npm run dev:stop
+> ```
+>
+> It kills by port rather than by process name, so it cannot take out an unrelated
+> `node` or `python` you had running. To check by hand:
 >
 > ```powershell
-> Get-NetTCPConnection -LocalPort 5000,8080 -State Listen | Select-Object LocalPort,OwningProcess
+> Get-NetTCPConnection -LocalPort 5000,8080 -State Listen
 > ```
+>
+> Running the two halves in separate terminals avoids this: Ctrl+C there goes to that
+> console's own process group.
 
 > [!NOTE]
 > Uploading your own PyTorch or TensorFlow model in place of the OpenAI API is optional,
@@ -183,6 +195,7 @@ clash-of-llms/
 │   │   └── graphDataService.js    Round data → vis-network shape
 │   └── views/                     Home · About
 ├── public/documents/              Default spreadsheets and in-app guides
+├── scripts/stop-dev.mjs           Frees the dev ports when Ctrl+C leaves something behind
 └── run-backend.sh                 Starts Flask alone, for a bash shell
 ```
 
