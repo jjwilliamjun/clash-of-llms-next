@@ -50,3 +50,15 @@ pnpm-debug.log*
 /venv
 /clash-of-llms/flask_app/dist
 /clash-of-llms/dist
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+
+# OS
+.DS_Store
+Thumbs.db
