@@ -107,7 +107,11 @@ def create_node_network(node_attributes, node_connections):
             graph.add_edge(node_id, target_node.strip(), weight=round(influence, 2))
 
     # Convert the graph to node-link data format, which is suitable for saving as JSON
-    graph_data = nx.node_link_data(graph)
+    # edges="links" is not optional. networkx 3.6 changed this key's default from
+    # "links" to "edges" with no deprecation warning, and the frontend reads
+    # networkData.links (src/services/graphDataService.js). Leaving it implicit means
+    # a networkx upgrade silently empties the graph in the browser.
+    graph_data = nx.node_link_data(graph, edges="links")
 
     # Create round_data directory if it doesn't exist
     dir_path = os.path.join(os.getcwd(), 'flask_app', 'create_node_network', 'round_data')

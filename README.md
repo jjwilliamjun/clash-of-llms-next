@@ -7,8 +7,8 @@
 
 <p align="center">
   <img alt="Vue 3" src="https://img.shields.io/badge/Vue-3-42b883?style=flat-square&logo=vue.js&logoColor=white">
-  <img alt="Python" src="https://img.shields.io/badge/Python-3-3776ab?style=flat-square&logo=python&logoColor=white">
-  <img alt="Flask" src="https://img.shields.io/badge/Flask-2.2-000000?style=flat-square&logo=flask&logoColor=white">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white">
+  <img alt="Flask" src="https://img.shields.io/badge/Flask-3-000000?style=flat-square&logo=flask&logoColor=white">
   <img alt="OpenAI" src="https://img.shields.io/badge/LLM-OpenAI%20API-412991?style=flat-square&logo=openai&logoColor=white">
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/licence-MIT-blue?style=flat-square"></a>
 </p>
@@ -66,12 +66,17 @@ cd clash-of-llms && npm run serve
 Open <http://localhost:8080>.
 
 > [!NOTE]
-> `requirements.txt` pins PyTorch and TensorFlow because the app can serve an uploaded
-> custom model in place of the OpenAI API. That is a multi-gigabyte install. If you only
-> want the OpenAI path, install everything except `torch` and `tensorflow`.
+> Uploading your own PyTorch or TensorFlow model in place of the OpenAI API is optional,
+> and those two are a multi-gigabyte install, so they are not in `requirements.txt`. Add
+> them only if you want that feature:
+> ```bash
+> pip install -r requirements-custom-model.txt
+> ```
+> They are imported lazily, so the server starts and the simulation runs without them.
 
-**Requires:** Python 3, Node.js 14+, a bash-compatible shell, and an OpenAI API key with
-access to a GPT-4-class model. The key is read from the environment and never committed.
+**Requires:** Python 3.10+ (developed against 3.13), Node.js 14+, a bash-compatible shell,
+and an OpenAI API key with access to a GPT-4-class model. The key is read from the
+environment and never committed.
 
 ### Pointing the halves at each other
 
@@ -143,22 +148,40 @@ clash-of-llms/
 └── run-backend.sh                 Starts Flask alone; the frontend is `npm run serve`
 ```
 
+Dependencies are split by what they are for:
+
+```
+requirements.txt                   Runtime — Flask, networkx, pandas, openai
+requirements-custom-model.txt      Optional — PyTorch and TensorFlow, several GB
+requirements-dev.txt               Tooling — pytest, pylint
+```
+
 | Layer | Technology |
 | --- | --- |
 | Frontend | Vue 3, Vue Router, vis-network, SheetJS, marked |
-| Backend | Python 3, Flask, Flask-CORS, NetworkX, pandas |
-| LLM | OpenAI API · optional PyTorch / TensorFlow model upload |
-| Tooling | Vue CLI, ESLint, pytest |
+| Backend | Python 3.10+, Flask 3, Flask-Cors 6, NetworkX 3, pandas 2 |
+| LLM | OpenAI API (SDK v1+) · optional PyTorch / TensorFlow model upload |
+| Tooling | Vue CLI, ESLint, pytest, pylint |
 
 ## Testing
 
 ```bash
 source venv/bin/activate
-python -m pytest clash-of-llms/flask_app
+pip install -r requirements-dev.txt
+pytest
 ```
 
-Seven tests cover network generation, Red team message and potency behaviour, and the
-core simulation loop. Widening this is on the roadmap.
+> [!WARNING]
+> **The suite does not currently pass, and fixing it is the next job here.** Seven tests
+> exist, covering network generation, Red team message and potency behaviour, and the core
+> simulation loop. They are stale: `Team.__init__` gained `temperature` and `alignment`
+> parameters and the tests were never updated, so five of them fail with a `TypeError`
+> before asserting anything.
+>
+> This went unnoticed because `pytest` used to abort during collection — two test modules
+> share the basename `test_create_network.py` and the default import mode cannot tell them
+> apart — so the failures were never printed. `pytest.ini` fixes collection; the tests
+> themselves still need rewriting against the current constructors.
 
 ## Provenance
 
@@ -181,8 +204,9 @@ imply sole authorship of what was a team effort.
 - [ ] Replace the linear influence model with a validated opinion-dynamics formulation
 - [ ] Support model providers beyond the OpenAI API
 - [ ] Batch mode: run many simulations headless and aggregate outcomes
-- [ ] Widen test coverage beyond network generation and the core loop
-- [ ] Tighten CORS and configuration handling for non-local deployment
+- [ ] Fix the stale tests (see [Testing](#testing)), then widen coverage
+- [ ] Remove the dead `excel_api/create_node_network/` duplicate
+- [ ] Package the backend properly so modules stop importing each other as top-level names
 
 ## Licence
 
