@@ -181,7 +181,7 @@
 
 
 <script>
-import axios from "axios";
+import api from '@/services/api';
 
 export default {
   data() {
@@ -209,8 +209,8 @@ export default {
   },
   methods: {
     downloadExcel() {
-      axios({
-        url: "http://localhost:5000/excel_export",
+      api({
+        url: "/excel_export",
         method: "GET",
         responseType: "blob",
       })
@@ -244,8 +244,8 @@ export default {
             });
         },
     getParameters() {
-      const path = "http://127.0.0.1:5000/get_parameters";
-      axios
+      const path = "/get_parameters";
+      api
         .get(path)
         .then((response) => {
           if (response.data.length < 2) {
@@ -274,8 +274,8 @@ export default {
         });
     },
     getTeamMetadata(team) {
-      const path = `http://127.0.0.1:5000/get_team_metadata/${team}`;
-      axios
+      const path = `/get_team_metadata/${team}`;
+      api
         .get(path)
         .then((response) => {
           if (team === "red") {
@@ -293,14 +293,14 @@ export default {
         });
     },
     async submitGameStyle() {
-      const path = "http://127.0.0.1:5000/set_gameplay";
+      const path = "/set_gameplay";
       try {
 
         // Check if topic is null or empty and set to 'random' if true
         const selected_topic = this.topic && this.topic.trim() !== "" ? this.topic : "random";
 
         // Send selected option to backend
-        const response = await axios.post(path, {
+        const response = await api.post(path, {
           play_option: this.play_option,
           topic: selected_topic
         });

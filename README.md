@@ -46,11 +46,24 @@ cd clash-of-llms-next
 python -m venv venv && source venv/bin/activate     # Windows: .\venv\Scripts\activate
 pip install -r requirements.txt
 
-cp .env.example .env                                # then put your OpenAI key in it
-cd clash-of-llms && npm install && ./init.sh
+cd clash-of-llms && npm install
 ```
 
-Frontend at <http://localhost:8080>, Flask API at <http://localhost:5000>.
+**The frontend and the backend are two separate processes.** Start each in its own
+terminal, so that restarting one does not take down the other:
+
+```bash
+# Terminal 1 — Flask API on http://127.0.0.1:5000
+export OPENAI_API_KEY="sk-..."
+cd clash-of-llms && ./run-backend.sh
+```
+
+```bash
+# Terminal 2 — vue-cli dev server on http://localhost:8080
+cd clash-of-llms && npm run serve
+```
+
+Open <http://localhost:8080>.
 
 > [!NOTE]
 > `requirements.txt` pins PyTorch and TensorFlow because the app can serve an uploaded
@@ -59,6 +72,24 @@ Frontend at <http://localhost:8080>, Flask API at <http://localhost:5000>.
 
 **Requires:** Python 3, Node.js 14+, a bash-compatible shell, and an OpenAI API key with
 access to a GPT-4-class model. The key is read from the environment and never committed.
+
+### Pointing the halves at each other
+
+Because they are separate processes, each side has to be told where the other is. The
+defaults work for local development and nothing needs setting.
+
+| Setting | Side | Default | Set it when |
+| --- | --- | --- | --- |
+| `VUE_APP_API_BASE_URL` | frontend, `clash-of-llms/.env` | `http://127.0.0.1:5000` | the backend is not on this machine's port 5000 |
+| `CORS_ORIGINS` | backend, environment | `http://localhost:8080,http://127.0.0.1:8080` | the frontend is served from another origin |
+| `FLASK_PORT` | backend, environment | `5000` | port 5000 is taken |
+
+Host spelling is not cosmetic here: a browser treats `http://localhost:8080` and
+`http://127.0.0.1:8080` as **different origins** and matches them separately, so whichever
+one you open has to appear in `CORS_ORIGINS`. Both are allowed by default for that reason.
+
+`VUE_APP_*` variables are inlined by vue-cli at build time, so changing one needs a
+restart of `npm run serve`.
 
 ### Configuring a run
 
@@ -103,9 +134,13 @@ clash-of-llms/
 │   └── llm_api/                   LLM dispatch: OpenAI API or uploaded custom model
 ├── src/
 │   ├── components/                NetworkGraph · GamePlay · ParameterInput · FileUpload
-│   ├── services/                  graphDataService — round data → vis-network shape
+│   ├── services/
+│   │   ├── api.js                 Configured axios client — the only place the
+│   │   │                          backend's address is written down
+│   │   └── graphDataService.js    Round data → vis-network shape
 │   └── views/                     Home · About
-└── public/documents/              Default spreadsheets and in-app guides
+├── public/documents/              Default spreadsheets and in-app guides
+└── run-backend.sh                 Starts Flask alone; the frontend is `npm run serve`
 ```
 
 | Layer | Technology |

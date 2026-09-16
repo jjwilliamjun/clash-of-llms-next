@@ -1,6 +1,6 @@
 import { Network } from 'vis-network/standalone/esm/vis-network';
 import { DataSet } from 'vis-data/standalone/esm/vis-data';
-import axios from 'axios';
+import api from './api';
 
 /**
  * Fetches the graph data for a specific round from the backend.
@@ -9,7 +9,7 @@ import axios from 'axios';
  */
 export const fetchGraphDataForRound = async (roundNumber) => {
   try {
-    const response = await axios.get(`http://127.0.0.1:5000/round_data/${roundNumber}`);
+    const response = await api.get(`/round_data/${roundNumber}`);
     if (response.status === 200) {
       return response.data; // Network data for the specified round
     } else {

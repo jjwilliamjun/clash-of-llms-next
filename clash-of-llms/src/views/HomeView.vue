@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/services/api';
 import ParameterInputForm from '@/components/ParameterInput.vue';
 import FileUploadForm from '@/components/FileUpload.vue';
 import UserLogin from '@/components/UserLogin.vue';
@@ -49,8 +49,8 @@ export default {
       this.isLoggedIn = true; // Set logged-in status
     },
     downloadExcel() {
-      axios({
-        url: 'http://localhost:5000/excel_export', 
+      api({
+        url: '/excel_export', 
         method: 'GET',
         responseType: 'blob', 
       })

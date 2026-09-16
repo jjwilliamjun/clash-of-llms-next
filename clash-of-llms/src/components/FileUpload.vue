@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/services/api';
 import ErrorPage from './ErrorPage.vue';
 
 export default {
@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     async startSimulation() {
-      const path = 'http://127.0.0.1:5000/excel_import';
+      const path = '/excel_import';
 
       this.errors = null;
       this.invalid_value = false;
@@ -68,7 +68,7 @@ export default {
       }
 
       try {
-        const response = await axios.post(path, this.file_data);
+        const response = await api.post(path, this.file_data);
         this.params = response.data;
         this.display_params = true;
         this.$router.push('/preview');
