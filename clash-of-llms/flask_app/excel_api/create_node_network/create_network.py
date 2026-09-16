@@ -102,7 +102,11 @@ def create_node_network(node_attributes, node_connections):
 #Currently hard codes them to 30 and 20
     green_team=GreenTeam(graph, 30, 20) 
     # Convert the graph to node-link data format, which is suitable for saving as JSON
-    graph_data = nx.node_link_data(graph)
+    # edges="links" is not optional. networkx 3.6 changed this key's default from
+    # "links" to "edges" with no deprecation warning, and the frontend reads
+    # networkData.links (src/services/graphDataService.js). Leaving it implicit means
+    # a networkx upgrade silently empties the graph in the browser.
+    graph_data = nx.node_link_data(graph, edges="links")
 
     # Define the correct path for saving the JSON file
     json_path = os.path.join(os.getcwd(), 'excel_api', 'create_node_network', 'network_output.json')

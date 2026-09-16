@@ -1,0 +1,6 @@
+# Development tooling. Not needed to run the application.
+#
+#     pip install -r requirements-dev.txt
+
+pytest>=8.3
+pylint>=3.3

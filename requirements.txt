@@ -1,50 +1,29 @@
-annotated-types==0.5.0
-anyio==3.7.1
-astroid
-cached-property==1.5.2
-certifi==2024.7.4
-click==8.1.7
-colorama==0.4.6
-dill==0.3.7
-distro==1.9.0
-et-xmlfile==1.1.0
-exceptiongroup==1.2.2
-Flask==2.2.3
-Flask-Cors==3.0.10
-h11==0.14.0
-httpcore==0.17.3
-httpx==0.24.1
-idna==3.7
-importlib-metadata==6.7.0
-isort==5.11.5
-itsdangerous==2.1.2
-Jinja2==3.1.4
-lazy-object-proxy==1.9.0
-MarkupSafe==2.1.5
-mccabe==0.7.0
-numpy==1.26.4
-openai
-openpyxl==3.1.3
-pip==24.0
-platformdirs==4.0.0
-pydantic
-pydantic_core
-pylint==2.17.7
-python-dateutil==2.9.0.post0
-pytz==2024.1
-setuptools==41.2.0
-six==1.16.0
-sniffio==1.3.1
-tomli==2.0.1
-tomlkit==0.12.5
-tqdm==4.66.5
-typed-ast==1.5.5
-typing_extensions
-Werkzeug==2.2.3
-wrapt==1.16.0
-zipp==3.15.0
-networkx==2.8.7
-pandas==1.5.3
-xlrd==2.0.1
-torch
-tensorflow
+# Runtime dependencies for the Flask backend. Requires Python 3.10 or later.
+#
+# Only direct dependencies are listed. The previous file pinned pylint's transitive
+# tree (astroid, dill, isort, mccabe, wrapt, ...) alongside the runtime, which made it
+# impossible to tell what the application actually needed from what a linter dragged in.
+#
+# Lower bounds rather than exact pins: this is a research tool that people clone and
+# run, and exact pins from one machine's freeze are what made the old file unusable on
+# any current Python.
+#
+# PyTorch and TensorFlow are NOT here. They are only needed to serve an uploaded custom
+# model, they weigh several gigabytes, and they were the reason this project could not
+# move past the Python version they happened to support. See requirements-custom-model.txt.
+
+# Web
+Flask>=3.1,<4
+Flask-Cors>=6.0,<7
+Werkzeug>=3.1,<4
+
+# Simulation
+networkx>=3.4,<4
+
+# Spreadsheet import/export
+pandas>=2.2,<3
+openpyxl>=3.1,<4
+xlrd>=2.0,<3
+
+# LLM
+openai>=1.40
