@@ -39,21 +39,42 @@ The asymmetry is the interesting part:
 
 ## Quickstart
 
+One command per line, so this pastes into PowerShell as well as bash — Windows
+PowerShell 5.1 does not accept `&&` and fails on the whole line if it sees one.
+
 ```bash
 git clone https://github.com/jjwilliamjun/clash-of-llms-next.git
 cd clash-of-llms-next
+python -m venv venv
+```
 
-python -m venv venv && source venv/bin/activate     # Windows: .\venv\Scripts\activate
+Activate it — this is the one line that differs by shell:
+
+| Shell | Command |
+| --- | --- |
+| PowerShell | `.\venv\Scripts\activate` |
+| cmd | `venv\Scripts\activate.bat` |
+| bash, zsh | `source venv/bin/activate` |
+| Git Bash on Windows | `source venv/Scripts/activate` |
+
+Then, with the environment active:
+
+```bash
 pip install -r requirements.txt
-
-cd clash-of-llms && npm install
+cd clash-of-llms
+npm install
 ```
 
 Then run both halves:
 
+| Shell | Command |
+| --- | --- |
+| PowerShell | `$env:OPENAI_API_KEY = "sk-..."` |
+| cmd | `set OPENAI_API_KEY=sk-...` |
+| bash, zsh | `export OPENAI_API_KEY="sk-..."` |
+
 ```bash
-export OPENAI_API_KEY="sk-..."      # Windows: set OPENAI_API_KEY=sk-...
-cd clash-of-llms && npm run dev
+npm run dev
 ```
 
 Open <http://localhost:8080>. Output is prefixed `[api]` and `[web]` so you can tell
@@ -88,9 +109,12 @@ npm run dev:web     # vue-cli dev server on http://localhost:8080
 > ```
 > They are imported lazily, so the server starts and the simulation runs without them.
 
-**Requires:** Python 3.10+ (developed against 3.13), Node.js 14+, a bash-compatible shell,
-and an OpenAI API key with access to a GPT-4-class model. The key is read from the
-environment and never committed.
+**Requires:** Python 3.10+ (developed against 3.13), Node.js 14+, and an OpenAI API key
+with access to a GPT-4-class model. The key is read from the environment and never
+committed.
+
+No particular shell: `npm run dev` works the same in PowerShell, cmd, and bash. Only
+`run-backend.sh` needs bash, and `npm run dev:api` does the same thing without it.
 
 ### Pointing the halves at each other
 
@@ -179,8 +203,10 @@ requirements-dev.txt               Tooling — pytest, pylint
 
 ## Testing
 
+With the virtual environment active (see [Quickstart](#quickstart)), from the
+repository root:
+
 ```bash
-source venv/bin/activate
 pip install -r requirements-dev.txt
 pytest
 ```
