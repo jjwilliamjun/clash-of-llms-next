@@ -49,21 +49,35 @@ pip install -r requirements.txt
 cd clash-of-llms && npm install
 ```
 
-**The frontend and the backend are two separate processes.** Start each in its own
-terminal, so that restarting one does not take down the other:
+Then run both halves:
 
 ```bash
-# Terminal 1 — Flask API on http://127.0.0.1:5000
-export OPENAI_API_KEY="sk-..."
-cd clash-of-llms && ./run-backend.sh
+export OPENAI_API_KEY="sk-..."      # Windows: set OPENAI_API_KEY=sk-...
+cd clash-of-llms && npm run dev
 ```
+
+Open <http://localhost:8080>. Output is prefixed `[api]` and `[web]` so you can tell
+which half is talking, and `--kill-others` means you never end up with one running
+alone.
+
+**They are still two independent processes.** `npm run dev` is a convenience over them,
+not a replacement — when you want to restart one without the other, or watch one
+closely, run them separately:
 
 ```bash
-# Terminal 2 — vue-cli dev server on http://localhost:8080
-cd clash-of-llms && npm run serve
+npm run dev:api     # Flask on http://127.0.0.1:5000  (or ./run-backend.sh)
+npm run dev:web     # vue-cli dev server on http://localhost:8080
 ```
 
-Open <http://localhost:8080>.
+> [!NOTE]
+> Flask's `--debug` reloader runs a supervisor process and a worker, so `npm run dev`
+> is four processes rather than two. Ctrl+C in a real terminal reaches all of them; a
+> force-kill of one will not, and the reloader will respawn what you killed. If a port
+> is ever still held after you stop the dev server:
+>
+> ```powershell
+> Get-NetTCPConnection -LocalPort 5000,8080 -State Listen | Select-Object LocalPort,OwningProcess
+> ```
 
 > [!NOTE]
 > Uploading your own PyTorch or TensorFlow model in place of the OpenAI API is optional,
@@ -145,7 +159,7 @@ clash-of-llms/
 │   │   └── graphDataService.js    Round data → vis-network shape
 │   └── views/                     Home · About
 ├── public/documents/              Default spreadsheets and in-app guides
-└── run-backend.sh                 Starts Flask alone; the frontend is `npm run serve`
+└── run-backend.sh                 Starts Flask alone, for a bash shell
 ```
 
 Dependencies are split by what they are for:
@@ -161,7 +175,7 @@ requirements-dev.txt               Tooling — pytest, pylint
 | Frontend | Vue 3, Vue Router, vis-network, SheetJS, marked |
 | Backend | Python 3.10+, Flask 3, Flask-Cors 6, NetworkX 3, pandas 2 |
 | LLM | OpenAI API (SDK v1+) · optional PyTorch / TensorFlow model upload |
-| Tooling | Vue CLI, ESLint, pytest, pylint |
+| Tooling | Vue CLI, ESLint, concurrently, pytest, pylint |
 
 ## Testing
 
