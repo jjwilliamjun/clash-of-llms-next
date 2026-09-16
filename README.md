@@ -1,16 +1,18 @@
 # Clash of LLMs — Next
 
-A personal continuation of [Clash of LLMs](https://github.com/jjwilliamjun/Clash-of-LLMs), a simulation platform where two opposing LLM agents compete to shift public opinion across a directed social network.
+A simulation platform where two opposing LLM agents compete to shift public opinion across a directed social network.
 
 <!-- TODO: replace with a screenshot or GIF of a running simulation -->
 
 ## Provenance
 
-The original project was built by a team of five as a university group project, and its full commit history is preserved in this repository. This fork exists so that further work can be done solo without rewriting shared history or implying sole authorship of the original.
+**This started as a university group project built by a team of five.** That matters for reading the commit history in this repository, so it is worth stating plainly rather than burying.
 
-- **Upstream:** [`jjwilliamjun/Clash-of-LLMs`](https://github.com/jjwilliamjun/Clash-of-LLMs) — the team project as submitted, 389 commits.
-- **My share of upstream:** 98 commits, roughly 25% and the second-largest contributor — LLM API integration and the agent message-generation pipeline, simulation endpoint work, and the frontend components for parameter configuration and run playback.
-- **This repository:** everything after the fork point is my own work.
+- **Origin:** 389 commits, five contributors. The original repository is private, but its complete history — every contributor's commits, under their own names — is preserved here rather than squashed away.
+- **My share of it:** 98 commits, roughly 25%, the second-largest contributor. My work was the LLM API integration and agent message-generation pipeline, the simulation endpoint, and the frontend components for parameter configuration and run playback.
+- **From the fork point onward:** solo work. Anything dated after the fork is mine.
+
+This repository exists so that continued development does not rewrite shared history or imply sole authorship of what was a team effort.
 
 ## What the simulation does
 
@@ -111,4 +113,4 @@ python -m pytest clash-of-llms/flask_app
 
 ## License
 
-MIT — see [LICENSE](LICENSE). The original team project is under the same terms; see upstream for its contributor list.
+MIT — see [LICENSE](LICENSE). Copyright is held by the Clash of LLMs contributors, which includes the original five-person team as recorded in this repository's commit history.
