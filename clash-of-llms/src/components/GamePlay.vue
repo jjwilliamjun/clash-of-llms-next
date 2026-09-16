@@ -176,7 +176,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import api from '@/services/api';
 import {
   drawNetworkGraph,
   fetchGraphDataForRound,
@@ -212,8 +212,8 @@ export default {
   },
   methods: {
     downloadExcel() {
-      axios({
-        url: "http://127.0.0.1:5000/excel_export",
+      api({
+        url: "/excel_export",
         method: "GET",
         responseType: "blob",
       })
@@ -247,8 +247,8 @@ export default {
         });
     },
     getParameters() {
-      const path = "http://127.0.0.1:5000/get_parameters";
-      axios
+      const path = "/get_parameters";
+      api
         .get(path)
         .then((response) => {
           if (response.data.length < 2) {
@@ -283,8 +283,8 @@ export default {
         });
     },
     getTeamMetadata(team) {
-      const path = `http://127.0.0.1:5000/get_team_metadata/${team}`;
-      axios
+      const path = `/get_team_metadata/${team}`;
+      api
         .get(path)
         .then((response) => {
           if (team === "red") {
@@ -302,7 +302,7 @@ export default {
         });
     },
     nextTurn() {
-      const path = "http://127.0.0.1:5000/next_round";
+      const path = "/next_round";
       let team = "";
       if (this.red_team_turn) {
         team = "red";
@@ -310,7 +310,7 @@ export default {
         team = "blue";
       }
 
-      axios
+      api
         .get(`${path}?team=${team}`)
         .then((response) => {
           if (response.data.length < 2) {
@@ -359,8 +359,8 @@ export default {
         });
     },
     cleanup(){
-        const path = "http://127.0.0.1:5000/cleanup";
-        axios
+        const path = "/cleanup";
+        api
         .get(path)
         .then((response) => {
           if (response.data.length < 2) {
@@ -408,11 +408,11 @@ export default {
       }
     },
     async startContinuousGame() {
-      const path = "http://127.0.0.1:5000/continuous_game";
+      const path = "/continuous_game";
 
       while (this.red_team_turn || this.blue_team_turn) {
         try {
-            const response = await axios.get(path);
+            const response = await api.get(path);
               this.red_team_turn = !this.red_team_turn;
               this.blue_team_turn = !this.blue_team_turn;
               this.message = response.data.message;

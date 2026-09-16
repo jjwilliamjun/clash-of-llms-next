@@ -18,8 +18,19 @@ from llm_api.llm_handler import *
 dist_folder = os.path.abspath('dist')
 app = Flask(__name__, static_folder=dist_folder, static_url_path='')
 
-# Allow requests from http://localhost: 8080
-CORS(app, resources={r"/*": {"origins":"http://127.0.0.1:5000:8080"}})
+# The frontend runs as its own process on its own port, so every request it makes is
+# cross-origin and has to be allowed explicitly. Both spellings are listed because a
+# browser treats http://localhost:8080 and http://127.0.0.1:8080 as different origins
+# and matches them separately -- allowing only one silently blocks the other.
+#
+# Override with CORS_ORIGINS (comma separated) when the frontend is served elsewhere.
+DEFAULT_CORS_ORIGINS = "http://localhost:8080,http://127.0.0.1:8080"
+cors_origins = [
+    origin.strip()
+    for origin in os.environ.get("CORS_ORIGINS", DEFAULT_CORS_ORIGINS).split(",")
+    if origin.strip()
+]
+CORS(app, resources={r"/*": {"origins": cors_origins}})
 
 # Global variables to store game data and team settings
 game_data = GameData()  

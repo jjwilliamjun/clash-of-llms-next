@@ -159,7 +159,7 @@
 
 
 <script>
-import axios from 'axios';
+import api from '@/services/api';
 
 export default {
   data() {
@@ -248,7 +248,7 @@ export default {
         formData.append('llm_file', this.blue_team.Custom_File);
         formData.append('team', 'blue');
         uploadPromises.push(
-          axios.post('http://127.0.0.1:5000/upload_llm', formData, {
+          api.post('/upload_llm', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           })
         );
@@ -259,7 +259,7 @@ export default {
         formData.append('llm_file', this.red_team.Custom_File);
         formData.append('team', 'red');
         uploadPromises.push(
-          axios.post('http://127.0.0.1:5000/upload_llm', formData, {
+          api.post('/upload_llm', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           })
         );
@@ -317,7 +317,7 @@ export default {
           round_number: this.round_number,
         };
 
-        const response = await axios.post('http://127.0.0.1:5000/ui_parameters', data);
+        const response = await api.post('/ui_parameters', data);
         this.params = response.data;
         this.display_params = true;
 

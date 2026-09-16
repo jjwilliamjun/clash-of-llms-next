@@ -56,7 +56,7 @@
 </template>
   
 <script>
-import axios from 'axios';
+import api from '@/services/api';
 import NetworkGraph from './NetworkGraph.vue';
 
   export default {
@@ -81,8 +81,8 @@ import NetworkGraph from './NetworkGraph.vue';
     },
     methods: {
         getParameters() {
-            const path = 'http://127.0.0.1:5000/excel_api/get_parameters'
-            axios.get(path)
+            const path = '/excel_api/get_parameters'
+            api.get(path)
                 .then((response) => {
                     if (response.data.length < 2) {
                         this.display_error = true;
@@ -100,7 +100,7 @@ import NetworkGraph from './NetworkGraph.vue';
                 });
         },
         nextTurn(){
-            const path = 'http://127.0.0.1:5000/excel_api/next_round'
+            const path = '/excel_api/next_round'
             let team = '';
             if (this.red_team_turn){
                 team = 'red';
@@ -108,7 +108,7 @@ import NetworkGraph from './NetworkGraph.vue';
                 team = 'blue';
             }
 
-            axios.get(`${path}?team=${team}`)
+            api.get(`${path}?team=${team}`)
                 .then((response) => {
                     if (response.data.length < 2) {
                         this.display_error = true;
